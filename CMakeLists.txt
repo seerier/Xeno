@@ -11,6 +11,8 @@ set(BUILD_SHARED_LIBS off)
 
 add_subdirectory(ext/glog)
 
+#add_library(xenolib STATIC src/film.cpp ext/lodepng.cpp)
+
 #
 #set_target_properties(glog PROPERTIES 
 #    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/glog/lib 

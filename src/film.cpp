@@ -25,9 +25,11 @@ void Film::writePng() const {
     auto ptr = image8bitValues.get();
     for (int j = 0; j < yResolution; ++j)
         for (int i = 0; i < xResolution; ++i) {
+            
             ptr[0] = static_cast<uint8_t>(gammaCorrect(clamp(pixel->rgb[0], 0.f, 1.f)) * 255.999f);
             ptr[1] = static_cast<uint8_t>(gammaCorrect(clamp(pixel->rgb[1], 0.f, 1.f)) * 255.999f);
             ptr[2] = static_cast<uint8_t>(gammaCorrect(clamp(pixel->rgb[2], 0.f, 1.f)) * 255.999f);
+            
             ptr += 3;
             pixel += 1;
         }

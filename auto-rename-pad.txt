@@ -1,0 +1,6 @@
+typedef Vector3<int> Vector3i;
+typedef Vector3<float> Vector3f;
+typedef Point3<int> Point3i;
+typedef Point3<float> Point3f;
+typedef Normal3<int> Normal3i;
+typedef Normal3<float> Normal3f;
