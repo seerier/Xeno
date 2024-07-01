@@ -4,6 +4,31 @@
 
 using namespace xeno;
 
+
+int main(int argc, char *argv[]) {
+
+    FLAGS_logtostdout = true;
+    FLAGS_minloglevel = 0;
+
+    google::InitGoogleLogging(argv[0]);
+
+    //FLAGS_logtostderr = true;
+
+    LOG(INFO) << "Some information";
+
+    VLOG(1) << "VLOG 1 !!!";
+
+    LOG(WARNING) << "I'm warnning u!";
+
+    DCHECK(1 == 0) << "Error occured!";
+
+    LOG(WARNING) << "I'm warnning u!";
+
+    //google::ShutdownGoogleLogging();
+    return 0;
+}
+
+/*
 int main(int argc, char *argv[]) {
     int xReso = 1920;
     int yReso = 1080;
@@ -33,3 +58,4 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+*/

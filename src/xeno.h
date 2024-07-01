@@ -9,6 +9,8 @@
 #include<limits>
 #include<iomanip>
 
+#include"glog/logging.h"
+
 namespace xeno {
 
 // Global Constants
@@ -33,6 +35,16 @@ inline T clamp(T val, U low, V high) {
         return high;
     else
         return val;
+}
+
+template <typename T>
+inline bool isNaN(const T v) {
+    return std::isnan(v);
+}
+
+template <>
+inline bool isNaN(const int v) {
+    return false;
 }
 
 }  //namespace xeno

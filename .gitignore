@@ -3,3 +3,7 @@
 .vs
 build
 out
+
+#glog
+*.orig
+bazel-*
