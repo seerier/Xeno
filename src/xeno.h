@@ -15,6 +15,7 @@ namespace xeno {
 
 // Global Declarations
 
+// vector.h
 template <typename T>
 class Vector2;
 template <typename T>
@@ -33,6 +34,9 @@ template <typename T>
 class Bounds3;
 template <typename T>
 class Normal3;
+
+// ray.h
+class Ray;
 
 
 // Global Constants
@@ -67,6 +71,10 @@ inline bool isNaN(const T v) {
 template <>
 inline bool isNaN(const int v) {
     return false;
+}
+
+inline float lerp(float t, float a, float b){
+    return (1 - t) * a + t * b;
 }
 
 }  //namespace xeno

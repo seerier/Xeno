@@ -42,12 +42,15 @@ Vector3f returnColor(int i, int j, int xReso, int yReso) {
 
     Vector3f dir = pixelPos - camPos;
 
-    /*
-    Vector3f color = cross(dir, Normal3f(0, 0, 1));
+    dir /= distance(pixelPos, camPos);
 
-    if (color != Vector3f(0, 0, 0)) normalize(color);
+    
+    Vector3f color = cross(dir, Normal3f(0, 0, 1));
+    color = faceForward(color, Normal3f(1, 0, 0));
+
+    if (color != Vector3f(0, 0, 0)) color = normalize(color);
     color = (color + Vector3f(1, 1, 1)) / 2;
-    */
+    
 
     /*
     float dtt = dot(dir, Vector3<float>(1, 0, 0));
@@ -56,10 +59,13 @@ Vector3f returnColor(int i, int j, int xReso, int yReso) {
     Vector3<float> color(dtt, dtt, dtt);
     */
 
+    /*
     float dtt = dir.lengthSquared();
     dtt = dtt / 2;
 
     Vector3<float> color(dtt, dtt, dtt);
+    */
+
 
     return color;
 }
@@ -71,18 +77,18 @@ int main(int argc, char *argv[]) {
 
     int xReso = 1920;
     int yReso = 1080;
-    
-    Film film(xReso, yReso, "DirectionalRGB-VectorPointNormal-LengthSquared.png");
+
+    /*
+    Film film(xReso, yReso, "DirectionalRGB-dirCrossFaceforwardNormalizeMapped-Distance.png");
     for (int j = 0; j < yReso; ++j)
         for (int i = 0; i < xReso; ++i) {
             float rgbVal[3];
 
-            /*
-            rgbVal[0] = static_cast<float>(std::abs(i - j) / 200 % 2);
-            rgbVal[1] = 0.2f;
+            
+            //rgbVal[0] = static_cast<float>(std::abs(i - j) / 200 % 2);
+            //rgbVal[1] = 0.2f;
             //rgbVal[2] = (i + j) / 100 % 3 * 0.5f;
-            rgbVal[2] = (i + j) / 100 % 3 * 0.5f;
-            */
+            
 
             // Compute color
             Vector3<float> vec = returnColor(i, j, xReso, yReso);
@@ -95,6 +101,22 @@ int main(int argc, char *argv[]) {
         }
 
     film.writePng();
+    
+    */
+
+    Bounds3f a(Point3f(0, 0, 0), Point3f(1, 1, 1));
+    Bounds3f b(Point3f(-1, -1, -1), Point3f(0, 0, 0));
+    Point3f p(3, 4, 5);
+
+    std::cout << a.contains(b) << a.overlaps(b) << a.overlapsExclusive(b) << std::endl;
+    std::cout << a.intersection(b) << std::endl;
+    std::cout << a.containsExclusive(p) << std::endl;
+    std::cout << a.distanceSquaredTo(p) << ' ' << a.distanceTo(p) << ' ' << b.distanceSquaredTo(p) << ' ' << b.distanceTo(p) << std::endl;
+
+    std::cout << a.lerp(p) << std::endl;
+
+    std::cout << a.distanceSquaredTo(b) << ' ' << a.distanceSquaredTo(Bounds3f(Point3f(-1, -10, -1), Point3f(-3, -5, 9))) << std::endl;
+
     return 0;
 }
 
