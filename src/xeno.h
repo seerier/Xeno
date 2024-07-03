@@ -38,6 +38,9 @@ class Normal3;
 // ray.h
 class Ray;
 
+// medium.h
+class Medium;
+
 
 // Global Constants
 static constexpr float Pi = 3.1415926535f;
@@ -46,6 +49,13 @@ static constexpr float PiOver4 = 0.7853981634f;
 static constexpr float InvPi = 0.3183098862f;
 static constexpr float Inv2Pi = 0.1591549431f;
 static constexpr float Inv4Pi = 0.0795774715f;
+
+static constexpr float MaxFloat = std::numeric_limits<float>::max();
+static constexpr float Infinity = std::numeric_limits<float>::infinity();
+
+// Epsilon to prevent self-occlusion
+static constexpr float Epsilon = 1e-4f;
+
 
 // Global Utility Functions
 inline float gammaCorrect(float v) {
@@ -75,6 +85,14 @@ inline bool isNaN(const int v) {
 
 inline float lerp(float t, float a, float b){
     return (1 - t) * a + t * b;
+}
+
+inline float radians(float d) {
+    return (Pi / 180) * d;
+}
+
+inline float degrees(float d) {
+    return (180 / Pi) * d;
 }
 
 }  //namespace xeno

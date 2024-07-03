@@ -1,6 +1,8 @@
 #include"xeno.h"
 #include"film.h"
 #include"vecmath.h"
+#include"ray.h"
+#include"transform.h"
 
 
 using namespace xeno;
@@ -104,6 +106,7 @@ int main(int argc, char *argv[]) {
     
     */
 
+    /*
     Bounds3f a(Point3f(0, 0, 0), Point3f(1, 1, 1));
     Bounds3f b(Point3f(-1, -1, -1), Point3f(0, 0, 0));
     Point3f p(3, 4, 5);
@@ -116,6 +119,57 @@ int main(int argc, char *argv[]) {
     std::cout << a.lerp(p) << std::endl;
 
     std::cout << a.distanceSquaredTo(b) << ' ' << a.distanceSquaredTo(Bounds3f(Point3f(-1, -10, -1), Point3f(-3, -5, 9))) << std::endl;
+    */
+
+    /*
+    Ray r;
+    Ray rb(Point3f(0, 0, 0), Vector3f(3, -2, 1));
+    std::cout << r << std::endl;
+    std::cout << rb << std::endl;
+    std::cout << r(1) << "   " << rb(4.2) << std::endl;
+    std::cout << RayDifferential(rb) << std::endl;
+
+    Matrix4x4 m;
+    std::cout << m << std::endl;
+    float theta = Pi / 3;
+    std::cout << std::sin(theta) << std::endl;
+    m.m[1][1] = std::cos(theta); m.m[1][2] = -std::sin(theta);
+    m.m[2][1] = std::sin(theta); m.m[2][2] = std::cos(theta);
+    std::cout << m << std::endl;
+    std::cout << transpose(m) << std::endl;
+    std::cout << inverse(m) << std::endl;
+
+    Matrix4x4 singular(1, 2, 3, 4, 2, 4, 6, 8, 3, 6, 9, 12, 4, 8, 12, 16);
+    std::cout << "singular: " << singular << std::endl;
+    std::cout << transpose(singular) << std::endl;
+    std::cout << inverse(singular) << std::endl;
+    */
+
+    
+
+    Point3f p(0, 0, 1);
+
+    std::cout << p << std::endl;
+
+    //vec = Transform::translate(Vector3f(0, 2, 2))(vec);
+    //vec = Transform::scale(1, 2, 3)(vec);
+    Transform translating = Transform::translate(Vector3f(0, 2, 2));
+    std::cout << translating << std::endl;
+
+    p = translating(p);
+
+    std::cout << p << std::endl;
+
+    std::cout << Transform::translate(Vector3f(0, 2, 0))(p);
+
+    p = Transform::rotateZ(45)(p);
+    std::cout << p << std::endl;
+
+    std::cout << Transform::perspective(45, 0.1, 1) << std::endl;
+    std::cout << Transform::orthographic(0.1, 1) << std::endl;
+
+
+
 
     return 0;
 }

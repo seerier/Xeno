@@ -877,8 +877,8 @@ public:
 
     Bounds2<T> expand(const Point2<T> &p) const {
         Bounds2<T> rec;
-        rec.pMin = min(pMin, p.pMin);
-        rec.pMax = min(pMax, p.pMax);
+        rec.pMin = min(pMin, p);
+        rec.pMax = min(pMax, p);
         return rec;
     }
 
@@ -1039,8 +1039,8 @@ public:
 
     Bounds3<T> expand(const Point3<T> &p) const {
         Bounds3<T> rec;
-        rec.pMin = min(pMin, p.pMin);
-        rec.pMax = min(pMax, p.pMax);
+        rec.pMin = min(pMin, p);
+        rec.pMax = min(pMax, p);
         return rec;
     }
 

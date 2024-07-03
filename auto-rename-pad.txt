@@ -1,4 +1,12 @@
-
-
-
-    float z = std::max({ 0.f, pMin.z - b.pMax.z, b.pMin.z - pMax.z })
+Bounds3f Transform::operator()(const Bounds3f &b) const {
+    const Transform &M = *this;
+    Bounds3f ret(M(Point3f(b.pMin.x, b.pMin.y, b.pMin.z)));
+    ret = ret.expand(M(Point3f(b.pMax.x, b.pMin.y, b.pMin.z)));
+    ret = ret.expand(M(Point3f(b.pMin.x, b.pMax.y, b.pMin.z)));
+    ret = ret.expand(M(Point3f(b.pMin.x, b.pMin.y, b.pMax.z)));
+    ret = ret.expand(M(Point3f(b.pMin.x, b.pMax.y, b.pMax.z)));
+    ret = ret.expand(M(Point3f(b.pMax.x, b.pMax.y, b.pMin.z)));
+    ret = ret.expand(M(Point3f(b.pMax.x, b.pMin.y, b.pMax.z)));
+    ret = ret.expand(M(Point3f(b.pMax.x, b.pMax.y, b.pMax.z)));
+    return ret;
+}
