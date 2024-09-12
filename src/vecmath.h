@@ -167,6 +167,7 @@ public:
     Vector3() { x = y = z = 0; }
     Vector3(T a, T b, T c) :x(a), y(b), z(c) {}
     explicit Vector3(const Point3<T> &p);
+    explicit Vector3(const Normal3<T> &n);
 
     Vector3<T> operator+(const Vector3<T> &v) const {
         return Vector3<T>(x + v.x, y + v.y, z + v.z);
@@ -1247,6 +1248,10 @@ inline Vector2<T>::Vector2(const Point2<T> &p) : x(p.x), y(p.y) {}
 template <typename T>
 inline Vector3<T>::Vector3(const Point3<T> &p) : x(p.x), y(p.y), z(p.z) {}
 
+template <typename T>
+inline Vector3<T>::Vector3(const Normal3<T> &n) : x(n.x), y(n.y), z(n.z) {}
+
+
 
 
 
@@ -1314,32 +1319,32 @@ inline Point3<T> lerp(float t, const Point3<T> &a, const Point3<T> &b) {
 }
 
 template <typename T>
-inline void CoordinateSystem(const Vector3<T> &v1, Vector3<T> *v2,
+inline void coordinateSystem(const Vector3<T> &v1, Vector3<T> *v2,
                              Vector3<T> *v3) {
     if (std::abs(v1.x) > std::abs(v1.y))
         *v2 = Vector3<T>(-v1.z, 0, v1.x) / std::sqrt(v1.x * v1.x + v1.z * v1.z);
     else
         *v2 = Vector3<T>(0, v1.z, -v1.y) / std::sqrt(v1.y * v1.y + v1.z * v1.z);
-    *v3 = Cross(v1, *v2);
+    *v3 = cross(v1, *v2);
 }
 
-inline Vector3f SphericalDirection(float sinTheta, float cosTheta, float phi) {
+inline Vector3f sphericalDirection(float sinTheta, float cosTheta, float phi) {
     return Vector3f(sinTheta * std::cos(phi), sinTheta * std::sin(phi),
                     cosTheta);
 }
 
-inline Vector3f SphericalDirection(float sinTheta, float cosTheta, float phi,
+inline Vector3f sphericalDirection(float sinTheta, float cosTheta, float phi,
                                    const Vector3f &x, const Vector3f &y,
                                    const Vector3f &z) {
     return sinTheta * std::cos(phi) * x + sinTheta * std::sin(phi) * y +
            cosTheta * z;
 }
 
-inline float SphericalTheta(const Vector3f &v) {
+inline float sphericalTheta(const Vector3f &v) {
     return std::acos(clamp(v.z, -1, 1));
 }
 
-inline float SphericalPhi(const Vector3f &v) {
+inline float sphericalPhi(const Vector3f &v) {
     float p = std::atan2(v.y, v.x);
     return (p < 0) ? (p + 2 * Pi) : p;
 }

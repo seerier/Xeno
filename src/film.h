@@ -1,20 +1,22 @@
 #pragma once
 
 #include"xeno.h"
+#include"vecmath.h"
 
 namespace xeno {
 
 struct Pixel {
-    float rgb[3];
+    Vector3f rgb;
 };
 
 class Film {
 public:
     Film(int xReso, int yReso, const std::string &name);
 
-    void getRadiance(int x, int y, const float *val) {
+    void getRadiance(int x, int y, const Vector3f &val) {
         int index = y * xResolution + x;
-        std::memcpy(pixels[index].rgb, val, 3 * sizeof(float));
+        //std::memcpy(pixels[index].rgb, val, 3 * sizeof(float));
+        pixels[index].rgb = val;
     }
 
     // Export an 8bit-RGB .png file

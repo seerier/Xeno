@@ -3,6 +3,7 @@
 #include"vecmath.h"
 #include"ray.h"
 #include"transform.h"
+#include"shapes/sphere.h"
 
 
 using namespace xeno;
@@ -38,7 +39,7 @@ Vector3f returnColor(int i, int j, int xReso, int yReso) {
     float xRatio = static_cast<float>(2 * i) / xReso - 1;
     float yRatio = static_cast<float>(2 * j) / yReso - 1;
 
-    Point3f pixelPos = screenCenterPos + Vector3f(xRatio, -yRatio, 0);
+    Point3f pixelPos = screenCenterPos + Vector3f(xRatio, yRatio, 0);
 
 
 
@@ -46,11 +47,11 @@ Vector3f returnColor(int i, int j, int xReso, int yReso) {
 
     dir /= distance(pixelPos, camPos);
 
-    
-    Vector3f color = cross(dir, Normal3f(0, 0, 1));
-    color = faceForward(color, Normal3f(1, 0, 0));
+    Vector3f color = cross(Normal3f(0, 0, 1), dir);
+    //Vector3f color = cross(dir, Normal3f(0, 0, 1))*0.8;
+    //color = faceForward(color, Normal3f(1, 0, 0));
 
-    if (color != Vector3f(0, 0, 0)) color = normalize(color);
+    //if (color != Vector3f(0, 0, 0)) color = normalize(color);
     color = (color + Vector3f(1, 1, 1)) / 2;
     
 
@@ -72,6 +73,20 @@ Vector3f returnColor(int i, int j, int xReso, int yReso) {
     return color;
 }
 
+Ray generateRay(int i, int j, int xReso, int yReso) {
+    Point3f camPos(0, 0, -1);
+    Point3f screenCenterPos(0, 0, 0);
+    float xRatio = static_cast<float>(2 * i) / xReso - 1;
+    float yRatio = static_cast<float>(2 * j) / yReso - 1;
+
+    Point3f pixelPos = screenCenterPos + Vector3f(xRatio, -yRatio, 0);
+
+
+
+    Vector3f dir = pixelPos - camPos;
+    return Ray(camPos, dir);
+}
+
 
 int main(int argc, char *argv[]) {
 
@@ -79,12 +94,15 @@ int main(int argc, char *argv[]) {
 
     int xReso = 1920;
     int yReso = 1080;
+    //int yReso=1920;
 
-    /*
-    Film film(xReso, yReso, "DirectionalRGB-dirCrossFaceforwardNormalizeMapped-Distance.png");
+    
+    //Film film(xReso, yReso, "DirectionalRGB-dirCrossFaceforwardNormalizeMapped-Distance.png");
+    //Film film(xReso, yReso, "myDirectionalRGB-1-1-dirInverseCrossMapped-upsideDown-Distance.png");
+    Film film(xReso, yReso, "sphereNormal.png");
     for (int j = 0; j < yReso; ++j)
         for (int i = 0; i < xReso; ++i) {
-            float rgbVal[3];
+
 
             
             //rgbVal[0] = static_cast<float>(std::abs(i - j) / 200 % 2);
@@ -92,11 +110,26 @@ int main(int argc, char *argv[]) {
             //rgbVal[2] = (i + j) / 100 % 3 * 0.5f;
             
 
+            /*
             // Compute color
             Vector3<float> vec = returnColor(i, j, xReso, yReso);
             rgbVal[0] = vec.x;
             rgbVal[1] = vec.y;
             rgbVal[2] = vec.z;
+            */
+
+            Vector3f rgbVal;
+
+            // Sphere Intersection Test
+            Ray r = generateRay(i, j, xReso, yReso);
+            Sphere sph(Point3f(0, 0, 0), 0.5);
+            Interaction intr;
+            if (sph.intersect(r, intr)) {
+                //rgbVal = Vector3f(intr.p + Vector3f(1, 1, 1)) / 2.f;
+                //rgbVal = Vector3f(1, 1, 1);
+                rgbVal = (Vector3f(intr.n) + Vector3f(1, 1, 1)) / 2.f;
+            }
+
 
             // Pass value to film
             film.getRadiance(i, j, rgbVal);
@@ -104,7 +137,7 @@ int main(int argc, char *argv[]) {
 
     film.writePng();
     
-    */
+    
 
     /*
     Bounds3f a(Point3f(0, 0, 0), Point3f(1, 1, 1));
@@ -146,7 +179,7 @@ int main(int argc, char *argv[]) {
     */
 
     
-
+    /*
     Point3f p(0, 0, 1);
 
     std::cout << p << std::endl;
@@ -168,8 +201,9 @@ int main(int argc, char *argv[]) {
     std::cout << Transform::perspective(45, 0.1, 1) << std::endl;
     std::cout << Transform::orthographic(0.1, 1) << std::endl;
 
+    */
 
-
+    Sphere r(Point3f(0, 0, 0), 10);
 
     return 0;
 }
