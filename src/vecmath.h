@@ -1128,6 +1128,36 @@ public:
     Point3<T> pMin, pMax;
 };
 
+template <typename T>
+inline Bounds2<T> aabbUnion(const Bounds2<T> &a, const Bounds2<T> &b) {
+    return Bounds2<T>(min(a.pMin, b.pMin), max(a.pMax, b.pMax));
+}
+
+template <typename T>
+inline Bounds2<T> aabbUnion(const Bounds2<T> &a, const Point2<T> &p) {
+    return Bounds2<T>(min(a.pMin, p), max(a.pMax, p));
+}
+
+template <typename T>
+inline Bounds2<T> aabbUnion(const Point2<T> &p, const Bounds2<T> &a) {
+    return Bounds2<T>(min(a.pMin, p), max(a.pMax, p));
+}
+
+template <typename T>
+inline Bounds3<T> aabbUnion(const Bounds3<T> &a, const Bounds3<T> &b) {
+    return Bounds3<T>(min(a.pMin, b.pMin), max(a.pMax, b.pMax));
+}
+
+template <typename T>
+inline Bounds3<T> aabbUnion(const Bounds3<T> &a, const Point3<T> &p) {
+    return Bounds3<T>(min(a.pMin, p), max(a.pMax, p));
+}
+
+template <typename T>
+inline Bounds3<T> aabbUnion(const Point3<T> &p, const Bounds3<T> &a) {
+    return Bounds3<T>(min(a.pMin, p), max(a.pMax, p));
+}
+
 
 
 // type defining
