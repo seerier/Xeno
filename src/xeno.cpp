@@ -4,6 +4,8 @@
 #include"ray.h"
 #include"transform.h"
 #include"shapes/sphere.h"
+#include"shapes/triangle.h"
+#include"shapes/quad.h"
 
 
 using namespace xeno;
@@ -99,7 +101,7 @@ int main(int argc, char *argv[]) {
     
     //Film film(xReso, yReso, "DirectionalRGB-dirCrossFaceforwardNormalizeMapped-Distance.png");
     //Film film(xReso, yReso, "myDirectionalRGB-1-1-dirInverseCrossMapped-upsideDown-Distance.png");
-    Film film(xReso, yReso, "sphereNormal.png");
+    Film film(xReso, yReso, "Quad.png");
     for (int j = 0; j < yReso; ++j)
         for (int i = 0; i < xReso; ++i) {
 
@@ -123,11 +125,17 @@ int main(int argc, char *argv[]) {
             // Sphere Intersection Test
             Ray r = generateRay(i, j, xReso, yReso);
             Sphere sph(Point3f(0, 0, 0), 0.5);
+            //std::shared_ptr<Shape> t1 = std::make_shared<Triangle>(Point3f(-0.5, -0.5, 0), Point3f(0.5, -0.5, 0), Point3f(0.5, 0.5, 0));
+            //Shape *t1 = new Triangle(Point3f(-0.5, -0.5, 0), Point3f(0.5, -0.5, 0), Point3f(0.5, 0.5, 0));
+            std::shared_ptr<Shape> q1 = std::make_shared<Quad>(Point3f(-0.5f, -0.5f, 0), Vector3f(1.f, 0, 0), Vector3f(0, 1.f, 0));
             Interaction intr;
-            if (sph.intersect(r, intr)) {
+            float t = 0;
+            if (q1->intersect(r, t, intr)) {
                 //rgbVal = Vector3f(intr.p + Vector3f(1, 1, 1)) / 2.f;
                 //rgbVal = Vector3f(1, 1, 1);
-                rgbVal = (Vector3f(intr.n) + Vector3f(1, 1, 1)) / 2.f;
+                //rgbVal = (Vector3f(intr.uv[0],intr.uv[1],0) + Vector3f(1, 1, 1)) / 2.f;
+                //rgbVal = Vector3f(intr.uv[0], intr.uv[1], 0);
+                rgbVal = Vector3f(intr.uv.x, intr.uv.y, 0.9f);
             }
 
 
