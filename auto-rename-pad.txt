@@ -1,12 +1,14 @@
-Bounds3f Transform::operator()(const Bounds3f &b) const {
-    const Transform &M = *this;
-    Bounds3f ret(M(Point3f(b.pMin.x, b.pMin.y, b.pMin.z)));
-    ret = ret.expand(M(Point3f(b.pMax.x, b.pMin.y, b.pMin.z)));
-    ret = ret.expand(M(Point3f(b.pMin.x, b.pMax.y, b.pMin.z)));
-    ret = ret.expand(M(Point3f(b.pMin.x, b.pMin.y, b.pMax.z)));
-    ret = ret.expand(M(Point3f(b.pMin.x, b.pMax.y, b.pMax.z)));
-    ret = ret.expand(M(Point3f(b.pMax.x, b.pMax.y, b.pMin.z)));
-    ret = ret.expand(M(Point3f(b.pMax.x, b.pMin.y, b.pMax.z)));
-    ret = ret.expand(M(Point3f(b.pMax.x, b.pMax.y, b.pMax.z)));
-    return ret;
+template <typename T>
+inline Bounds3<T> aabbUnion(const Bounds3<T> &a, const Bounds3<T> &b) {
+    return Bounds3<T>(min(a.pMin, b.pMin), max(a.pMax, b.pMax));
+}
+
+template <typename T>
+inline Bounds3<T> aabbUnion(const Bounds3<T> &a, const Point3<T> &p) {
+    return Bounds3<T>(min(a.pMin, p), max(a.pMax, p));
+}
+
+template <typename T>
+inline Bounds3<T> aabbUnion(const Point3<T> &p, const Bounds3<T> &a) {
+    return Bounds3<T>(min(a.pMin, p), max(a.pMax, p));
 }
