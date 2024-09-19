@@ -18,7 +18,20 @@ add_subdirectory(ext/glog)
 # LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/glog/lib
 # RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/glog/bin
 # )
-add_executable(xeno src/xeno.cpp src/film.cpp ext/lodepng.cpp src/transform.cpp src/shapes/sphere.cpp src/shapes/triangle.cpp src/shapes/quad.cpp)
+include_directories(src)
+
+set(XENO_CORE_SOURCE
+    src/xeno.cpp
+    src/film.cpp
+    src/transform.cpp
+)
+
+file(GLOB XENO_SOURCE
+    ext/*
+    src/shapes/*
+)
+
+add_executable(xeno ${XENO_SOURCE} ${XENO_CORE_SOURCE})
 
 target_link_libraries(xeno glog::glog)
 target_include_directories(xeno PRIVATE ext/glog/src)
