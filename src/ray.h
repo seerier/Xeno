@@ -2,6 +2,7 @@
 
 #include"xeno.h"
 #include"vecmath.h"
+#include"mathutil.h"
 
 namespace xeno {
 
