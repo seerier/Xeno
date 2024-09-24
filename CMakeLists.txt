@@ -32,6 +32,7 @@ file(GLOB XENO_SOURCE
     ext/*
     src/shapes/*
     src/materials/*
+    src/accelerators/*
 )
 
 add_executable(xeno ${XENO_SOURCE} ${XENO_CORE_SOURCE})

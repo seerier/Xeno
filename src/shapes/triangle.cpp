@@ -20,7 +20,10 @@ bool Triangle::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
     if (v < 0 || u + v > 1) return false;
 
     intr.uv.x = u, intr.uv.y = v;
-    ray_t = dot(e2, qvec) * inv_det;
+    float t = dot(e2, qvec) * inv_det;
+    if (t<ray.tMin || t>ray.tMax) return false;
+    ray_t = t;
+    //ray_t = dot(e2, qvec) * inv_det;
     ray.tMax = ray_t;
 
     intr.wo = -ray.d;
