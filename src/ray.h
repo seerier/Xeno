@@ -3,6 +3,7 @@
 #include"xeno.h"
 #include"vecmath.h"
 #include"mathutil.h"
+#include"rng.h"
 
 namespace xeno {
 

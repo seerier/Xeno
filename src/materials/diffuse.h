@@ -1,3 +1,5 @@
+#pragma once
+
 #include "material.h"
 
 namespace xeno {
@@ -6,16 +8,15 @@ class Diffuse : public Material {
 public:
     Diffuse(float k = 0.5f) :kd(k) {}
 
-    float f(const Point3f &wo, const Point3f &wi) const override {
-        // if (dot(wo, n)<0||dot(wi, n)<0) return 0;
-
+    float f(const Vector3f &wo, const Vector3f &wi, const Normal3f &n) const override {
+        if (dot(wo, n) < 0 || dot(wi, n) < 0) return 0;
         return kd * InvPi;
     }
 
-    float sample_f(const Point3f &wo, Point3f *wi, const Point3f &n, const Point2f &sample, float *pdf) const override {
-        Vector3f localWi = cosineSampleHemisphere(sample);
-        *pdf = localWi.z * InvPi;
+    float sample_f(const Vector3f &wo, Vector3f *wi, const Normal3f &n, const Point2f &sample, float *pdf) const override;
 
+    float pdf(const Vector3f &wo, const Vector3f &wi, const Normal3f &n) const override {
+        return InvPi;
     }
 
 private:

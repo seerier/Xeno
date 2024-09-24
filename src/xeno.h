@@ -8,6 +8,7 @@
 #include<memory>
 #include<limits>
 #include<iomanip>
+#include<random>
 
 #include"glog/logging.h"
 

@@ -24,6 +24,8 @@ set(XENO_CORE_SOURCE
     src/xeno.cpp
     src/film.cpp
     src/transform.cpp
+    src/integrator.cpp
+    src/camera.cpp
 )
 
 file(GLOB XENO_SOURCE

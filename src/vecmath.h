@@ -731,6 +731,16 @@ inline Normal3<T> operator*(U v, const Normal3<T> &vec) {
 }
 
 template <typename T>
+inline Vector3<T> operator+(const Vector3<T> &v, const Normal3<T> &n) {
+    return Vector3<T>(v.x + n.x, v.y + n.y, v.z + n.z);
+}
+
+template <typename T>
+inline Vector3<T> operator+(const Normal3<T> &n, const Vector3<T> &v) {
+    return Vector3<T>(v.x + n.x, v.y + n.y, v.z + n.z);
+}
+
+template <typename T>
 inline Normal3<T> abs(const Normal3<T> &v) {
     return Normal3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
 }

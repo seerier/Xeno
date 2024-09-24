@@ -3,6 +3,7 @@
 #include"vecmath.h"
 #include"ray.h"
 #include"transform.h"
+#include"integrator.h"
 #include"shapes/sphere.h"
 #include"shapes/triangle.h"
 #include"shapes/quad.h"
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
     int yReso = 1080;
     //int yReso=1920;
 
-    
+    /*
     //Film film(xReso, yReso, "DirectionalRGB-dirCrossFaceforwardNormalizeMapped-Distance.png");
     //Film film(xReso, yReso, "myDirectionalRGB-1-1-dirInverseCrossMapped-upsideDown-Distance.png");
     Film film(xReso, yReso, "Quad.png");
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]) {
             //rgbVal[0] = static_cast<float>(std::abs(i - j) / 200 % 2);
             //rgbVal[1] = 0.2f;
             //rgbVal[2] = (i + j) / 100 % 3 * 0.5f;
-            
+            */
 
             /*
             // Compute color
@@ -119,7 +120,7 @@ int main(int argc, char *argv[]) {
             rgbVal[1] = vec.y;
             rgbVal[2] = vec.z;
             */
-
+/*
             Vector3f rgbVal;
 
             // Sphere Intersection Test
@@ -144,7 +145,7 @@ int main(int argc, char *argv[]) {
         }
 
     film.writePng();
-    
+    */
     
 
     /*
@@ -184,10 +185,10 @@ int main(int argc, char *argv[]) {
     std::cout << "singular: " << singular << std::endl;
     std::cout << transpose(singular) << std::endl;
     std::cout << inverse(singular) << std::endl;
-    */
+    
 
     
-    /*
+    
     Point3f p(0, 0, 1);
 
     std::cout << p << std::endl;
@@ -208,10 +209,13 @@ int main(int argc, char *argv[]) {
 
     std::cout << Transform::perspective(45, 0.1, 1) << std::endl;
     std::cout << Transform::orthographic(0.1, 1) << std::endl;
+*/
 
-    */
+    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "sampledNormal.png");
+    Camera camera(std::move(film));
 
-    Sphere r(Point3f(0, 0, 0), 10);
+    Integrator integrator;
+    integrator.Render(camera);
 
     return 0;
 }

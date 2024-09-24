@@ -21,6 +21,14 @@ bool Quad::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
 
     intr.uv.x = u, intr.uv.y = v;
     ray_t = dot(e1, qvec) * inv_det;
+    ray.tMax = ray_t;
+
+    intr.wo = -ray.d;
+    Vector3f n = normalize(cross(e0, e1));
+    n = dot(n, ray.d) < 0 ? n : -n;
+    intr.n = Normal3f(n);
+    intr.p = ray(ray_t);
+
     return true;
 }
 
