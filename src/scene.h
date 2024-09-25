@@ -4,6 +4,7 @@
 #include "shapes/sphere.h"
 #include "shapes/triangle.h"
 #include "materials/diffuse.h"
+#include "accelerators/objectList.h"
 
 namespace xeno {
 

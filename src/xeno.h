@@ -42,6 +42,26 @@ class Ray;
 // medium.h
 class Medium;
 
+// shapes
+class Shape;
+class Quad;
+class Triangle;
+class Sphere;
+
+//materials
+class Material;
+class Diffuse;
+
+//accelerators
+class ObjectList;
+
+//cameras
+class Camera;
+class Film;
+
+//integrators
+class Integrator;
+
 
 // Global Constants
 static constexpr float Pi = 3.1415926535f;
