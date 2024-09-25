@@ -1,10 +1,8 @@
 #include "integrator.h"
-#include "shapes/quad.h"
-#include "materials/diffuse.h"
 
 namespace xeno {
 
-Vector3f Integrator::Li(Ray &ray) const {
+Vector3f Integrator::Li(Ray &ray, const Scene &scene) const {
     //return Vector3f(0.2f, 0.3f, 0.5f);
     std::shared_ptr<Shape> quad = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 2, 0), Vector3f(0, 0, 2));
     float ray_t;
@@ -24,7 +22,7 @@ Vector3f Integrator::Li(Ray &ray) const {
 
 }
 
-void Integrator::Render(Camera &camera) const {
+void Integrator::Render(Camera &camera, const Scene &scene) const {
 
     int xReso = camera.film->xResolution;
     int yReso = camera.film->yResolution;
@@ -33,7 +31,7 @@ void Integrator::Render(Camera &camera) const {
         for (int i = 0; i < xReso; ++i) {
             Vector3f rgbVal;
             Ray ray = camera.generateRay(i, j);
-            rgbVal = Li(ray);
+            rgbVal = Li(ray, scene);
             camera.film->getRadiance(i, j, rgbVal);
         }
 
