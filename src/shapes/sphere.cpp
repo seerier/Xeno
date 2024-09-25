@@ -28,6 +28,8 @@ bool Sphere::intersect(Ray &r, float &ray_t, Interaction &intr) const {
         intr.uv.y = std::acosf(intr.wo.z) * InvPi;
         intr.uv.x = 0.5f + std::atan2f(intr.wo.y, intr.wo.x) * InvPi;
 
+        intr.shape = this;
+
         return true;
     }
 

@@ -39,16 +39,16 @@ int main(int argc, char *argv[]) {
     int xReso = 1920;
     int yReso = 1080;
 
-
-    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "my1stPathTracing.png");
+    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "matBoundTry.png");
     Camera camera(std::move(film));
 
     // Scene Definition
-    std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 2, 0), Vector3f(0, 0, 2));
-    std::shared_ptr<Shape> quad2 = std::make_shared<Quad>(Point3f(-1, -1, 2), Vector3f(0, 2, 0), Vector3f(2, 0, 0));
-    std::shared_ptr<Shape> quad3 = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 0, 2), Vector3f(2, 0, 0));
-    std::shared_ptr<Shape> quad4 = std::make_shared<Quad>(Point3f(1, 1, 2), Vector3f(0, 0, -2), Vector3f(0, -2, 0));
-    std::shared_ptr<Shape> quad5 = std::make_shared<Quad>(Point3f(1, 1, 2), Vector3f(0, 0, -2), Vector3f(-2, 0, 0));
+    std::shared_ptr<Material> mat = std::make_shared<Diffuse>(0.5f);
+    std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 2, 0), Vector3f(0, 0, 2), mat);
+    std::shared_ptr<Shape> quad2 = std::make_shared<Quad>(Point3f(-1, -1, 2), Vector3f(0, 2, 0), Vector3f(2, 0, 0), mat);
+    std::shared_ptr<Shape> quad3 = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 0, 2), Vector3f(2, 0, 0), mat);
+    std::shared_ptr<Shape> quad4 = std::make_shared<Quad>(Point3f(1, 1, 2), Vector3f(0, 0, -2), Vector3f(0, -2, 0), mat);
+    std::shared_ptr<Shape> quad5 = std::make_shared<Quad>(Point3f(1, 1, 2), Vector3f(0, 0, -2), Vector3f(-2, 0, 0), mat);
     ObjectList objectList(quad1);
     objectList.add(quad2);
     objectList.add(quad3);

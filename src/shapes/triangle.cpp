@@ -32,6 +32,8 @@ bool Triangle::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
     intr.n = Normal3f(n);
     intr.p = ray(ray_t);
 
+    intr.shape = this;
+
     return true;
 }
 

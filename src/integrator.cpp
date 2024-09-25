@@ -19,12 +19,13 @@ Vector3f Integrator::Li(Ray &ray, const Scene &scene) const {
             return Li;
         }
         if (bounces > 5) break;
-        Diffuse mat(0.5);
+        //Diffuse mat(0.5);
         //float f = mat.f(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
         //float pdf = mat.pdf(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
         float pdf;
         Vector3f wi;
-        float f = mat.sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        const Material *mat = intr.shape->getMaterial();
+        float f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
         ray = Ray(intr.p, wi);
         beta *= f * dot(intr.n, wi) / pdf;
         ++bounces;
@@ -36,14 +37,20 @@ void Integrator::Render(Camera &camera, const Scene &scene) const {
 
     int xReso = camera.film->xResolution;
     int yReso = camera.film->yResolution;
+    float inv_yReso = 1.f / (yReso - 1);
 
-    for (int j = 0; j < yReso; ++j)
+    for (int j = 0; j < yReso; ++j) {
         for (int i = 0; i < xReso; ++i) {
             Vector3f rgbVal;
             Ray ray = camera.generateRay(i, j);
             rgbVal = Li(ray, scene);
             camera.film->getRadiance(i, j, rgbVal);
+            //int percentage = 100 * (j * yReso + i) / (xReso * yReso);
+            //std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
         }
+        int percentage = 100 * j * inv_yReso;
+        std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
+    }
 
     camera.film->writePng();
 }
