@@ -47,6 +47,16 @@ public:
         return *this;
     }
 
+    Vector2<T> operator*(const Vector2<T> &v) const {
+        return Vector2<T>(x * v.x, y * v.y);
+    }
+
+    Vector2<T> &operator*=(const Vector2<T> &v) {
+        x *= v.x;
+        y *= v.y;
+        return *this;
+    }
+
     template <typename U>
     Vector2<T> operator/(U v) const {
         DCHECK_NE(v, 0);
@@ -194,6 +204,17 @@ public:
     template <typename U>
     Vector3<T> operator*(U v) const {
         return Vector3<T>(x * v, y * v, z * v);
+    }
+
+    Vector3<T> operator*(const Vector3<T> &v) const {
+        return Vector3<T>(x * v.x, y * v.y, z * v.z);
+    }
+
+    Vector3<T> &operator*=(const Vector3<T> &v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+        return *this;
     }
 
     template <typename U>

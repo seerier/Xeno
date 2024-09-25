@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     int yReso = 1080;
 
 
-    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "5Quads-new.png");
+    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "my1stPathTracing.png");
     Camera camera(std::move(film));
 
     // Scene Definition
