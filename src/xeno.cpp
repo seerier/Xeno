@@ -7,6 +7,7 @@
 #include"shapes/sphere.h"
 #include"shapes/triangle.h"
 #include"shapes/quad.h"
+#include"accelerators/objectList.h"
 
 
 using namespace xeno;
@@ -211,7 +212,7 @@ int main(int argc, char *argv[]) {
     std::cout << Transform::orthographic(0.1, 1) << std::endl;
 */
 
-    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "sampledNormal.png");
+    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "5Quads.png");
     Camera camera(std::move(film));
 
     Integrator integrator;
