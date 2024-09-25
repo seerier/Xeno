@@ -17,9 +17,4 @@ inline bool quadratic(float a, float b, float c, float *t0, float *t1) {
     return true;
 }
 
-inline Vector3f cosineSampleHemisphere(const Point2f sample) {
-    float phi = 2 * Pi * sample.x;
-    return Vector3f(cosf(phi) * sqrtf(sample.y), sinf(phi) * sqrtf(sample.y), sqrtf(1 - sample.y));
-}
-
 }

@@ -15,13 +15,14 @@ Vector3f Integrator::Li(Ray &ray, const Scene &scene) const {
 
     while (1) {
         if (!scene.intersect(ray, ray_t, intr)) {
-            Li += beta * Vector3f(0.5, 0.5, 0.5);
+            //Li += beta * Vector3f(0.1, 0.1, 0.1);
             return Li;
         }
         if (bounces > 5) break;
         //Diffuse mat(0.5);
         //float f = mat.f(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
         //float pdf = mat.pdf(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
+        Li += beta * intr.Le(-ray.d);
         float pdf;
         Vector3f wi;
         const Material *mat = intr.shape->getMaterial();

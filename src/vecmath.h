@@ -1413,4 +1413,12 @@ inline float sphericalPhi(const Vector3f &v) {
 
 
 
+inline Vector3f cosineSampleHemisphere(const Point2f &sample) {
+    float phi = 2 * Pi * sample.x;
+    return Vector3f(cosf(phi) * sqrtf(sample.y), sinf(phi) * sqrtf(sample.y), sqrtf(1 - sample.y));
+}
+
+
+
+
 } // namespace xeno

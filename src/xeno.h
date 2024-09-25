@@ -42,6 +42,9 @@ class Ray;
 // medium.h
 class Medium;
 
+// interaction
+class Interaction;
+
 // shapes
 class Shape;
 class Quad;
@@ -61,6 +64,9 @@ class Film;
 
 //integrators
 class Integrator;
+
+//lights
+class Light;
 
 
 // Global Constants
