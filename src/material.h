@@ -12,7 +12,7 @@ public:
 
     virtual float pdf(const Vector3f &wo, const Vector3f &wi, const Normal3f &n) const = 0;
 
-    ~Material() {}
+    virtual ~Material() {}
 };
 
 } // namespace xeno

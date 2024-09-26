@@ -8,6 +8,7 @@
 #include"shapes/triangle.h"
 #include"shapes/quad.h"
 #include"accelerators/objectList.h"
+#include"sensors/pinhole.h"
 
 
 using namespace xeno;
@@ -36,19 +37,47 @@ int main(int argc, char *argv[]) {
 
     google::InitGoogleLogging(argv[0]);
 
-    int xReso = 1920;
+    int xReso = 1080;
     int yReso = 1080;
 
-    std::unique_ptr<Film> film = std::make_unique<Film>(xReso, yReso, "spectrum-tricolor-box.png");
-    Camera camera(std::move(film));
+    // Scene Definition for Cornell Box
 
-    // Scene Definition
-    std::shared_ptr<Material> mat = std::make_shared<Diffuse>(0.4f);
-    std::shared_ptr<Material> blackMat = std::make_shared<Diffuse>(0.f);
-    std::shared_ptr<Material> redMat = std::make_shared<Diffuse>(1.f, 0.1f, 0.1f);
-    std::shared_ptr<Material> greenMat = std::make_shared<Diffuse>(0.1f, 1.f, 0.1f);
-    std::shared_ptr<Material> blueMat = std::make_shared<Diffuse>(0.1f, 0.1f, 1.f);
+    // Sensor
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-Box-50depth-100spp.png");
+    Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
+    // Materials
+    std::shared_ptr<Material> whiteMat = std::make_shared<Diffuse>(.73, .73, .73);
+    std::shared_ptr<Material> redMat = std::make_shared<Diffuse>(.65, .05, .05);
+    std::shared_ptr<Material> greenMat = std::make_shared<Diffuse>(.12, .45, .15);
+    std::shared_ptr<Material> blackMat = std::make_shared<Diffuse>(.0, .0, .0);
+
+    // Lights
+    std::shared_ptr<Light> light = std::make_shared<Light>(15.f, 15.f, 15.f);
+
+    // Shapes
+    std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(555, 0, 0), Vector3f(0, 0, 555), Vector3f(0, 555, 0), greenMat);
+    std::shared_ptr<Shape> quad2 = std::make_shared<Quad>(Point3f(0, 0, 555), Vector3f(0, 0, -555), Vector3f(0, 555, 0), redMat);
+    std::shared_ptr<Shape> quad3 = std::make_shared<Quad>(Point3f(0, 555, 0), Vector3f(555, 0, 0), Vector3f(0, 0, 555), whiteMat);
+    std::shared_ptr<Shape> quad4 = std::make_shared<Quad>(Point3f(0, 0, 555), Vector3f(555, 0, 0), Vector3f(0, 0, -555), whiteMat);
+    std::shared_ptr<Shape> quad5 = std::make_shared<Quad>(Point3f(555, 0, 555), Vector3f(-555, 0, 0), Vector3f(0, 555, 0), whiteMat);
+    std::shared_ptr<Shape> lightQuad = std::make_shared<Quad>(Point3f(213, 554, 227), Vector3f(130, 0, 0), Vector3f(0, 0, 105), blackMat);
+    lightQuad->bindLight(light);
+    ObjectList objectList(quad1);
+    objectList.add(quad2);
+    objectList.add(quad3);
+    objectList.add(quad4);
+    objectList.add(quad5);
+    objectList.add(lightQuad);
+
+    std::shared_ptr<Shape> objects = std::make_shared<ObjectList>(std::move(objectList));
+
+    Scene scene(objects);
+
+    Integrator integrator;
+    integrator.Render(camera, scene);
+
+    /*
     std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 2, 0), Vector3f(0, 0, 2), redMat);
     std::shared_ptr<Shape> quad2 = std::make_shared<Quad>(Point3f(-1, -1, 2), Vector3f(0, 2, 0), Vector3f(2, 0, 0), greenMat);
     std::shared_ptr<Shape> quad3 = std::make_shared<Quad>(Point3f(-1, -1, 0), Vector3f(0, 0, 2), Vector3f(2, 0, 0), mat);
@@ -67,6 +96,7 @@ int main(int argc, char *argv[]) {
 
     Integrator integrator;
     integrator.Render(camera, scene);
+    */
 
     return 0;
 }

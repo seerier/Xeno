@@ -215,6 +215,48 @@ Transform Transform::lookAt(const Point3f &pos, const Point3f &look, const Vecto
     return Transform(inverse(cameraToWorld), cameraToWorld);
 }
 
+Transform Transform::cameraToWorld(const Point3f &pos, const Point3f &look, const Vector3f &up) {
+    Matrix4x4 cameraToWorld;
+    // Initialize fourth column of viewing matrix
+    cameraToWorld.m[0][3] = pos.x;
+    cameraToWorld.m[1][3] = pos.y;
+    cameraToWorld.m[2][3] = pos.z;
+    cameraToWorld.m[3][3] = 1;
+
+    // Initialize first three columns of viewing matrix
+    Vector3f dir = normalize(look - pos);
+    
+    //if (Cross(Normalize(up), dir).Length() == 0) {
+    //    Error(
+    //        "\"up\" vector (%f, %f, %f) and viewing direction (%f, %f, %f) "
+    //        "passed to LookAt are pointing in the same direction.  Using "
+    //        "the identity transformation.",
+    //        up.x, up.y, up.z, dir.x, dir.y, dir.z);
+    //    return Transform();
+    //}
+    DCHECK(cross(normalize(up), dir).length() != 0) <<
+        "up vector and viewing direction "
+        "passed to LookAt are pointing in the same direction.  Using "
+        "the identity transformation.";
+
+
+    Vector3f right = normalize(cross(normalize(up), dir));
+    Vector3f newUp = cross(dir, right);
+    cameraToWorld.m[0][0] = right.x;
+    cameraToWorld.m[1][0] = right.y;
+    cameraToWorld.m[2][0] = right.z;
+    cameraToWorld.m[3][0] = 0.;
+    cameraToWorld.m[0][1] = newUp.x;
+    cameraToWorld.m[1][1] = newUp.y;
+    cameraToWorld.m[2][1] = newUp.z;
+    cameraToWorld.m[3][1] = 0.;
+    cameraToWorld.m[0][2] = dir.x;
+    cameraToWorld.m[1][2] = dir.y;
+    cameraToWorld.m[2][2] = dir.z;
+    cameraToWorld.m[3][2] = 0.;
+    return Transform(cameraToWorld, inverse(cameraToWorld));
+}
+
 Transform Transform::orthographic(float zNear, float zFar) {
     return scale(1, 1, 1 / (zFar - zNear)) * translate(Vector3f(0, 0, -zNear));
 }

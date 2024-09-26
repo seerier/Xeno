@@ -18,11 +18,15 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
             //Li += beta * Vector3f(0.1, 0.1, 0.1);
             return Li;
         }
-        if (bounces > 5) break;
         //Diffuse mat(0.5);
         //float f = mat.f(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
         //float pdf = mat.pdf(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
-        Li += beta * intr.Le(-ray.d);
+        if (intr.shape->isEmitter()) {
+            Li += beta * intr.Le(-ray.d);
+            break;
+        }
+        if (bounces > 50) break;
+
         float pdf;
         Vector3f wi;
         const Material *mat = intr.shape->getMaterial();
@@ -34,18 +38,23 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
     return Li;
 }
 
-void Integrator::Render(Camera &camera, const Scene &scene) const {
+void Integrator::Render(Sensor &sensor, const Scene &scene) const {
 
-    int xReso = camera.film->xResolution;
-    int yReso = camera.film->yResolution;
+    int xReso = sensor.film->xResolution;
+    int yReso = sensor.film->yResolution;
     float inv_yReso = 1.f / (yReso - 1);
+    int spp = 100;
 
     for (int j = 0; j < yReso; ++j) {
         for (int i = 0; i < xReso; ++i) {
             Spectrum rgbVal;
-            Ray ray = camera.generateRay(i, j);
-            rgbVal = Li(ray, scene);
-            camera.film->getRadiance(i, j, rgbVal);
+            for (int k = 0; k < spp; ++k) {
+                Point2f sample(random_float(), random_float());
+                Ray ray = sensor.generateRay(i, j, sample);;
+                rgbVal += Li(ray, scene);
+            }
+            rgbVal /= spp;
+            sensor.film->getRadiance(i, j, rgbVal);
             //int percentage = 100 * (j * yReso + i) / (xReso * yReso);
             //std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
         }
@@ -53,7 +62,7 @@ void Integrator::Render(Camera &camera, const Scene &scene) const {
         std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
     }
 
-    camera.film->writePng();
+    sensor.film->writePng();
 }
 
 } //namespace xeno

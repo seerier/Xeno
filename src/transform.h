@@ -149,6 +149,7 @@ class Transform {
     static Transform rotateZ(float theta);
     static Transform rotate(float theta, const Vector3f &axis);
     static Transform lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up);
+    static Transform cameraToWorld(const Point3f &pos, const Point3f &look, const Vector3f &up);
     static Transform orthographic(float znear, float zfar);
     static Transform perspective(float fov, float znear, float zfar);
 

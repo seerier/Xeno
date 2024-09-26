@@ -25,7 +25,7 @@ set(XENO_CORE_SOURCE
     src/film.cpp
     src/transform.cpp
     src/integrator.cpp
-    src/camera.cpp
+    src/sensor.cpp
     src/interaction.cpp
 )
 
@@ -34,6 +34,7 @@ file(GLOB XENO_SOURCE
     src/shapes/*
     src/materials/*
     src/accelerators/*
+    src/sensors/*
 )
 
 add_executable(xeno ${XENO_SOURCE} ${XENO_CORE_SOURCE})
