@@ -10,7 +10,7 @@ public:
     Interaction(const Point3f &p, const Normal3f &n, const Vector3f &wo, const Point2f uv = Point2f(0, 0))
         :p(p), n(n), wo(normalize(wo)), uv(uv) {}
 
-    Vector3f Le(const Vector3f &w) const;
+    Spectrum Le(const Vector3f &w) const;
 
     // Geometry related members
     Point3f p;

@@ -8,7 +8,7 @@ namespace xeno {
 
 class Integrator {
 public:
-    Vector3f Li(Ray &ray, const Scene &scene) const;
+    Spectrum Li(Ray &ray, const Scene &scene) const;
     void Render(Camera &camera, const Scene &scene) const;
 };
 

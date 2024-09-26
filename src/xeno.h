@@ -84,6 +84,9 @@ static constexpr float Infinity = std::numeric_limits<float>::infinity();
 static constexpr float Epsilon = 1e-4f;
 
 
+// Type aliased
+typedef Vector3<float> Spectrum;
+
 // Global Utility Functions
 inline float gammaCorrect(float v) {
     if (v <= 0.0031308f)return 12.92f * v;

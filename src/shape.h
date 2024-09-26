@@ -23,9 +23,9 @@ public:
     void bindLight(std::shared_ptr<Light> l) { light = l; }
     bool isEmitter() const { return light != nullptr; }
 
-    Vector3f L(const Interaction &intr, const Vector3f &w) const {
+    Spectrum L(const Interaction &intr, const Vector3f &w) const {
         if (light) return light->L(intr, w);
-        return Vector3f(0, 0, 0);
+        return Spectrum(0, 0, 0);
     }
 
 private:

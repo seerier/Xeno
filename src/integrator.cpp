@@ -2,16 +2,16 @@
 
 namespace xeno {
 
-Vector3f Integrator::Li(Ray &ray, const Scene &scene) const {
+Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
     //return Vector3f(0.2f, 0.3f, 0.5f);
     
     float ray_t;
     Interaction intr;
 
     int bounces = 0;
-    Vector3f Li(0, 0, 0);
+    Spectrum Li(0, 0, 0);
     // throughput
-    Vector3f beta(1, 1, 1);
+    Spectrum beta(1, 1, 1);
 
     while (1) {
         if (!scene.intersect(ray, ray_t, intr)) {
@@ -26,7 +26,7 @@ Vector3f Integrator::Li(Ray &ray, const Scene &scene) const {
         float pdf;
         Vector3f wi;
         const Material *mat = intr.shape->getMaterial();
-        float f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
         ray = Ray(intr.p, wi);
         beta *= f * dot(intr.n, wi) / pdf;
         ++bounces;
@@ -42,7 +42,7 @@ void Integrator::Render(Camera &camera, const Scene &scene) const {
 
     for (int j = 0; j < yReso; ++j) {
         for (int i = 0; i < xReso; ++i) {
-            Vector3f rgbVal;
+            Spectrum rgbVal;
             Ray ray = camera.generateRay(i, j);
             rgbVal = Li(ray, scene);
             camera.film->getRadiance(i, j, rgbVal);

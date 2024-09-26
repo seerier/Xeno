@@ -13,7 +13,7 @@ class Film {
 public:
     Film(int xReso, int yReso, const std::string &name);
 
-    void getRadiance(int x, int y, const Vector3f &val) {
+    void getRadiance(int x, int y, const Spectrum &val) {
         int index = y * xResolution + x;
         //std::memcpy(pixels[index].rgb, val, 3 * sizeof(float));
         pixels[index].rgb = val;
