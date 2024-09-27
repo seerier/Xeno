@@ -19,7 +19,8 @@ Ray Pinhole::generateRay(int i, int j, const Point2f &sample) const {
     float xRatio = (2 * (i + sample.x)) / film->xResolution - 1;
     float yRatio = (2 * (j + sample.y)) / film->yResolution - 1;
     float ratio = std::tan(radians(fov) / 2.f);
-    Point3f pixelPos = screenCenterPos + Vector3f(xRatio * ratio, -yRatio * ratio, 0);
+    //Point3f pixelPos = screenCenterPos + Vector3f(xRatio * ratio, -yRatio * ratio, 0);
+    Point3f pixelPos = screenCenterPos + Vector3f(-xRatio * ratio, -yRatio * ratio, 0);
 
     Ray ray(camPos, normalize(pixelPos - camPos));
     return cameraToWorld(ray);

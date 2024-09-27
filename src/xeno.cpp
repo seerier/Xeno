@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     // Scene Definition for Cornell Box
 
     // Sensor
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-Box-50depth-100spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-WholeBox-1024spp.png");
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
     // Materials
@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<Light> light = std::make_shared<Light>(15.f, 15.f, 15.f);
 
     // Shapes
+    // basic box
     std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(555, 0, 0), Vector3f(0, 0, 555), Vector3f(0, 555, 0), greenMat);
     std::shared_ptr<Shape> quad2 = std::make_shared<Quad>(Point3f(0, 0, 555), Vector3f(0, 0, -555), Vector3f(0, 555, 0), redMat);
     std::shared_ptr<Shape> quad3 = std::make_shared<Quad>(Point3f(0, 555, 0), Vector3f(555, 0, 0), Vector3f(0, 0, 555), whiteMat);
@@ -69,6 +70,19 @@ int main(int argc, char *argv[]) {
     objectList.add(quad4);
     objectList.add(quad5);
     objectList.add(lightQuad);
+
+    // 2 additional boxes
+    objectList.add(std::make_shared<Quad>(Point3f(130, 165, 65), Vector3f(-48, 0, 160), Vector3f(160, 0, 49), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(290, 0, 114), Vector3f(0, 165, 0), Vector3f(-50, 0, 158), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(130, 0, 65), Vector3f(0, 165, 0), Vector3f(160, 0, 49), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(82, 0, 225), Vector3f(0, 165, 0), Vector3f(48, 0, -160), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(240, 0, 272), Vector3f(0, 165, 0), Vector3f(-158, 0, -47), whiteMat));
+
+    objectList.add(std::make_shared<Quad>(Point3f(265, 330, 296), Vector3f(49, 0, 160), Vector3f(158, 0, -49), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(423, 0, 247), Vector3f(0, 330, 0), Vector3f(49, 0, 159), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(472, 0, 406), Vector3f(0, 330, 0), Vector3f(-158, 0, 50), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(314, 0, 456), Vector3f(0, 330, 0), Vector3f(-49, 0, -160), whiteMat));
+    objectList.add(std::make_shared<Quad>(Point3f(265, 0, 296), Vector3f(0, 330, 0), Vector3f(158, 0, -49), whiteMat));
 
     std::shared_ptr<Shape> objects = std::make_shared<ObjectList>(std::move(objectList));
 

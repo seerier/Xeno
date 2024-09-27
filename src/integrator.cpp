@@ -43,7 +43,7 @@ void Integrator::Render(Sensor &sensor, const Scene &scene) const {
     int xReso = sensor.film->xResolution;
     int yReso = sensor.film->yResolution;
     float inv_yReso = 1.f / (yReso - 1);
-    int spp = 100;
+    int spp = 1024;
 
     for (int j = 0; j < yReso; ++j) {
         for (int i = 0; i < xReso; ++i) {
