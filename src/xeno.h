@@ -12,6 +12,8 @@
 
 #include"glog/logging.h"
 
+//#define float double
+
 namespace xeno {
 
 // Global Declarations
@@ -81,11 +83,13 @@ static constexpr float MaxFloat = std::numeric_limits<float>::max();
 static constexpr float Infinity = std::numeric_limits<float>::infinity();
 
 // Epsilon to prevent self-occlusion
-static constexpr float Epsilon = 1e-4f;
+static constexpr float Epsilon = 1e-3f;
 
 
 // Type aliased
 typedef Vector3<float> Spectrum;
+
+//using double = float;
 
 // Global Utility Functions
 inline float gammaCorrect(float v) {

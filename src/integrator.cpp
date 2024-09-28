@@ -13,6 +13,39 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
     // throughput
     Spectrum beta(1, 1, 1);
 
+    /*
+    // abnormal depth==1 specific test
+    if (!scene.intersect(ray, ray_t, intr)) {
+        //Li += beta * Vector3f(0.1, 0.1, 0.1);
+        return Li;
+    }
+
+    if (intr.shape->isEmitter()) {
+        Li += beta * intr.Le(-ray.d);
+        return Li;
+    }
+
+    float pdf;
+    Vector3f wi;
+    const Material *mat = intr.shape->getMaterial();
+    Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+    ray = Ray(intr.p, normalize(wi));
+    //beta *= f * dot(intr.n, wi) / pdf;
+    beta *= f * Pi;
+    if (!scene.intersect(ray, ray_t, intr)) {
+        return Li;
+    }
+
+    if (intr.shape->isEmitter()) {
+        Li += beta * intr.Le(-ray.d);
+        return Li;
+    }
+    return Li;
+    */
+
+
+    // normal pt
+    
     while (1) {
         if (!scene.intersect(ray, ray_t, intr)) {
             //Li += beta * Vector3f(0.1, 0.1, 0.1);
@@ -22,20 +55,23 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
         //float f = mat.f(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
         //float pdf = mat.pdf(normalize(-ray.d), Vector3f(1, 0, 0), Normal3f(1, 0, 0));
         if (intr.shape->isEmitter()) {
+            //if(bounces==1)
             Li += beta * intr.Le(-ray.d);
             break;
         }
-        if (bounces > 50) break;
+        if (bounces >= 50) break;
 
         float pdf;
         Vector3f wi;
         const Material *mat = intr.shape->getMaterial();
         Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
-        ray = Ray(intr.p, wi);
+        ray = Ray(intr.p, normalize(wi));
         beta *= f * dot(intr.n, wi) / pdf;
+        //beta *= f * Pi;
         ++bounces;
     }
     return Li;
+    
 }
 
 void Integrator::Render(Sensor &sensor, const Scene &scene) const {

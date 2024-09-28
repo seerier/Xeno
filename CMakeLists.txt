@@ -27,6 +27,7 @@ set(XENO_CORE_SOURCE
     src/integrator.cpp
     src/sensor.cpp
     src/interaction.cpp
+    src/rng.cpp
 )
 
 file(GLOB XENO_SOURCE
