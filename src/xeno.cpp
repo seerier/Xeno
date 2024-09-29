@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
     // Sensor
     //std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-WholeBox-CustomSamplerMultiply-depth1-32spp.png");
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-FullBox-depth50-1024spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-FullBox-selfIntersectionTest-10e-2-1024spp.png");
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
     // Materials

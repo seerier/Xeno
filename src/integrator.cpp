@@ -13,7 +13,7 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
     // throughput
     Spectrum beta(1, 1, 1);
 
-    /*
+    
     // abnormal depth==1 specific test
     if (!scene.intersect(ray, ray_t, intr)) {
         //Li += beta * Vector3f(0.1, 0.1, 0.1);
@@ -36,14 +36,18 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
         return Li;
     }
 
+    /*
     if (intr.shape->isEmitter()) {
         Li += beta * intr.Le(-ray.d);
         return Li;
     }
     return Li;
     */
+    if (ray.tMax < 10e-1) return Spectrum(1, 1, 1);
+    return Spectrum(0, 0, 0);
 
 
+   /*
     // normal pt
     
     while (1) {
@@ -71,7 +75,8 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
         ++bounces;
     }
     return Li;
-    
+    */
+
 }
 
 void Integrator::Render(Sensor &sensor, const Scene &scene) const {
