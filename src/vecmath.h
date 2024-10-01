@@ -1419,6 +1419,13 @@ inline Vector3f cosineSampleHemisphere(const Point2f &sample) {
 }
 
 
+inline Point3f offsetRayOrigin(const Point3f &p, const Normal3f &n, const Vector3f &w) {
+    Vector3f offset = Vector3f(n) * offsetScale;
+    if (dot(n, w) < 0)offset *= -1;
+    return p + offset;
+}
+
+
 
 
 } // namespace xeno

@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
     // Sensor
     //std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-WholeBox-CustomSamplerMultiply-depth1-32spp.png");
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-FullBox-selfIntersectionTest-10e-2-1024spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-FullBox-uvComp-NormalColorComp-offsetScale10e-4-1024spp.png");
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
     // Materials
@@ -80,12 +80,15 @@ int main(int argc, char *argv[]) {
     objectList.add(std::make_shared<Quad>(Point3f(82, 0, 225), Vector3f(0, 165, 0), Vector3f(48, 0, -160), whiteMat));
     objectList.add(std::make_shared<Quad>(Point3f(240, 0, 272), Vector3f(0, 165, 0), Vector3f(-158, 0, -47), whiteMat));
 
+    
     objectList.add(std::make_shared<Quad>(Point3f(265, 330, 296), Vector3f(49, 0, 160), Vector3f(158, 0, -49), whiteMat));
     objectList.add(std::make_shared<Quad>(Point3f(423, 0, 247), Vector3f(0, 330, 0), Vector3f(49, 0, 159), whiteMat));
     objectList.add(std::make_shared<Quad>(Point3f(472, 0, 406), Vector3f(0, 330, 0), Vector3f(-158, 0, 50), whiteMat));
     objectList.add(std::make_shared<Quad>(Point3f(314, 0, 456), Vector3f(0, 330, 0), Vector3f(-49, 0, -160), whiteMat));
     objectList.add(std::make_shared<Quad>(Point3f(265, 0, 296), Vector3f(0, 330, 0), Vector3f(158, 0, -49), whiteMat));
     
+    //objectList.add(std::make_shared<Sphere>(Point3f(314, 165, 340), 170, whiteMat));
+
 
     std::shared_ptr<Shape> objects = std::make_shared<ObjectList>(std::move(objectList));
 

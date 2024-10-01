@@ -13,7 +13,7 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
     // throughput
     Spectrum beta(1, 1, 1);
 
-    
+    /*
     // abnormal depth==1 specific test
     if (!scene.intersect(ray, ray_t, intr)) {
         //Li += beta * Vector3f(0.1, 0.1, 0.1);
@@ -29,25 +29,26 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
     Vector3f wi;
     const Material *mat = intr.shape->getMaterial();
     Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
-    ray = Ray(intr.p, normalize(wi));
+    //ray = Ray(intr.p, normalize(wi));
+    ray = intr.spawnRay(wi);
     //beta *= f * dot(intr.n, wi) / pdf;
     beta *= f * Pi;
-    if (!scene.intersect(ray, ray_t, intr)) {
+
+    Interaction intr2;
+    if (!scene.intersect(ray, ray_t, intr2)) {
         return Li;
     }
 
-    /*
-    if (intr.shape->isEmitter()) {
-        Li += beta * intr.Le(-ray.d);
-        return Li;
+    if (ray.tMax < 10e-2) {
+        return Spectrum(.5f, .5f, .5f);
+        //return Spectrum(ray.tMax + .1f, ray.tMax + .1f, ray.tMax + .1f);
+        //return Spectrum(ray.o.x * 1e-3f, ray.o.y * 1e-3f, ray.o.z * 1e-3f);
     }
-    return Li;
-    */
-    if (ray.tMax < 10e-1) return Spectrum(1, 1, 1);
     return Spectrum(0, 0, 0);
+    */
 
 
-   /*
+   
     // normal pt
     
     while (1) {
@@ -69,13 +70,14 @@ Spectrum Integrator::Li(Ray &ray, const Scene &scene) const {
         Vector3f wi;
         const Material *mat = intr.shape->getMaterial();
         Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
-        ray = Ray(intr.p, normalize(wi));
+        //ray = Ray(intr.p, normalize(wi));
+        ray = intr.spawnRay(wi);
         beta *= f * dot(intr.n, wi) / pdf;
         //beta *= f * Pi;
         ++bounces;
     }
     return Li;
-    */
+    
 
 }
 

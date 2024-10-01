@@ -10,9 +10,9 @@ namespace xeno {
 class Ray {
 public:
     // Ray Public Methods
-    Ray() :tMax(Infinity), tMin(Epsilon), time(0.f), medium(nullptr) {}
+    Ray() :tMax(Infinity), tMin(0.f), time(0.f), medium(nullptr) {}
     Ray(const Point3f &p, const Vector3f &dir, float tmax = Infinity,
-        float tmin = Epsilon, float t = 0.f, const Medium *m = nullptr) :
+        float tmin = 0.f, float t = 0.f, const Medium *m = nullptr) :
         o(p), d(dir),
         tMax(tmax), tMin(tmin), time(t), medium(m) {}
 
@@ -48,7 +48,7 @@ public:
     explicit RayDifferential(const Ray &r) : Ray(r), hasDifferential(false) {}
 
     RayDifferential(const Point3f &p, const Vector3f &dir, float tmax = Infinity,
-        float tmin = Epsilon, float t = 0.f, const Medium *m = nullptr)
+        float tmin = 0.f, float t = 0.f, const Medium *m = nullptr)
         : Ray(p, dir, tmax, tmin, t, m), hasDifferential(false) {}
 
     bool hasNaN() const {

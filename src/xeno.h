@@ -83,7 +83,8 @@ static constexpr float MaxFloat = std::numeric_limits<float>::max();
 static constexpr float Infinity = std::numeric_limits<float>::infinity();
 
 // Epsilon to prevent self-occlusion
-static constexpr float Epsilon = 1e-2f;
+static constexpr float Epsilon = 1e-4f;
+static constexpr float offsetScale = 1e-4f;
 
 
 // Type aliased

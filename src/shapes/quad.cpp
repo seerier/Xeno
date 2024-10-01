@@ -28,9 +28,10 @@ bool Quad::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
 
     intr.wo = -ray.d;
     Vector3f n = normalize(cross(e0, e1));
-    n = dot(n, ray.d) < 0 ? n : -n;
+    n = dot(n, ray.d) > 0 ? -n : n;
     intr.n = Normal3f(n);
-    intr.p = ray(ray_t);
+    //intr.p = ray(ray_t);
+    intr.p = p + u * e0 + v * e1;
 
     intr.shape = this;
 

@@ -12,6 +12,10 @@ public:
 
     Spectrum Le(const Vector3f &w) const;
 
+    Ray spawnRay(const Vector3f &w) const{
+        return Ray(offsetRayOrigin(p, n, w), w);
+    }
+
     // Geometry related members
     Point3f p;
     Normal3f n;

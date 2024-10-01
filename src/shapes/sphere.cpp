@@ -24,6 +24,7 @@ bool Sphere::intersect(Ray &r, float &ray_t, Interaction &intr) const {
         Vector3f n = normalize(intr.p - p);
         intr.wo = n;
         intr.n = Normal3f(n);
+        intr.p = p + intr.wo * radius;
 
         intr.uv.y = std::acosf(intr.wo.z) * InvPi;
         intr.uv.x = 0.5f + std::atan2f(intr.wo.y, intr.wo.x) * InvPi;

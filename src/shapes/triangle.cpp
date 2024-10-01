@@ -30,7 +30,8 @@ bool Triangle::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
     Vector3f n = normalize(cross(e1, e2));
     n = dot(n, ray.d) < 0 ? n : -n;
     intr.n = Normal3f(n);
-    intr.p = ray(ray_t);
+    //intr.p = ray(ray_t);
+    intr.p = v0 + u * e1 + v * e2;
 
     intr.shape = this;
 
