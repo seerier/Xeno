@@ -36,6 +36,7 @@ file(GLOB XENO_SOURCE
     src/materials/*
     src/accelerators/*
     src/sensors/*
+    src/integrators/*
 )
 
 add_executable(xeno ${XENO_SOURCE} ${XENO_CORE_SOURCE})

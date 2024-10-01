@@ -9,6 +9,7 @@
 #include"shapes/quad.h"
 #include"accelerators/objectList.h"
 #include"sensors/pinhole.h"
+#include"integrators/simplePathTracer.h"
 
 
 using namespace xeno;
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     // Sensor
     //std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-WholeBox-CustomSamplerMultiply-depth1-32spp.png");
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-FullBox-uvComp-NormalColorComp-offsetScale10e-4-1024spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-SimpleIntegrator-128spp.png");
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
     // Materials
@@ -94,7 +95,7 @@ int main(int argc, char *argv[]) {
 
     Scene scene(objects);
 
-    Integrator integrator;
+    SimplePathTracer integrator(128);
     integrator.Render(camera, scene);
 
     /*
