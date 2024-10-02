@@ -17,7 +17,7 @@ Spectrum SimplePathTracer::Li(Ray &ray, const Scene &scene) const {
         if (!scene.intersect(ray, ray_t, intr)) {
             return Li;
         }
-        if (intr.shape->isEmitter()) {
+        if (intr.primitive->isEmitter()) {
             //if(bounces==1)
             Li += beta * intr.Le(-ray.d);
             break;
@@ -26,10 +26,12 @@ Spectrum SimplePathTracer::Li(Ray &ray, const Scene &scene) const {
 
         float pdf;
         Vector3f wi;
-        const Material *mat = intr.shape->getMaterial();
+        const Material *mat = intr.primitive->getMaterial();
         Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+
+        if (pdf == 0 || f == Spectrum(0, 0, 0)) return Li;
         ray = intr.spawnRay(wi);
-        beta *= f * dot(intr.n, wi) / pdf;
+        beta *= f * absDot(intr.n, wi) / pdf;
 
         ++bounces;
     }

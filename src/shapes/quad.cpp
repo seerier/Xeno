@@ -2,7 +2,7 @@
 
 namespace xeno {
 
-bool Quad::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
+bool Quad::intersect(const Ray &ray, float &ray_t, Interaction &intr) const {
     // Moller-Trumbore algorithm
 
     Vector3f pvec = cross(ray.d, e1);
@@ -28,7 +28,7 @@ bool Quad::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
 
     intr.wo = -ray.d;
     Vector3f n = normalize(cross(e0, e1));
-    n = dot(n, ray.d) > 0 ? -n : n;
+    //n = dot(n, ray.d) > 0 ? -n : n;
     intr.n = Normal3f(n);
     //intr.p = ray(ray_t);
     intr.p = p + u * e0 + v * e1;
@@ -36,6 +36,14 @@ bool Quad::intersect(Ray &ray, float &ray_t, Interaction &intr) const {
     intr.shape = this;
 
     return true;
+}
+
+Interaction Quad::sample(const Point2f &uv, float *pdf) const {
+    *pdf = 1.f / surfaceArea;
+    Interaction intr;
+    intr.p = p + uv.x * e0 + uv.y * e1;
+    intr.n = normalize(Normal3f(cross(e0, e1)));
+    return intr;
 }
 
 }

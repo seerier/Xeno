@@ -38,6 +38,9 @@ class Bounds3;
 template <typename T>
 class Normal3;
 
+// scene.h
+class Scene;
+
 // ray.h
 class Ray;
 
@@ -69,6 +72,12 @@ class Integrator;
 
 //lights
 class Light;
+class VisibilityTester;
+class AreaLight;
+
+//primitive
+class Primitive;
+class GeometricPrimitive;
 
 
 // Global Constants
@@ -84,7 +93,8 @@ static constexpr float Infinity = std::numeric_limits<float>::infinity();
 
 // Epsilon to prevent self-occlusion
 static constexpr float Epsilon = 1e-4f;
-static constexpr float offsetScale = 1e-4f;
+static constexpr float OffsetScale = 1e-4f;
+static constexpr float ShadowRayEpsilon = 1e-4f;
 
 
 // Type aliased

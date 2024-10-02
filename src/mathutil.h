@@ -17,4 +17,8 @@ inline bool quadratic(float a, float b, float c, float *t0, float *t1) {
     return true;
 }
 
+inline float balanceHeuristic(float a, float b) {
+    return a / (a + b);
+}
+
 }

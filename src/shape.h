@@ -2,37 +2,31 @@
 
 #include "mathutil.h"
 #include "ray.h"
-#include "light.h"
+#include "interaction.h"
 
 namespace xeno {
 
 class Shape {
 public:
     Shape() {}
-    Shape(std::shared_ptr<Material> mat) :material(mat) {}
 
     virtual Bounds3f aabb() const { return worldBound; }
 
-    virtual bool intersect(Ray &r, float &ray_t, Interaction &intr) const = 0;
+    float area() const { return surfaceArea; }
+
+    //virtual float pdf(const Interaction &intr, const Vector3f &w) const { return 1.f / surfaceArea; }
+
+    virtual float pdf_Li(const Interaction &intr, const Vector3f &w) const;
+
+    virtual bool intersect(const Ray &r, float &ray_t, Interaction &intr) const = 0;
+
+    virtual Interaction sample(const Point2f &uv, float *pdf) const = 0;
 
     virtual ~Shape() {}
 
-    const Material *getMaterial() const { return material.get(); }
-    const Light *getLight() const { return light.get(); }
-
-    void bindLight(std::shared_ptr<Light> l) { light = l; }
-    bool isEmitter() const { return light != nullptr; }
-
-    Spectrum L(const Interaction &intr, const Vector3f &w) const {
-        if (light) return light->L(intr, w);
-        return Spectrum(0, 0, 0);
-    }
-
-private:
-    std::shared_ptr<Material> material;
-    std::shared_ptr<Light> light;
 protected:
     Bounds3f worldBound;
+    float surfaceArea;
 };
 
 } // namespace xeno

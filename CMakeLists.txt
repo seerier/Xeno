@@ -28,6 +28,8 @@ set(XENO_CORE_SOURCE
     src/sensor.cpp
     src/interaction.cpp
     src/rng.cpp
+    src/light.cpp
+    src/shape.cpp
 )
 
 file(GLOB XENO_SOURCE

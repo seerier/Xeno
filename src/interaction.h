@@ -16,6 +16,8 @@ public:
         return Ray(offsetRayOrigin(p, n, w), w);
     }
 
+    Ray spawnRayTo(const Interaction &i) const;
+
     // Geometry related members
     Point3f p;
     Normal3f n;
@@ -25,8 +27,9 @@ public:
     //const Material *material = nullptr;
     Point2f uv;
 
-    // Ptr to Shape
+    // Ptrs
     const Shape *shape = nullptr;
+    const Primitive *primitive = nullptr;
 };
 
 }

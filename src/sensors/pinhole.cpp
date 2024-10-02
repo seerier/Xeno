@@ -22,7 +22,7 @@ Ray Pinhole::generateRay(int i, int j, const Point2f &sample) const {
     //Point3f pixelPos = screenCenterPos + Vector3f(xRatio * ratio, -yRatio * ratio, 0);
     Point3f pixelPos = screenCenterPos + Vector3f(-xRatio * ratio, -yRatio * ratio, 0);
 
-    Ray ray(camPos, normalize(pixelPos - camPos));
+    Ray ray(camPos, pixelPos - camPos);
     return cameraToWorld(ray);
 }
 

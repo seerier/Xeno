@@ -1,16 +1,16 @@
 #pragma once
 
-#include "shape.h"
+#include "primitive.h"
 
 namespace xeno{
 
-class ObjectList : public Shape {
+class ObjectList : public Primitive {
 public:
     ObjectList() {}
-    ObjectList(std::shared_ptr<Shape> obj) { add(obj); }
+    ObjectList(const std::shared_ptr<Primitive> &obj) { add(obj); }
 
-    void add(std::shared_ptr<Shape> obj) {
-        shapes.push_back(obj);
+    void add(const std::shared_ptr<Primitive> &obj) {
+        primitives.push_back(obj);
         wholeAabb = wholeAabb.expand(obj->aabb());
     }
 
@@ -18,10 +18,10 @@ public:
         return wholeAabb;
     }
 
-    bool intersect(Ray &r, float &ray_t, Interaction &intr) const override;
+    bool intersect(const Ray &r, float &ray_t, Interaction &intr) const override;
 
 private:
-    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<Primitive>> primitives;
     Bounds3f wholeAabb;
 };
 

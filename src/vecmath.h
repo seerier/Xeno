@@ -1412,20 +1412,23 @@ inline float sphericalPhi(const Vector3f &v) {
 
 
 
+inline Point3f offsetRayOrigin(const Point3f &p, const Normal3f &n, const Vector3f &w) {
+    Vector3f offset = Vector3f(n) * OffsetScale;
+    if (dot(n, w) < 0)offset *= -1;
+    return p + offset;
+}
+
+inline Vector3f uniformSampleSphere(const Point2f &u) {
+    float z = 1 - 2 * u[0];
+    float r = std::sqrt(std::max(0.f, 1.f - z * z));
+    float phi = 2 * Pi * u[1];
+    return Vector3f(r * std::cos(phi), r * std::sin(phi), z);
+}
 
 inline Vector3f cosineSampleHemisphere(const Point2f &sample) {
     float phi = 2 * Pi * sample.x;
     return Vector3f(cosf(phi) * sqrtf(sample.y), sinf(phi) * sqrtf(sample.y), sqrtf(1 - sample.y));
 }
-
-
-inline Point3f offsetRayOrigin(const Point3f &p, const Normal3f &n, const Vector3f &w) {
-    Vector3f offset = Vector3f(n) * offsetScale;
-    if (dot(n, w) < 0)offset *= -1;
-    return p + offset;
-}
-
-
 
 
 } // namespace xeno

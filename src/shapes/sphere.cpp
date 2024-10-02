@@ -2,7 +2,7 @@
 
 namespace xeno {
 
-bool Sphere::intersect(Ray &r, float &ray_t, Interaction &intr) const {
+bool Sphere::intersect(const Ray &r, float &ray_t, Interaction &intr) const {
         Vector3f half_b = r.o - p;
         float a = r.d.lengthSquared();
         float b = 2 * dot(half_b, r.d);
@@ -32,6 +32,15 @@ bool Sphere::intersect(Ray &r, float &ray_t, Interaction &intr) const {
         intr.shape = this;
 
         return true;
-    }
+}
+
+Interaction Sphere::sample(const Point2f &uv, float *pdf) const {
+    *pdf = 1.f / surfaceArea;
+    Interaction intr;
+    Vector3f vec = uniformSampleSphere(uv);
+    intr.p = p + radius * vec;
+    intr.n = Normal3f(vec);
+    return intr;
+}
 
 }
