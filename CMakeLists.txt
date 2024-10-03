@@ -30,6 +30,7 @@ set(XENO_CORE_SOURCE
     src/rng.cpp
     src/light.cpp
     src/shape.cpp
+    src/parallel.cpp
 )
 
 file(GLOB XENO_SOURCE

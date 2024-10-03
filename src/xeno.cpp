@@ -5,6 +5,7 @@
 #include"transform.h"
 #include"integrator.h"
 #include"primitive.h"
+#include"parallel.h"
 #include"shapes/sphere.h"
 #include"shapes/triangle.h"
 #include"shapes/quad.h"
@@ -26,7 +27,7 @@ int main(int argc, char *argv[]) {
     // Scene Definition for Cornell Box
 
     // Sensor
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-1024spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-256spp.png");
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
     // Materials
@@ -48,12 +49,20 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<Shape> lightQuad = std::make_shared<Quad>(Point3f(213, 554, 227), Vector3f(130, 0, 0), Vector3f(0, 0, 105));
     std::shared_ptr<AreaLight> light = std::make_shared<AreaLight>(lightQuad, 15.f);
 
+
+    //std::shared_ptr<Shape> lightQuad2 = std::make_shared<Quad>(Point3f(1, 250, 250), Vector3f(0, 50, 0), Vector3f(0, 0, 50));
+    //std::shared_ptr<Shape> lightQuad3 = std::make_shared<Quad>(Point3f(554, 250, 250), Vector3f(0, 0, 50), Vector3f(0, 50, 0));
+    //std::shared_ptr<AreaLight> light2 = std::make_shared<AreaLight>(lightQuad2, 10.f);
+    //std::shared_ptr<AreaLight> light3 = std::make_shared<AreaLight>(lightQuad3, 10.f);
+
     ObjectList objectList(std::make_shared<GeometricPrimitive>(quad1, greenMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad2, redMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad3, whiteMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad4, whiteMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad5, whiteMat));
     objectList.add(std::make_shared<GeometricPrimitive>(lightQuad, blackMat, light));
+    //objectList.add(std::make_shared<GeometricPrimitive>(lightQuad2, blackMat, light2));
+    //objectList.add(std::make_shared<GeometricPrimitive>(lightQuad3, blackMat, light3));
 
     
     // 2 additional boxes
@@ -73,11 +82,16 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::shared_ptr<Light>> lights;
     lights.push_back(light);
+    //lights.push_back(light2);
+    //lights.push_back(light3);
 
     Scene scene(objects, lights);
 
-    PathTracer integrator(1024);
+
+    ParallelInit();
+    PathTracer integrator(256);
     integrator.Render(camera, scene);
+    ParallelCleanup();
 
     return 0;
 }
