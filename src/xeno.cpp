@@ -24,10 +24,16 @@ int main(int argc, char *argv[]) {
     int xReso = 1080;
     int yReso = 1080;
 
+    // scene parsing
+    std::ifstream f("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json");
+    json data = json::parse(f);
+    int spp = data["spp"];
+
     // Scene Definition for Cornell Box
 
     // Sensor
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-256spp.png");
+    //std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-256spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-" + std::to_string(spp) + "spp.png");
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
     // Materials
@@ -87,11 +93,12 @@ int main(int argc, char *argv[]) {
 
     Scene scene(objects, lights);
 
-
     ParallelInit();
-    PathTracer integrator(256);
+    PathTracer integrator(spp);
     integrator.Render(camera, scene);
     ParallelCleanup();
+
+    std::cout << "spp = " << spp << std::endl;
 
     return 0;
 }

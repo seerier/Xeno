@@ -1,6 +1,7 @@
 #pragma once 
 
 #include<iostream>
+#include<fstream>
 #include<cmath>
 #include<algorithm>
 #include<vector>
@@ -11,10 +12,15 @@
 #include<random>
 
 #include"glog/logging.h"
+#include"json.hpp"
 
 //#define float double
 
+
 namespace xeno {
+
+// json support
+using json = nlohmann::json;
 
 // Global Declarations
 
