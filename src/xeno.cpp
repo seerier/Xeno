@@ -6,6 +6,7 @@
 #include"integrator.h"
 #include"primitive.h"
 #include"parallel.h"
+#include"renderParams.h"
 #include"shapes/sphere.h"
 #include"shapes/triangle.h"
 #include"shapes/quad.h"
@@ -13,6 +14,7 @@
 #include"sensors/pinhole.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/PathTracer.h"
+#include"io/jsonutil.h"
 
 
 using namespace xeno;
@@ -25,17 +27,25 @@ int main(int argc, char *argv[]) {
     int yReso = 1080;
 
     // scene parsing
-    std::ifstream f("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json");
-    json data = json::parse(f);
-    int spp = data["spp"];
+    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json");
+    json data = loadJson(inFilename);
+    xReso = data["imageWidth"];
+    yReso = data["imageHeight"];
+
+    RenderParams params = data.template get<RenderParams>();
+
+    //int spp = std::dynamic_pointer_cast<PathTracer>(params.integrator)->spp;
+    int spp = data.at("integrator").at("spp").get<int>();
+
+    std::string outFilename = "Cornell-" + data.at("integrator").at("type").get<std::string>() + "-" + std::to_string(xReso) + "_" + std::to_string(yReso) + "-" + std::to_string(spp) + "spp.png";
 
     // Scene Definition for Cornell Box
 
     // Sensor
-    //std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-256spp.png");
-    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, "Cornell-MIS-" + std::to_string(spp) + "spp.png");
+    std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, outFilename);
     Pinhole camera(film, Transform::cameraToWorld(Point3f(278, 278, -800), Point3f(278, 278, 0), Vector3f(0, 1, 0)), 40);
 
+    /*
     // Materials
     std::shared_ptr<Material> whiteMat = std::make_shared<Diffuse>(.73, .73, .73);
     std::shared_ptr<Material> redMat = std::make_shared<Diffuse>(.65, .05, .05);
@@ -47,7 +57,8 @@ int main(int argc, char *argv[]) {
 
     // Shapes
     // basic box
-    std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(555, 0, 0), Vector3f(0, 0, 555), Vector3f(0, 555, 0));
+    
+    //std::shared_ptr<Shape> quad1 = std::make_shared<Quad>(Point3f(555, 0, 0), Vector3f(0, 0, 555), Vector3f(0, 555, 0));
     std::shared_ptr<Shape> quad2 = std::make_shared<Quad>(Point3f(0, 0, 555), Vector3f(0, 0, -555), Vector3f(0, 555, 0));
     std::shared_ptr<Shape> quad3 = std::make_shared<Quad>(Point3f(0, 555, 0), Vector3f(555, 0, 0), Vector3f(0, 0, 555));
     std::shared_ptr<Shape> quad4 = std::make_shared<Quad>(Point3f(0, 0, 555), Vector3f(555, 0, 0), Vector3f(0, 0, -555));
@@ -61,7 +72,8 @@ int main(int argc, char *argv[]) {
     //std::shared_ptr<AreaLight> light2 = std::make_shared<AreaLight>(lightQuad2, 10.f);
     //std::shared_ptr<AreaLight> light3 = std::make_shared<AreaLight>(lightQuad3, 10.f);
 
-    ObjectList objectList(std::make_shared<GeometricPrimitive>(quad1, greenMat));
+    ObjectList objectList(std::make_shared<GeometricPrimitive>(params.shapes.at("quad1"), params.materials.at("greenMat")));
+    //ObjectList objectList(std::make_shared<GeometricPrimitive>(quad1, greenMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad2, redMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad3, whiteMat));
     objectList.add(std::make_shared<GeometricPrimitive>(quad4, whiteMat));
@@ -90,12 +102,17 @@ int main(int argc, char *argv[]) {
     lights.push_back(light);
     //lights.push_back(light2);
     //lights.push_back(light3);
+    */
 
-    Scene scene(objects, lights);
+    //Scene scene(objects, lights);
+    std::shared_ptr<ObjectList> list = std::make_shared<ObjectList>();
+    for (const auto &primitive : params.primitives) {
+        list->add(primitive);
+    }
+    Scene scene(list, params.lights);
 
     ParallelInit();
-    PathTracer integrator(spp);
-    integrator.Render(camera, scene);
+    params.integrator->Render(camera, scene);
     ParallelCleanup();
 
     std::cout << "spp = " << spp << std::endl;

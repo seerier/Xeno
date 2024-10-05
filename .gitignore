@@ -3,6 +3,7 @@
 .vs
 build
 out
+*.pdb
 
 #glog
 *.orig

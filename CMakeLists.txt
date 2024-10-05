@@ -31,6 +31,7 @@ set(XENO_CORE_SOURCE
     src/light.cpp
     src/shape.cpp
     src/parallel.cpp
+    src/renderParams.cpp
 )
 
 file(GLOB XENO_SOURCE
@@ -40,9 +41,10 @@ file(GLOB XENO_SOURCE
     src/accelerators/*
     src/sensors/*
     src/integrators/*
+    src/io/*
 )
 
 add_executable(xeno ${XENO_SOURCE} ${XENO_CORE_SOURCE})
 
 target_link_libraries(xeno glog::glog)
-target_include_directories(xeno PRIVATE ext/glog/src ext/json/single_include/nlohmann)
+target_include_directories(xeno PRIVATE ext/glog/src ext/json/single_include/nlohmann src)
