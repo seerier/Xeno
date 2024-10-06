@@ -1,9 +1,18 @@
 {
-    "imageWidth": 1440,
-    "imageHeight": 1440,
+    "name": "CornellBox",
+    "imageWidth": 720,
+    "imageHeight": 720,
     "integrator": {
         "type": "PathTracer",
-        "spp": 44
+        "spp": 66
+    },
+    "sensor": {
+        "type": "pinhole",
+        "transform": {
+            "pos": [278, 278, -800],
+            "lookat": [278, 278, 0],
+            "up": [0, 1, 0]
+        }
     },
     "materials": [
         {

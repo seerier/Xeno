@@ -8,6 +8,7 @@ out
 #glog
 *.orig
 bazel-*
+logs
 
 #specific
 toeflPad.txt

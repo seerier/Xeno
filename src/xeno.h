@@ -69,8 +69,8 @@ class Diffuse;
 //accelerators
 class ObjectList;
 
-//cameras
-class Camera;
+//sensors
+class Sensor;
 class Film;
 
 //integrators

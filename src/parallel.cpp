@@ -16,6 +16,8 @@
 #include <thread>
 #include <condition_variable>
 
+#include "io/cmdOptions.h"
+
 namespace xeno {
 
 // Parallel Local Definitions
@@ -85,7 +87,7 @@ void Barrier::Wait() {
 static std::condition_variable workListCondition;
 
 static void workerThreadFunc(int tIndex, std::shared_ptr<Barrier> barrier) {
-    LOG(INFO) << "Started execution in worker thread " << tIndex;
+    //LOG(INFO) << "Started execution in worker thread " << tIndex;
     ThreadIndex = tIndex;
 
     // Give the profiler a chance to do per-thread initialization for
@@ -152,7 +154,7 @@ static void workerThreadFunc(int tIndex, std::shared_ptr<Barrier> barrier) {
             if (loop.Finished()) workListCondition.notify_all();
         }
     }
-    LOG(INFO) << "Exiting worker thread " << tIndex;
+    //LOG(INFO) << "Exiting worker thread " << tIndex;
 }
 
 // Parallel Definitions
@@ -216,7 +218,8 @@ thread_local int ThreadIndex;
 
 int MaxThreadIndex() {
     //return PbrtOptions.nThreads == 0 ? NumSystemCores() : PbrtOptions.nThreads;
-    return 10u;
+    //return 10u;
+    return cmdOption.nthreads == 0 ? 12u : cmdOption.nthreads;
 }
 
 void ParallelFor2D(std::function<void(Point2i)> func, const Point2i &count) {

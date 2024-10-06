@@ -31,7 +31,6 @@ set(XENO_CORE_SOURCE
     src/light.cpp
     src/shape.cpp
     src/parallel.cpp
-    src/renderParams.cpp
 )
 
 file(GLOB XENO_SOURCE

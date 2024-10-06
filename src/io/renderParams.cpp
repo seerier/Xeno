@@ -1,10 +1,13 @@
 #include"renderParams.h"
+#include"cmdOptions.h"
+#include"transform.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/pathTracer.h"
 #include"materials/diffuse.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
 #include"shapes/triangle.h"
+#include"sensors/pinhole.h"
 
 namespace xeno {
 
@@ -12,10 +15,12 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
     std::string type = j.at("type").get<std::string>();
     if (type == "SimplePathTracer") {
         int spp = j.at("spp").get<int>();
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
         return std::make_shared<SimplePathTracer>(spp);
     }
     else if (type == "PathTracer") {
         int spp = j.at("spp").get<int>();
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
         return std::make_shared<PathTracer>(spp);
     }
 
@@ -71,28 +76,19 @@ inline std::vector<float> threeValueCheck(const json &j, const std::string &name
     }
 }
 
+inline Point3f threeValue2Point3f(const std::vector<float> &values) {
+    return Point3f(values[0], values[1], values[2]);
+}
+
+inline Vector3f threeValue2Vector3f(const std::vector<float> &values) {
+    return Vector3f(values[0], values[1], values[2]);
+}
+
 void RenderParams::createShape(const json &j) {
     std::string name = j.at("name").get<std::string>();
     std::string type = j.at("type").get<std::string>();
     if (type == "Sphere") {
         std::vector<float> point = threeValueCheck(j, name, "origin");
-        /*
-        auto pointValue = j.at("origin");
-        if (pointValue.is_array()) {
-            if (pointValue.size() == 3) {
-                point = pointValue.get<std::vector<float>>();
-            }
-            else {
-                std::cerr << "origin in " << name << " doesn't have three values" << std::endl;
-                throw std::runtime_error("origin in " + name + " doesn't have three values");
-            }
-        }
-        else {
-            throw std::runtime_error("origin in " + name + " is not array");
-
-        }
-        */
-
         float radius = j.at("radius").get<float>();
 
         shapes.emplace(name, std::make_shared<Sphere>(Point3f(point[0], point[1], point[2]), radius));
@@ -166,6 +162,43 @@ void RenderParams::createLight(const json &j) {
     throw std::runtime_error("Unknown light name: " + name);
 }
 
+std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const {
+    const json j = scenejson.at("sensor");
+    std::string sceneName = scenejson.at("name").get<std::string>();
+    std::string type = j.at("type").get<std::string>();
+    const json transform = j.at("transform");
+    std::vector<float> pos = threeValueCheck(transform, type, "pos");
+    std::vector<float> lookat = threeValueCheck(transform, type, "lookat");
+    std::vector<float> up = threeValueCheck(transform, type, "up");
+
+    Transform trans = Transform::cameraToWorld(threeValue2Point3f(pos), threeValue2Point3f(lookat), threeValue2Vector3f(up));
+
+    int xReso = scenejson.at("imageWidth").get<int>();
+    if (cmdOption.width != 0) xReso = cmdOption.width;
+    int yReso = scenejson.at("imageHeight").get<int>();
+    if (cmdOption.height != 0) yReso = cmdOption.height;
+    int spp = scenejson.at("integrator").at("spp").get<int>();
+    if (cmdOption.spp != 0) spp = cmdOption.spp;
+
+    std::string outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
+        "_" + std::to_string(yReso) + "-" + std::to_string(spp) + "spp.png";
+    if (cmdOption.outFilename != "") outfilename = cmdOption.outFilename;
+
+    if (type == "pinhole") {
+        std::shared_ptr<Film> film = std::make_shared<Film>(xReso, yReso, outfilename);
+        if (j.contains("fov")) {
+            float fov = j.at("fov").get<float>();
+            return std::make_shared<Pinhole>(film, trans, fov);
+        }
+        else {
+            return std::make_shared<Pinhole>(film, trans);
+        }
+    }
+
+    return nullptr;
+    LOG(ERROR) << "Fail to create sensor for type: " << type;
+}
+
 void from_json(const json &j, RenderParams &params) {
     params.integrator = params.createIntegrator(j.at("integrator"));
     json mats = j.at("materials");
@@ -184,6 +217,7 @@ void from_json(const json &j, RenderParams &params) {
     for (const auto &jsonPrimitive : jsonPrimitives) {
         params.createPrimitive(jsonPrimitive);
     }
+    params.sensor = params.createSensor(j);
 }
 
 }
