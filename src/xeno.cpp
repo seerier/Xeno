@@ -81,7 +81,8 @@ int main(int argc, char *argv[]) {
 
 
     // scene parsing
-    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
+    //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
+    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\objTry.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
     json data = loadJson(inFilename);
 

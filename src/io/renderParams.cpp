@@ -6,6 +6,7 @@
 #include"materials/diffuse.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
+#include"shapes/triangleMesh.h"
 #include"shapes/triangle.h"
 #include"sensors/pinhole.h"
 
@@ -91,21 +92,37 @@ void RenderParams::createShape(const json &j) {
         std::vector<float> point = threeValueCheck(j, name, "origin");
         float radius = j.at("radius").get<float>();
 
-        shapes.emplace(name, std::make_shared<Sphere>(Point3f(point[0], point[1], point[2]), radius));
+        //shapes.emplace(name, std::make_shared<Sphere>(Point3f(point[0], point[1], point[2]), radius));
+        //shapes.emplace(name, std::vector<std::shared_ptr<Sphere>>(1, std::make_shared<Sphere>(Point3f(point[0], point[1], point[2]), radius)));
+        shapes[name].emplace_back(std::make_shared<Sphere>(Point3f(point[0], point[1], point[2]), radius));
         return;
     }
     else if (type == "Quad") {
         std::vector<float> p = threeValueCheck(j, name, "p");
         std::vector<float> e0 = threeValueCheck(j, name, "e0");
         std::vector<float> e1 = threeValueCheck(j, name, "e1");
-        shapes.emplace(name, std::make_shared<Quad>(Point3f(p[0], p[1], p[2]), Vector3f(e0[0], e0[1], e0[2]), Vector3f(e1[0], e1[1], e1[2])));
+        //shapes.emplace(name, std::make_shared<Quad>(Point3f(p[0], p[1], p[2]), Vector3f(e0[0], e0[1], e0[2]), Vector3f(e1[0], e1[1], e1[2])));
+        shapes[name].emplace_back(std::make_shared<Quad>(Point3f(p[0], p[1], p[2]), Vector3f(e0[0], e0[1], e0[2]), Vector3f(e1[0], e1[1], e1[2])));
         return;
     }
     else if (type == "Triangle") {
         std::vector<float> v0 = threeValueCheck(j, name, "v0");
         std::vector<float> v1 = threeValueCheck(j, name, "v1");
         std::vector<float> v2 = threeValueCheck(j, name, "v2");
-        shapes.emplace(name, std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2])));
+        //shapes.emplace(name, std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2])));
+        shapes[name].emplace_back(std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2])));
+        return;
+    }
+    else if (type == "ObjTriangleMesh") {
+        std::string path = j.at("path").get<std::string>();
+        ObjTriangleMesh mesh;
+        if (mesh.createFromObjFile(path)) {
+            //std::vector<Triangle> triList = mesh.toTriangleList();
+            std::vector<std::shared_ptr<Triangle>> triList = mesh.toSharedTriangleList();
+            for (const auto &triPtr : triList) {
+                shapes[name].emplace_back(triPtr);
+            }
+        }
         return;
     }
 
@@ -118,10 +135,16 @@ void RenderParams::createPrimitive(const json &j) {
     std::string shape = j.at("shape").get<std::string>();
     if (j.contains("areaLight")) {
         std::string areaLight = j.at("areaLight").get<std::string>();
-        primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material), areaLights.at(areaLight)));
+        //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material), areaLights.at(areaLight)));
+        for (const auto &shapePtr : shapes.at(shape)) {
+            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material), areaLights.at(areaLight)));
+        }
     }
     else {
-        primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material)));
+        //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material)));
+        for (const auto &shapePtr : shapes.at(shape)) {
+            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material)));
+        }
     }
     return;
 }
@@ -152,9 +175,14 @@ void RenderParams::createLight(const json &j) {
                 throw std::runtime_error("emission in " + name + " is not number or array");
             }
         }
-        std::shared_ptr<AreaLight> l = std::make_shared<AreaLight>(shapes.at(shape), emission[0], emission[1], emission[2]);
-        lights.push_back(l);
-        areaLights.emplace(name, l);
+        for (const auto &shapePtr : shapes.at(shape)) {
+            std::shared_ptr<AreaLight> l = std::make_shared<AreaLight>(shapePtr, emission[0], emission[1], emission[2]);
+            lights.push_back(l);
+            areaLights.emplace(name, l);
+        }
+        //std::shared_ptr<AreaLight> l = std::make_shared<AreaLight>(shapes.at(shape), emission[0], emission[1], emission[2]);
+        //lights.push_back(l);
+        //areaLights.emplace(name, l);
         return;
     }
 
