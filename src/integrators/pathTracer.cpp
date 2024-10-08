@@ -29,7 +29,8 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
                 Li += beta * intr.Le(-ray.d);
             }
             else {
-                float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d);
+                //float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d);
+                float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d) / scene.lights.size();
                 float weight = balanceHeuristic(matPdf, lightPdf);
                 Li += weight * beta * intr.Le(-ray.d);
             }
@@ -54,12 +55,13 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
 
         Spectrum Ld = scene.lights[lightIndex]->sample_Li(intr, Point2f(random_float(), random_float()), &wi, &pdf, &vis);
 
-        if (pdf != 0 || Ld != Spectrum(0, 0, 0)) {
+        if (pdf != 0 && Ld != Spectrum(0, 0, 0)) {
             Spectrum f = mat->f(normalize(-ray.d), wi, intr.n);
             if (f != Spectrum(0, 0, 0)) {
                 if (vis.unoccluded(scene)) {
                     //Li += beta * Ld * f * absDot(intr.n, wi) / pdf;
-                    float weight = balanceHeuristic(pdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
+                    //float weight = balanceHeuristic(pdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
+                    float weight = balanceHeuristic(pdf * lightSelectPdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
                     //Li += weight * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
                     Li += weight * beta * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
                 }

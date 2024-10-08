@@ -3,6 +3,7 @@
 #include"transform.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/pathTracer.h"
+#include"integrators/normal.h"
 #include"materials/diffuse.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
@@ -15,14 +16,25 @@ namespace xeno {
 std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const {
     std::string type = j.at("type").get<std::string>();
     if (type == "SimplePathTracer") {
-        int spp = j.at("spp").get<int>();
+        //int spp = j.at("spp").get<int>();
+        int spp = j.value("spp", 0);
         if (cmdOption.spp != 0) spp = cmdOption.spp;
-        return std::make_shared<SimplePathTracer>(spp);
+        if (spp != 0) return std::make_shared<SimplePathTracer>(spp);
+        else return std::make_shared<SimplePathTracer>();
     }
     else if (type == "PathTracer") {
+        /*
         int spp = j.at("spp").get<int>();
         if (cmdOption.spp != 0) spp = cmdOption.spp;
         return std::make_shared<PathTracer>(spp);
+        */
+        int spp = j.value("spp", 0);
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
+        if (spp != 0) return std::make_shared<PathTracer>(spp);
+        else return std::make_shared<PathTracer>();
+    }
+    else if (type == "NormalIntegrator") {
+        return std::make_shared<NormalIntegrator>();
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;
@@ -205,11 +217,16 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
     if (cmdOption.width != 0) xReso = cmdOption.width;
     int yReso = scenejson.at("imageHeight").get<int>();
     if (cmdOption.height != 0) yReso = cmdOption.height;
-    int spp = scenejson.at("integrator").at("spp").get<int>();
+    //int spp = scenejson.at("integrator").at("spp").get<int>();
+    int spp = scenejson.at("integrator").value("spp", 0);
     if (cmdOption.spp != 0) spp = cmdOption.spp;
 
-    std::string outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
+    std::string outfilename;
+    if (spp != 0) outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
         "_" + std::to_string(yReso) + "-" + std::to_string(spp) + "spp.png";
+    else outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
+        "_" + std::to_string(yReso) + ".png";
+
     if (cmdOption.outFilename != "") outfilename = cmdOption.outFilename;
 
     if (type == "pinhole") {

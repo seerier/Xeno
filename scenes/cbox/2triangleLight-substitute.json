@@ -1,9 +1,9 @@
 {
-    "name": "newTriangleSample-luminaire-cbox",
+    "name": "2triangleLight-substitute-cbox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "PathTracer",
+        "type": "SimplePathTracer",
         "spp": 16
     },
     "sensor": {
@@ -98,36 +98,66 @@
             "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_luminaire.obj"
         }
         ,{
-            "name": "lightQuad",
-            "type": "Quad",
-            "p": [
-                213,
+            "name": "lightTriangle1",
+            "type": "Triangle",
+            "v0": [
+                343,
                 544,
                 227
             ],
-            "e0": [
-                130,
-                0,
-                0
+            "v1": [
+                343,
+                544,
+                332
             ],
-            "e1": [
-                0,
-                0,
-                105
+            "v2": [
+                213,
+                544,
+                332
+            ]
+        }
+        ,{
+            "name": "lightTriangle2",
+            "type": "Triangle",
+            "v0": [
+                343,
+                544,
+                227
+            ],
+            "v1": [
+                213,
+                544,
+                332
+            ],
+            "v2": [
+                213,
+                544,
+                227
             ]
         }
     ],
     "lights": [
         {
-            "name": "light",
+            "name": "light1",
             "type": "AreaLight",
             "emission": [
                 15,
                 15,
                 15
             ],
-            "shape": "luminaire"
+            "shape": "lightTriangle1"
+        },
+        {
+            "name": "light2",
+            "type": "AreaLight",
+            "emission": [
+                15,
+                15,
+                15
+            ],
+            "shape": "lightTriangle2"
         }
+        
     ],
     "primitives": [
         {
@@ -151,10 +181,16 @@
             "material": "whiteMat"
         },
         {
-            "shape": "luminaire",
+            "shape": "lightTriangle1",
             "material": "blackMat",
-            "areaLight": "light"
+            "areaLight": "light1"
         },
+        {
+            "shape": "lightTriangle2",
+            "material": "blackMat",
+            "areaLight": "light2"
+        },
+        
         
         
         {

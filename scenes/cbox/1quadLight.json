@@ -1,9 +1,9 @@
 {
-    "name": "newTriangleSample-luminaire-cbox",
+    "name": "1quadLight-cbox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "PathTracer",
+        "type": "SimplePathTracer",
         "spp": 16
     },
     "sensor": {
@@ -98,7 +98,7 @@
             "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_luminaire.obj"
         }
         ,{
-            "name": "lightQuad",
+            "name": "lightQuad1",
             "type": "Quad",
             "p": [
                 213,
@@ -116,17 +116,36 @@
                 105
             ]
         }
+        ,{
+            "name": "lightQuad2",
+            "type": "Quad",
+            "p": [
+                278,
+                544,
+                227
+            ],
+            "e0": [
+                65,
+                0,
+                0
+            ],
+            "e1": [
+                0,
+                0,
+                105
+            ]
+        }
     ],
     "lights": [
         {
-            "name": "light",
+            "name": "light1",
             "type": "AreaLight",
             "emission": [
                 15,
                 15,
                 15
             ],
-            "shape": "luminaire"
+            "shape": "lightQuad1"
         }
     ],
     "primitives": [
@@ -151,10 +170,11 @@
             "material": "whiteMat"
         },
         {
-            "shape": "luminaire",
+            "shape": "lightQuad1",
             "material": "blackMat",
-            "areaLight": "light"
+            "areaLight": "light1"
         },
+        
         
         
         {

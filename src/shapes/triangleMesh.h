@@ -59,7 +59,31 @@ struct ObjTriangleMesh {
             // face
             if (lineType == "f") {
                 std::string refStr;
-                
+                std::vector<VertRef> localVertRef;
+
+                while (lineSS >> refStr) {
+                    std::stringstream ref(refStr);
+                    std::string vStr, vtStr, vnStr;
+                    std::getline(ref, vStr, '/');
+                    std::getline(ref, vtStr, '/');
+                    std::getline(ref, vnStr, '/');
+                    int vIndex = std::stoi(vStr);
+                    int vtIndex = vtStr.empty() ? 0 : std::stoi(vtStr);
+                    int vnIndex = vnStr.empty() ? 0 : std::stoi(vnStr);
+                    vIndex = (vIndex > 0 ? vIndex : vIndex + p.size()) - 1; 
+                    vtIndex = (vIndex > 0 ? vtIndex : vtIndex + p.size()) - 1; // should handle the special case that vtIndex==0, leave for future development
+                    vnIndex = (vIndex > 0 ? vnIndex : vnIndex + p.size()) - 1;
+                    localVertRef.emplace_back(vIndex, vtIndex, vnIndex);
+                }
+
+                for (int i = 1;i + 1 < localVertRef.size();++i) {
+                    indices.push_back(localVertRef[0]);
+                    indices.push_back(localVertRef[i]);
+                    indices.push_back(localVertRef[i + 1]);
+                    ++nFaces;
+                }
+
+                /*
                 for (int num = 0; num < 3; ++num) {
                     lineSS >> refStr;
                     std::stringstream ref(refStr);
@@ -75,8 +99,7 @@ struct ObjTriangleMesh {
                     vnIndex = (vIndex > 0 ? vnIndex : vnIndex + p.size()) - 1;
                     indices.emplace_back(vIndex, vtIndex, vnIndex);
                 }
-                
-                ++nFaces;
+                */
             }
         }
         return true;

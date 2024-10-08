@@ -1,4 +1,5 @@
 #include "simplePathTracer.h"
+#include "parallel.h"
 
 namespace xeno {
 
@@ -46,6 +47,7 @@ void SimplePathTracer::Render(Sensor &sensor, const Scene &scene) const {
     int yReso = sensor.film->yResolution;
     float inv_yReso = 1.f / (yReso - 1);
 
+    /*
     for (int j = 0; j < yReso; ++j) {
         for (int i = 0; i < xReso; ++i) {
             Spectrum rgbVal;
@@ -62,6 +64,23 @@ void SimplePathTracer::Render(Sensor &sensor, const Scene &scene) const {
         int percentage = 100 * j * inv_yReso;
         std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
     }
+    */
+
+    ParallelFor([&](int64_t j) {
+        for (int i = 0; i < xReso; ++i) {
+            Spectrum rgbVal;
+            for (int k = 0; k < spp; ++k) {
+                Point2f sample(random_float(), random_float());
+                Ray ray = sensor.generateRay(i, j, sample);;
+                rgbVal += Li(ray, scene);
+            }
+            rgbVal /= spp;
+            sensor.film->getRadiance(i, j, rgbVal);
+            //int finished = ++lines;
+            //int percentage = 100 * finished * inv_yReso;
+            //std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
+        }
+        }, yReso);
 
     sensor.film->writePng();
 }

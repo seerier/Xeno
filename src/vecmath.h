@@ -509,6 +509,10 @@ public:
         return *this;
     }
 
+    Point3<T> operator+(const Point3<T> &p) const {
+        return Point3<T>(x + p.x, y + p.y, z + p.z);
+    }
+
     Vector3<T> operator-(const Point3<T> &v) const {
         return Vector3<T>(x - v.x, y - v.y, z - v.z);
     }

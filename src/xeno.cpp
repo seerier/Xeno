@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 
     // scene parsing
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
-    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\objTry.json");
+    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\2triangleLight.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
     json data = loadJson(inFilename);
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     params.integrator->Render(*params.sensor, scene);
     ParallelCleanup();
 
-    int spp = data.at("integrator").at("spp").get<int>();
+    int spp = data.at("integrator").value("spp", 0);
     if (cmdOption.spp != 0) spp = cmdOption.spp;
     std::cout << "spp = " << spp << std::endl;
 
