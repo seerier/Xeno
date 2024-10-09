@@ -3,6 +3,7 @@
 #include"fileutil.h"
 #include"transform.h"
 #include"integrators/simplePathTracer.h"
+#include"integrators/neePathTracer.h"
 #include"integrators/pathTracer.h"
 #include"integrators/normal.h"
 #include"materials/diffuse.h"
@@ -23,6 +24,17 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         if (cmdOption.spp != 0) spp = cmdOption.spp;
         if (spp != 0) return std::make_shared<SimplePathTracer>(spp);
         else return std::make_shared<SimplePathTracer>();
+    }
+    else if (type == "NEEPathTracer") {
+        /*
+        int spp = j.at("spp").get<int>();
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
+        return std::make_shared<PathTracer>(spp);
+        */
+        int spp = j.value("spp", 0);
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
+        if (spp != 0) return std::make_shared<NEEPathTracer>(spp);
+        else return std::make_shared<NEEPathTracer>();
     }
     else if (type == "PathTracer") {
         /*
