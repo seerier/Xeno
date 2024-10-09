@@ -1,5 +1,6 @@
 #include"renderParams.h"
 #include"cmdOptions.h"
+#include"fileutil.h"
 #include"transform.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/pathTracer.h"
@@ -10,6 +11,7 @@
 #include"shapes/triangleMesh.h"
 #include"shapes/triangle.h"
 #include"sensors/pinhole.h"
+
 
 namespace xeno {
 
@@ -127,8 +129,9 @@ void RenderParams::createShape(const json &j) {
     }
     else if (type == "ObjTriangleMesh") {
         std::string path = j.at("path").get<std::string>();
+        std::string absPath = resolveFilename(path);
         ObjTriangleMesh mesh;
-        if (mesh.createFromObjFile(path)) {
+        if (mesh.createFromObjFile(absPath)) {
             //std::vector<Triangle> triList = mesh.toTriangleList();
             std::vector<std::shared_ptr<Triangle>> triList = mesh.toSharedTriangleList();
             for (const auto &triPtr : triList) {

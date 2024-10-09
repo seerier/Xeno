@@ -16,6 +16,7 @@
 #include"integrators/simplePathTracer.h"
 #include"integrators/PathTracer.h"
 #include"io/jsonutil.h"
+#include"io/fileutil.h"
 
 
 using namespace xeno;
@@ -82,9 +83,11 @@ int main(int argc, char *argv[]) {
 
     // scene parsing
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
-    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\2triangleLight.json");
+    //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\2triangleLight.json");
+    std::string inFilename("D:\\Coding\\Github-Repo\\Xeno\\scenes\\cbox\\2triangleLight.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
     json data = loadJson(inFilename);
+    setSearchDirectory(directoryContaining(inFilename));
 
     RenderParams params = data.template get<RenderParams>();
     

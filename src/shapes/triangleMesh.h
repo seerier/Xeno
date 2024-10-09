@@ -13,6 +13,8 @@ struct VertRef {
 struct ObjTriangleMesh {
     ObjTriangleMesh() {}
     bool createFromObjFile(const std::string &path) {
+        
+
         // If the file is not an .obj file return false
 	    if (path.substr(path.size() - 4, 4) != ".obj")
             return false;
