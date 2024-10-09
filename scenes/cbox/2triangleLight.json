@@ -4,7 +4,7 @@
     "imageHeight": 1000,
     "integrator": {
         "type": "NEEPathTracer",
-        "spp": 128
+        "spp": 68
     },
     "sensor": {
         "type": "pinhole",

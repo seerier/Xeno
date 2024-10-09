@@ -1,29 +1,17 @@
 {
-    "name": "CBox",
+    "name": "1triangleLight-substitute-cbox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "MISPathTracer",
-        "spp": 1024
+        "type": "NEEPathTracer",
+        "spp": 512
     },
     "sensor": {
         "type": "pinhole",
         "transform": {
-            "pos": [
-                278,
-                278,
-                -800
-            ],
-            "lookat": [
-                278,
-                278,
-                0
-            ],
-            "up": [
-                0,
-                1,
-                0
-            ]
+            "pos": [278, 278, -800],
+            "lookat": [278, 278, 0],
+            "up": [0, 1, 0]
         }
     },
     "materials": [
@@ -68,74 +56,98 @@
         {
             "name": "smallbox",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_smallbox.obj"
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_smallbox.obj"
         },
         {
             "name": "largebox",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_largebox.obj"
-        },
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_largebox.obj"
+        }
+        ,
         {
             "name": "back",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_back.obj"
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_back.obj"
         },
         {
             "name": "floor",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_floor.obj"
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_floor.obj"
         },
         {
             "name": "ceiling",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_ceiling.obj"
-        },
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_ceiling.obj"
+        }
+        ,
         {
             "name": "redwall",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_redwall.obj"
-        },
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_redwall.obj"
+        }
+        ,
         {
             "name": "greenwall",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_greenwall.obj"
-        },
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_greenwall.obj"
+        }
+        ,
         {
             "name": "luminaire",
             "type": "ObjTriangleMesh",
-            "path": "geometry\\cbox_luminaire.obj"
-        },
-        {
-            "name": "lightQuad",
-            "type": "Quad",
-            "p": [
-                213,
+            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_luminaire.obj"
+        }
+        ,{
+            "name": "lightTriangle1",
+            "type": "Triangle",
+            "v0": [
+                343,
                 544,
                 227
             ],
-            "e0": [
-                130,
-                0,
-                0
+            "v1": [
+                343,
+                544,
+                332
             ],
-            "e1": [
-                0,
-                0,
-                105
+            "v2": [
+                213,
+                544,
+                332
+            ]
+        }
+        ,{
+            "name": "lightTriangle2",
+            "type": "Triangle",
+            "v0": [
+                343,
+                544,
+                227
+            ],
+            "v1": [
+                213,
+                544,
+                332
+            ],
+            "v2": [
+                213,
+                544,
+                227
             ]
         }
     ],
     "lights": [
         {
-            "name": "light",
+            "name": "light1",
             "type": "AreaLight",
             "emission": [
-                17,
                 15,
-                4
+                15,
+                15
             ],
-            "shape": "luminaire"
+            "shape": "lightTriangle1"
         }
+        
     ],
     "primitives": [
         {
@@ -159,10 +171,13 @@
             "material": "whiteMat"
         },
         {
-            "shape": "luminaire",
+            "shape": "lightTriangle1",
             "material": "blackMat",
-            "areaLight": "light"
+            "areaLight": "light1"
         },
+        
+        
+        
         {
             "shape": "largebox",
             "material": "whiteMat"

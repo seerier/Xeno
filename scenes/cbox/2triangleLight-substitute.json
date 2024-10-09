@@ -3,8 +3,8 @@
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "SimplePathTracer",
-        "spp": 16
+        "type": "MISPathTracer",
+        "spp": 1024
     },
     "sensor": {
         "type": "pinhole",

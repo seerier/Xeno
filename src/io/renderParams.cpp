@@ -4,7 +4,7 @@
 #include"transform.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/neePathTracer.h"
-#include"integrators/pathTracer.h"
+#include"integrators/misPathTracer.h"
 #include"integrators/normal.h"
 #include"materials/diffuse.h"
 #include"shapes/quad.h"
@@ -36,7 +36,7 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         if (spp != 0) return std::make_shared<NEEPathTracer>(spp);
         else return std::make_shared<NEEPathTracer>();
     }
-    else if (type == "PathTracer") {
+    else if (type == "MISPathTracer") {
         /*
         int spp = j.at("spp").get<int>();
         if (cmdOption.spp != 0) spp = cmdOption.spp;
@@ -44,8 +44,8 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         */
         int spp = j.value("spp", 0);
         if (cmdOption.spp != 0) spp = cmdOption.spp;
-        if (spp != 0) return std::make_shared<PathTracer>(spp);
-        else return std::make_shared<PathTracer>();
+        if (spp != 0) return std::make_shared<MISPathTracer>(spp);
+        else return std::make_shared<MISPathTracer>();
     }
     else if (type == "NormalIntegrator") {
         return std::make_shared<NormalIntegrator>();
@@ -163,8 +163,10 @@ void RenderParams::createPrimitive(const json &j) {
     if (j.contains("areaLight")) {
         std::string areaLight = j.at("areaLight").get<std::string>();
         //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material), areaLights.at(areaLight)));
+        int i = 0;
         for (const auto &shapePtr : shapes.at(shape)) {
-            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material), areaLights.at(areaLight)));
+            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material), areaLightsMap.at(areaLight)[i]));
+            ++i;
         }
     }
     else {
@@ -205,7 +207,9 @@ void RenderParams::createLight(const json &j) {
         for (const auto &shapePtr : shapes.at(shape)) {
             std::shared_ptr<AreaLight> l = std::make_shared<AreaLight>(shapePtr, emission[0], emission[1], emission[2]);
             lights.push_back(l);
-            areaLights.emplace(name, l);
+            areaLightsMap[name].push_back(l);
+            //areaLightsMap.emplace(name, l);
+            //areaLights.push_back(l);
         }
         //std::shared_ptr<AreaLight> l = std::make_shared<AreaLight>(shapes.at(shape), emission[0], emission[1], emission[2]);
         //lights.push_back(l);

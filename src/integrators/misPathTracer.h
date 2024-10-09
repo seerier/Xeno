@@ -4,9 +4,9 @@
 
 namespace xeno {
 
-class PathTracer : public Integrator {
+class MISPathTracer : public Integrator {
 public:
-    PathTracer(int i = 16) :spp(i) {}
+    MISPathTracer(int i = 16) :spp(i) {}
     virtual void Render(Sensor &sensor, const Scene &scene) const;
     Spectrum Li(Ray &ray, const Scene &scene) const;
 

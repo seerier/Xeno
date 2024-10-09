@@ -43,7 +43,7 @@ Interaction Triangle::sample(const Point2f &uv, float *pdf) const {
     Interaction intr;
     //intr.p = (uv.x + uv.y > 1.f) ? (v0 + (1 - uv.x) * (v1 - v0) + (1 - uv.y) * (v2 - v0)) : (v0 + uv.x * (v1 - v0) + uv.y * (v2 - v0));
 
-    float su0 = uv.x;
+    float su0 = std::sqrt(uv.x);
     float b0 = 1 - su0;
     float b1 = su0 * uv.y;
     float b2 = su0 * (1 - uv.y);

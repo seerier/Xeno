@@ -1,9 +1,9 @@
-#include "pathTracer.h"
+#include "misPathTracer.h"
 #include "parallel.h"
 
 namespace xeno {
 
-Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
+Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
     //return Vector3f(0.2f, 0.3f, 0.5f);
     
     float ray_t;
@@ -29,8 +29,8 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
                 Li += beta * intr.Le(-ray.d);
             }
             else {
-                //float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d);
-                float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d) / scene.lights.size();
+                float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d);
+                //float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d) / scene.lights.size();
                 float weight = balanceHeuristic(matPdf, lightPdf);
                 Li += weight * beta * intr.Le(-ray.d);
             }
@@ -61,7 +61,7 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
                 if (vis.unoccluded(scene)) {
                     //Li += beta * Ld * f * absDot(intr.n, wi) / pdf;
                     //float weight = balanceHeuristic(pdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
-                    float weight = balanceHeuristic(pdf * lightSelectPdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
+                    float weight = balanceHeuristic(pdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
                     //Li += weight * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
                     Li += weight * beta * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
                 }
@@ -98,7 +98,7 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
 
 }
 
-void PathTracer::Render(Sensor &sensor, const Scene &scene) const {
+void MISPathTracer::Render(Sensor &sensor, const Scene &scene) const {
 
     int xReso = sensor.film->xResolution;
     int yReso = sensor.film->yResolution;

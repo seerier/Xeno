@@ -88,17 +88,7 @@ Spectrum NEEPathTracer::Li(Ray &ray, const Scene &scene) const {
         preIntr = intr;
         matPdf = pdf;
 
-        /*
-        Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
 
-        if (pdf == 0 || f == Spectrum(0, 0, 0)) return Li;
-
-        beta *= f * absDot(intr.n, wi) / pdf;
-        beta_maxComponent = maxComponent(beta);
-        if (beta_maxComponent <= .0f) return Li;
-
-        ray = intr.spawnRay(wi);
-        */
 
         ++bounces;
     }
