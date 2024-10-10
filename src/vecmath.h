@@ -907,14 +907,14 @@ public:
     Bounds2<T> expand(const Bounds2<T> &b) const {
         Bounds2<T> rec;
         rec.pMin = min(pMin, b.pMin);
-        rec.pMax = min(pMax, b.pMax);
+        rec.pMax = max(pMax, b.pMax);
         return rec;
     }
 
     Bounds2<T> expand(const Point2<T> &p) const {
         Bounds2<T> rec;
         rec.pMin = min(pMin, p);
-        rec.pMax = min(pMax, p);
+        rec.pMax = max(pMax, p);
         return rec;
     }
 
@@ -1069,14 +1069,14 @@ public:
     Bounds3<T> expand(const Bounds3<T> &b) const {
         Bounds3<T> rec;
         rec.pMin = min(pMin, b.pMin);
-        rec.pMax = min(pMax, b.pMax);
+        rec.pMax = max(pMax, b.pMax);
         return rec;
     }
 
     Bounds3<T> expand(const Point3<T> &p) const {
         Bounds3<T> rec;
         rec.pMin = min(pMin, p);
-        rec.pMax = min(pMax, p);
+        rec.pMax = max(pMax, p);
         return rec;
     }
 
@@ -1092,6 +1092,8 @@ public:
         rec.pMax = min(pMax, b.pMax);
         return rec;
     }
+
+    inline bool intersectP(const Ray &ray, float *hit1 = nullptr, float *hit2 = nullptr) const;
 
     bool contains(const Point3<T> &p) const {
         return (pMin.x <= p.x && pMin.y <= p.y && pMin.z <= p.z && pMax.x >= p.x && pMax.y >= p.y && pMax.z >= p.z);
@@ -1316,7 +1318,25 @@ inline Vector3<T>::Vector3(const Point3<T> &p) : x(p.x), y(p.y), z(p.z) {}
 template <typename T>
 inline Vector3<T>::Vector3(const Normal3<T> &n) : x(n.x), y(n.y), z(n.z) {}
 
+template <typename T>
+inline bool Bounds3<T>::intersectP(const Ray &ray, float *hit1 = nullptr, float *hit2 = nullptr) const {
+    float t0 = 0, t1 = ray.tMax;
+    for (int i = 0; i < 3; ++i) {
+        float inv_dir = 1.f / ray.d[i];
+        float tNear = (pMin[i] - ray.o[i]) * inv_dir;
+        float tFar = (pMax[i] - ray.o[i]) * inv_dir;
+        if (tNear > tFar) std::swap(tNear, tFar);
+        //t0 = t0 > tNear ? t0 : tNear;
+        t0 = tNear > t0 ? tNear : t0;
+        //t1 = t1 < tFar ? t1 : tFar;
+        t1 = tFar < t1 ? tFar : t1;
 
+        if (t0 > t1) return false;
+    }
+    if (hit1) *hit1 = t0;
+    if (hit2) *hit2 = t1;
+    return true;
+}
 
 
 

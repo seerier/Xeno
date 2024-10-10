@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
     // scene parsing
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\2triangleLight.json");
+    auto buildStart = std::chrono::high_resolution_clock::now();
     std::string inFilename("E:\\Coding\\github_Repo\\xeno\\scenes\\cbox\\cbox.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
     json data = loadJson(inFilename);
@@ -105,9 +106,12 @@ int main(int argc, char *argv[]) {
     int spp = data.at("integrator").value("spp", 0);
     if (cmdOption.spp != 0) spp = cmdOption.spp;
     std::cout << "spp = " << spp << std::endl;
+    std::chrono::duration<double> buildDuration = start - buildStart;
     std::chrono::duration<double> duration = end - start;
-    std::ostringstream rendertimeStr;
+    std::ostringstream rendertimeStr, initializationTimeStr;
     rendertimeStr << std::fixed << std::setprecision(2) << duration.count();
+    initializationTimeStr << std::fixed << std::setprecision(2) << buildDuration.count();
+    std::cout << "Initialization time = " << initializationTimeStr.str() << " seconds" << std::endl;
     std::cout << "Render time = " << rendertimeStr.str() << " seconds" << std::endl;
 
     return 0;

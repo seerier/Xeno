@@ -3,6 +3,7 @@
 namespace xeno {
 
 bool ObjectList::intersect(const Ray &r, float &ray_t, Interaction &intr) const {
+    if (!wholeAabb.intersectP(r)) return false;
     int n = primitives.size();
     bool flag = false;
     for (int i = 0; i < n; ++i) {
