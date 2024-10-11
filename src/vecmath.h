@@ -888,13 +888,13 @@ public:
     }
 
     int maxExtent() const {
-        Vector2<T> diag = diagnal();
+        Vector2<T> diag = diagonal();
         if (diag.x > diag.y) return 0;
         return 1;
     }
 
     int minExtent() const {
-        Vector2<T> diag = diagnal();
+        Vector2<T> diag = diagonal();
         if (diag.x < diag.y) return 0;
         return 1;
     }
@@ -1052,12 +1052,12 @@ public:
     }
 
     int maxExtent() const {
-        Vector3<T> diag = diagnal();
+        Vector3<T> diag = diagonal();
         return (diag.x > diag.y) ? (diag.x > diag.z ? 0 : 2) : (diag.y > diag.z ? 1 : 2);
     }
 
     int minExtent() const {
-        Vector3<T> diag = diagnal();
+        Vector3<T> diag = diagonal();
         return (diag.x < diag.y) ? (diag.x < diag.z ? 0 : 2) : (diag.y < diag.z ? 1 : 2);
     }
 
@@ -1094,6 +1094,7 @@ public:
     }
 
     inline bool intersectP(const Ray &ray, float *hit1 = nullptr, float *hit2 = nullptr) const;
+    inline bool intersectP(const Ray &ray, const Vector3<float> &invDir, const int dirIsNeg[3]) const;
 
     bool contains(const Point3<T> &p) const {
         return (pMin.x <= p.x && pMin.y <= p.y && pMin.z <= p.z && pMax.x >= p.x && pMax.y >= p.y && pMax.z >= p.z);
@@ -1336,6 +1337,36 @@ inline bool Bounds3<T>::intersectP(const Ray &ray, float *hit1 = nullptr, float 
     if (hit1) *hit1 = t0;
     if (hit2) *hit2 = t1;
     return true;
+}
+
+// from pbrt-v3
+template <typename T>
+inline bool Bounds3<T>::intersectP(const Ray &ray, const Vector3<float> &invDir,
+                                   const int dirIsNeg[3]) const {
+    const Bounds3f &bounds = *this;
+    // Check for ray intersection against $x$ and $y$ slabs
+    float tMin = (bounds[dirIsNeg[0]].x - ray.o.x) * invDir.x;
+    float tMax = (bounds[1 - dirIsNeg[0]].x - ray.o.x) * invDir.x;
+    float tyMin = (bounds[dirIsNeg[1]].y - ray.o.y) * invDir.y;
+    float tyMax = (bounds[1 - dirIsNeg[1]].y - ray.o.y) * invDir.y;
+
+    // Update _tMax_ and _tyMax_ to ensure robust bounds intersection
+    //tMax *= 1 + 2 * gamma(3);
+    //tyMax *= 1 + 2 * gamma(3);
+    if (tMin > tyMax || tyMin > tMax) return false;
+    if (tyMin > tMin) tMin = tyMin;
+    if (tyMax < tMax) tMax = tyMax;
+
+    // Check for ray intersection against $z$ slab
+    float tzMin = (bounds[dirIsNeg[2]].z - ray.o.z) * invDir.z;
+    float tzMax = (bounds[1 - dirIsNeg[2]].z - ray.o.z) * invDir.z;
+
+    // Update _tzMax_ to ensure robust bounds intersection
+    //tzMax *= 1 + 2 * gamma(3);
+    if (tMin > tzMax || tzMin > tMax) return false;
+    if (tzMin > tMin) tMin = tzMin;
+    if (tzMax < tMax) tMax = tzMax;
+    return (tMin < ray.tMax) && (tMax > 0);
 }
 
 

@@ -12,6 +12,7 @@
 #include"shapes/triangle.h"
 #include"shapes/quad.h"
 #include"accelerators/objectList.h"
+#include"accelerators/bvh.h"
 #include"sensors/pinhole.h"
 #include"io/jsonutil.h"
 #include"io/fileutil.h"
@@ -90,12 +91,17 @@ int main(int argc, char *argv[]) {
 
     RenderParams params = data.template get<RenderParams>();
     
-    std::shared_ptr<ObjectList> list = std::make_shared<ObjectList>();
+    //std::shared_ptr<ObjectList> list = std::make_shared<ObjectList>();
+    std::vector<std::shared_ptr<Primitive>> prims;
     for (const auto &primitive : params.primitives) {
-        list->add(primitive);
+        //list->add(primitive);
+        prims.push_back(primitive);
     }
-    Scene scene(list, params.lights);
-    
+    std::shared_ptr<BVH> bvh = std::make_shared<BVH>(prims);
+
+    //Scene scene(list, params.lights);
+    Scene scene(bvh, params.lights);
+
 
     ParallelInit();
     auto start = std::chrono::high_resolution_clock::now();
