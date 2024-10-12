@@ -1,0 +1,102 @@
+{
+    "name": "teapot",
+    "imageWidth": 800,
+    "imageHeight": 600,
+    "integrator": {
+        "type": "MISPathTracer",
+        "spp": 2048
+    },
+    "accelerator": {
+        "type": "bvh"
+    },
+    "sensor": {
+        "type": "pinhole",
+        "transform": {
+            "pos": [
+                15,
+                3,
+                0
+            ],
+            "lookat": [
+                0,
+                3,
+                0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 40
+    },
+    "materials": [
+        {
+            "name": "whiteMat",
+            "type": "Diffuse",
+            "albedo": [
+                0.73,
+                0.73,
+                0.73
+            ]
+        },
+        {
+            "name": "blackMat",
+            "type": "Diffuse",
+            "albedo": [
+                0,
+                0,
+                0
+            ]
+        }
+    ],
+    "shapes": [
+        {
+            "name": "teapot1",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\Mesh001.obj"
+        },
+        {
+            "name": "lightQuad",
+            "type": "Quad",
+            "p": [
+                15,
+                -60,
+                -60
+            ],
+            "e0": [
+                0,
+                0,
+                120
+            ],
+            "e1": [
+                0,
+                120,
+                0
+            ]
+        }
+    ],
+    "lights": [
+        {
+            "name": "light",
+            "type": "AreaLight",
+            "emission": [
+                1,
+                1,
+                1
+            ],
+            "shape": "lightQuad"
+        }
+    ],
+    "primitives": [
+        {
+            "shape": "lightQuad",
+            "areaLight": "light",
+            "material": "blackMat"
+        },
+        {
+            "shape": "teapot1",
+            "material": "whiteMat"
+        }
+    ]
+}
