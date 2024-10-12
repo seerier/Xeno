@@ -90,7 +90,8 @@ int main(int argc, char *argv[]) {
     setSearchDirectory(directoryContaining(inFilename));
 
     RenderParams params = data.template get<RenderParams>();
-    
+
+    /*
     //std::shared_ptr<ObjectList> list = std::make_shared<ObjectList>();
     std::vector<std::shared_ptr<Primitive>> prims;
     for (const auto &primitive : params.primitives) {
@@ -98,9 +99,11 @@ int main(int argc, char *argv[]) {
         prims.push_back(primitive);
     }
     std::shared_ptr<BVH> bvh = std::make_shared<BVH>(prims);
+    */
 
     //Scene scene(list, params.lights);
-    Scene scene(bvh, params.lights);
+    //Scene scene(bvh, params.lights);
+    Scene scene(params.accelerator, params.lights);
 
 
     ParallelInit();

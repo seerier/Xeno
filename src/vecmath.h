@@ -924,6 +924,25 @@ public:
                         pMax + Vector2<T>(delta, delta));
     }
 
+    Bounds2<T> &expandby(const Bounds2<T> &b) {
+        pMin = min(pMin, b.pMin);
+        pMax = max(pMax, b.pMax);
+        return *this;
+    }
+
+    Bounds2<T> &expandby(const Point2<T> &p) {
+        pMin = min(pMin, p);
+        pMax = max(pMax, p);
+        return *this;
+    }
+
+    template <typename U>
+    Bounds2<T> &expandby(U delta) {
+        pMin = pMin - Vector2<T>(delta, delta, delta);
+        pMax = pMax + Vector2<T>(delta, delta, delta);
+        return *this;
+    }
+
     Bounds2<T> intersection(const Bounds2<T> &b) const {
         Bounds2<T> rec;
         rec.pMin = max(pMin, b.pMin);
@@ -1084,6 +1103,25 @@ public:
     Bounds3<T> expand(U delta) const {
         return Bounds3<T>(pMin - Vector3<T>(delta, delta, delta),
                         pMax + Vector3<T>(delta, delta, delta));
+    }
+
+    Bounds3<T> &expandby(const Bounds3<T> &b) {
+        pMin = min(pMin, b.pMin);
+        pMax = max(pMax, b.pMax);
+        return *this;
+    }
+
+    Bounds3<T> &expandby(const Point3<T> &p) {
+        pMin = min(pMin, p);
+        pMax = max(pMax, p);
+        return *this;
+    }
+
+    template <typename U>
+    Bounds3<T> &expandby(U delta) {
+        pMin = pMin - Vector3<T>(delta, delta, delta);
+        pMax = pMax + Vector3<T>(delta, delta, delta);
+        return *this;
     }
 
     Bounds3<T> intersection(const Bounds3<T> &b) const {

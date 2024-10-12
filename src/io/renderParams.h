@@ -13,10 +13,12 @@ struct RenderParams {
     void createPrimitive(const json &j);
     void createLight(const json &j);
     std::shared_ptr<Sensor> createSensor(const json &j) const;
+    std::shared_ptr<Primitive> createAccelerator(const json &j) const;
 
 
     std::shared_ptr<Integrator> integrator;
     std::shared_ptr<Sensor> sensor;
+    std::shared_ptr<Primitive> accelerator;
     std::map<std::string, std::shared_ptr<Material>> materials;
     //std::map<std::string, std::shared_ptr<Shape>> shapes;
     std::map<std::string, std::vector<std::shared_ptr<Shape>>> shapes;

@@ -2,6 +2,8 @@
 #include"cmdOptions.h"
 #include"fileutil.h"
 #include"transform.h"
+#include"accelerators/bvh.h"
+#include"accelerators/objectList.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/neePathTracer.h"
 #include"integrators/misPathTracer.h"
@@ -263,6 +265,20 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
     LOG(ERROR) << "Fail to create sensor for type: " << type;
 }
 
+std::shared_ptr<Primitive> RenderParams::createAccelerator(const json &j) const {
+    std::string type = j.at("type").get<std::string>();
+    if (type == "objectList") {
+        std::shared_ptr<ObjectList> list = std::make_shared<ObjectList>();
+        for (const auto &primitive : primitives) {
+            list->add(primitive);
+        }
+        return list;
+    }
+    else {
+        return std::make_shared<BVH>(primitives);
+    }
+}
+
 void from_json(const json &j, RenderParams &params) {
     params.integrator = params.createIntegrator(j.at("integrator"));
     json mats = j.at("materials");
@@ -281,6 +297,7 @@ void from_json(const json &j, RenderParams &params) {
     for (const auto &jsonPrimitive : jsonPrimitives) {
         params.createPrimitive(jsonPrimitive);
     }
+    params.accelerator = params.createAccelerator(j.at("accelerator"));
     params.sensor = params.createSensor(j);
 }
 

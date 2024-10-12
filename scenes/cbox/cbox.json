@@ -1,10 +1,13 @@
 {
-    "name": "BVH-short-CBox",
+    "name": "BVH-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
         "type": "MISPathTracer",
-        "spp": 32
+        "spp": 256
+    },
+    "accelerator": {
+        "type": "bvh"
     },
     "sensor": {
         "type": "pinhole",
@@ -12,7 +15,7 @@
             "pos": [
                 278,
                 278,
-                -400
+                -800
             ],
             "lookat": [
                 278,

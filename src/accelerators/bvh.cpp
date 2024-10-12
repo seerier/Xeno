@@ -28,11 +28,18 @@ BVH::BVH(const std::vector<std::shared_ptr<Primitive>> &prims) : primitives(std:
     if (primitives.empty()) return;
     int n = primitives.size();
 
+    /*
     std::vector<PrimitiveInfo> primitiveInfos;
     primitiveInfos.reserve(n);
     for (int i = 0; i < n; ++i) {
         primitiveInfos.emplace_back(i, primitives[i]->aabb());
     }
+    */
+    std::vector<PrimitiveInfo> primitiveInfos(n);
+    for (int i = 0; i < n; ++i) {
+        primitiveInfos[i] = PrimitiveInfo(i, primitives[i]->aabb());
+    }
+
 
     std::vector<std::shared_ptr<Primitive>> orderedPrims;
     orderedPrims.reserve(n);
@@ -57,8 +64,8 @@ BVHNode *BVH::buildBVH(std::vector<PrimitiveInfo> &primitiveInfos, std::vector<s
         Bounds3f wholeBound;
         Bounds3f centerBound;
         for (int i = start; i < end; ++i) {
-            wholeBound.expand(primitiveInfos[i].aabb);
-            centerBound.expand(primitiveInfos[i].center);
+            wholeBound.expandby(primitiveInfos[i].aabb);
+            centerBound.expandby(primitiveInfos[i].center);
         }
         int splitAxis = centerBound.maxExtent();
         int offset = orderedPrims.size();
@@ -135,54 +142,5 @@ bool BVH::intersect(const Ray &r, float &ray_t, Interaction &intr) const {
     }
     return hit;
 }
-
-/*
-bool BVH::intersect(const Ray &ray, float &ray_t, Interaction &intr) const {
-    if (!bvhNode) return false;
-    
-    bool hit = false;
-    Vector3f invDir(1 / ray.d.x, 1 / ray.d.y, 1 / ray.d.z);
-    int dirIsNeg[3] = {invDir.x < 0, invDir.y < 0, invDir.z < 0};
-    
-    // Stack to store nodes to visit
-    int toVisitOffset = 0, currentNodeIndex = 0;
-    BVHNode *nodesToVisit[1024];
-    
-    while (true) {
-        const BVHNode *node = &bvhNode[currentNodeIndex];
-        
-        // Check if the ray intersects the current node's bounding box
-        if (node->aabb.intersectP(ray, invDir, dirIsNeg)) {
-            if (node->nPrimitives > 0) {
-                // Leaf node: Check intersection with each primitive in this node
-                for (int i = 0; i < node->nPrimitives; ++i) {
-                    if (primitives[node->offset + i]->intersect(ray, ray_t, intr)) {
-                        hit = true;
-                    }
-                }
-                // If no more nodes to visit, break
-                if (toVisitOffset == 0) break;
-                // Go back to the last node in the stack
-                currentNodeIndex = nodesToVisit[--toVisitOffset] - bvhNode;
-            } else {
-                // Internal node: Traverse down either left or right child
-                if (dirIsNeg[node->aabb.maxExtent()]) {
-                    nodesToVisit[toVisitOffset++] = &bvhNode[currentNodeIndex + 1]; // Push far child
-                    currentNodeIndex = node->right - bvhNode;  // Traverse near child
-                } else {
-                    nodesToVisit[toVisitOffset++] = node->right;  // Push far child
-                    currentNodeIndex = currentNodeIndex + 1;      // Traverse near child
-                }
-            }
-        } else {
-            // If no intersection with current node, go back to last visited node
-            if (toVisitOffset == 0) break;
-            currentNodeIndex = nodesToVisit[--toVisitOffset] - bvhNode;
-        }
-    }
-    
-    return hit;
-}
-*/
 
 }
