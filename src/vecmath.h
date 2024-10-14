@@ -175,6 +175,7 @@ class Vector3 {
 public:
     // Vector3 Public Methods
     Vector3() { x = y = z = 0; }
+    Vector3(T a) : x(a), y(a), z(a) {}
     Vector3(T a, T b, T c) :x(a), y(b), z(c) {}
     explicit Vector3(const Point3<T> &p);
     explicit Vector3(const Normal3<T> &n);
@@ -280,7 +281,7 @@ public:
         return std::sqrt(lengthSquared());
     }
 
-
+    
 
     // Vector3 Public Data
     T x, y, z;

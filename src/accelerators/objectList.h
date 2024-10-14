@@ -11,7 +11,8 @@ public:
 
     void add(const std::shared_ptr<Primitive> &obj) {
         primitives.push_back(obj);
-        wholeAabb = wholeAabb.expand(obj->aabb());
+        //wholeAabb = wholeAabb.expand(obj->aabb());
+        wholeAabb.expandby(obj->aabb());
     }
 
     Bounds3f aabb() const override {

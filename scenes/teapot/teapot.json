@@ -1,13 +1,13 @@
 {
-    "name": "teapot",
+    "name": "BVH-teapot",
     "imageWidth": 800,
     "imageHeight": 600,
     "integrator": {
         "type": "MISPathTracer",
-        "spp": 2048
+        "spp": 8
     },
     "accelerator": {
-        "type": "bvh"
+        "type": "BVH"
     },
     "sensor": {
         "type": "pinhole",
@@ -60,7 +60,7 @@
             "name": "lightQuad",
             "type": "Quad",
             "p": [
-                15,
+                16,
                 -60,
                 -60
             ],

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "xeno.h"
+#include "vecmath.h"
 
 namespace xeno {
 
@@ -16,8 +17,8 @@ inline float random_float() {
     return distribution(generator);
 }
 
-float random_float3();
-
-float random_float7();
+inline Point2f random2D() {
+    return Point2f(random_float(), random_float());
+}
 
 }

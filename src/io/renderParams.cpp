@@ -8,6 +8,7 @@
 #include"integrators/neePathTracer.h"
 #include"integrators/misPathTracer.h"
 #include"integrators/normal.h"
+#include"integrators/pm.h"
 #include"materials/diffuse.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
@@ -51,6 +52,9 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
     }
     else if (type == "NormalIntegrator") {
         return std::make_shared<NormalIntegrator>();
+    }
+    else if (type=="pm"){
+        return std::make_shared<PM>(1, 1);
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;

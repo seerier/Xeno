@@ -10,6 +10,7 @@ public:
 
     virtual float pdf_Li(const Interaction &it, const Vector3f &w) const = 0;
 
+    virtual Spectrum sample_Le(const Point2f &uPoint, const Point2f &uDir, Ray &ray, Normal3f *nLight, float *pPoint, float *pDir) const = 0;
 };
 
 class VisibilityTester {
@@ -36,6 +37,7 @@ public:
 
     Spectrum sample_Li(const Interaction &it, const Point2f &uv, Vector3f *wi, float *pdf, VisibilityTester *vis) const override;
     float pdf_Li(const Interaction &it, const Vector3f &w) const override;
+    Spectrum sample_Le(const Point2f &uPoint, const Point2f &uDir, Ray &ray, Normal3f *nLight, float *pPoint, float *pDir) const override;
 
 private:
     std::shared_ptr<Shape> shape;

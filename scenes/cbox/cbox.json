@@ -1,10 +1,10 @@
 {
-    "name": "BVH-CBox",
-    "imageWidth": 1000,
-    "imageHeight": 1000,
+    "name": "simplePM-CBox",
+    "imageWidth": 10,
+    "imageHeight": 10,
     "integrator": {
-        "type": "MISPathTracer",
-        "spp": 256
+        "type": "pm",
+        "spp": 1024
     },
     "accelerator": {
         "type": "bvh"
@@ -27,7 +27,8 @@
                 1,
                 0
             ]
-        }
+        },
+        "fov": 30
     },
     "materials": [
         {
