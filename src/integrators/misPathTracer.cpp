@@ -35,7 +35,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
                 Li += weight * beta * intr.Le(-ray.d);
             }
         }
-        if (bounces >= 50) break;
+        if (bounces >= maxDepth) break;
 
         // rr
         if (bounces >= 5) {
@@ -79,17 +79,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         preIntr = intr;
         matPdf = pdf;
 
-        /*
-        Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
 
-        if (pdf == 0 || f == Spectrum(0, 0, 0)) return Li;
-
-        beta *= f * absDot(intr.n, wi) / pdf;
-        beta_maxComponent = maxComponent(beta);
-        if (beta_maxComponent <= .0f) return Li;
-
-        ray = intr.spawnRay(wi);
-        */
 
         ++bounces;
     }
@@ -104,24 +94,7 @@ void MISPathTracer::Render(Sensor &sensor, const Scene &scene) const {
     int yReso = sensor.film->yResolution;
     float inv_yReso = 1.f / (yReso - 1);
 
-    /*
-    for (int j = 0; j < yReso; ++j) {
-        for (int i = 0; i < xReso; ++i) {
-            Spectrum rgbVal;
-            for (int k = 0; k < spp; ++k) {
-                Point2f sample(random_float(), random_float());
-                Ray ray = sensor.generateRay(i, j, sample);;
-                rgbVal += Li(ray, scene);
-            }
-            rgbVal /= spp;
-            sensor.film->getRadiance(i, j, rgbVal);
-            //int percentage = 100 * (j * yReso + i) / (xReso * yReso);
-            //std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
-        }
-        int percentage = 100 * j * inv_yReso;
-        std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
-    }
-    */
+
 
     
     //std::atomic<int> lines(0);

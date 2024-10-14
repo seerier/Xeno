@@ -40,21 +40,21 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         else return std::make_shared<NEEPathTracer>();
     }
     else if (type == "MISPathTracer") {
-        /*
-        int spp = j.at("spp").get<int>();
-        if (cmdOption.spp != 0) spp = cmdOption.spp;
-        return std::make_shared<PathTracer>(spp);
-        */
+
         int spp = j.value("spp", 0);
         if (cmdOption.spp != 0) spp = cmdOption.spp;
-        if (spp != 0) return std::make_shared<MISPathTracer>(spp);
-        else return std::make_shared<MISPathTracer>();
+        int maxDepth = j.value("maxDepth", 10);
+        if (spp != 0) return std::make_shared<MISPathTracer>(spp, maxDepth);
+        else return std::make_shared<MISPathTracer>(16, maxDepth);
     }
     else if (type == "NormalIntegrator") {
         return std::make_shared<NormalIntegrator>();
     }
-    else if (type=="pm"){
-        return std::make_shared<PM>(1, 1);
+    else if (type == "pm") {
+        int nIterations = j.value("nIterations", 10);
+        int photonsPerIteration = j.value("photonsPerIteration", 100);
+        float radius = j.value("radius", 1.f);
+        return std::make_shared<PM>(nIterations, photonsPerIteration, 10, radius);
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;
@@ -245,12 +245,25 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
     //int spp = scenejson.at("integrator").at("spp").get<int>();
     int spp = scenejson.at("integrator").value("spp", 0);
     if (cmdOption.spp != 0) spp = cmdOption.spp;
+    int maxDepth = scenejson.at("integrator").value("maxDepth", 0);
 
     std::string outfilename;
     if (spp != 0) outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
-        "_" + std::to_string(yReso) + "-" + std::to_string(spp) + "spp.png";
+        "_" + std::to_string(yReso) + "-" + std::to_string(spp);
     else outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
-        "_" + std::to_string(yReso) + ".png";
+        "_" + std::to_string(yReso);
+
+    if (maxDepth != 0) outfilename += "-depth" + std::to_string(maxDepth);
+    outfilename += ".png";
+
+    if (scenejson.at("integrator").at("type") == "pm") {
+        int nIterations = scenejson.at("integrator").value("nIterations", 10);
+        int photonsPerIteration = scenejson.at("integrator").value("photonsPerIteration", 100);
+        float radius = scenejson.at("integrator").value("radius", 1.f);
+        outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
+            "_" + std::to_string(yReso) + "-" + std::to_string(nIterations) + "iterations-" + std::to_string(photonsPerIteration) + "photons-" +
+            std::to_string(radius) + "radius.png";
+    }
 
     if (cmdOption.outFilename != "") outfilename = cmdOption.outFilename;
 

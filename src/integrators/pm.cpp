@@ -58,7 +58,7 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
             Spectrum Le = scene.lights[lightIndex]->sample_Le(random2D(), random2D(), photonRay, &nLight, &pPoint, &pDir);
 
             if (Le == Spectrum(0) || pPoint == 0 || pDir == 0) continue;
-            beta *= Le * absDot(photonRay.d, nLight) / (lightSelectPdf * pPoint * pDir);
+            beta *= Le * absDot(normalize(photonRay.d), nLight) / (lightSelectPdf * pPoint * pDir);
             if (beta == Spectrum(0)) continue;
 
             float ray_t;
@@ -68,7 +68,7 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                     for (int i = 0; i < xReso; ++i) {
                         int index = j * yReso + i;
                         PMPixel &pixel = pixels[index];
-                        if (pixel.vp.beta == Spectrum(0.f)) break;
+                        if (pixel.vp.beta == Spectrum(0.f)) continue;
                         if (distanceSquared(intr.p, pixel.vp.intr.p) < radius * radius) {
                             //pixel.LPhoton += beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
                             Spectrum phi = beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
@@ -104,7 +104,7 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                         //pixel.Ld /= nIterations;
                         Spectrum rgbVal;
                         for (int k = 0; k < 3; ++k)
-                            rgbVal += pixel.LPhoton[k] + pixel.Ld[k];
+                            rgbVal[k] += pixel.LPhoton[k] + pixel.Ld[k];
 
                         sensor.film->getRadiance(i, j, rgbVal);
                     }
