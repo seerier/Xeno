@@ -54,7 +54,8 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         int nIterations = j.value("nIterations", 10);
         int photonsPerIteration = j.value("photonsPerIteration", 100);
         float radius = j.value("radius", 1.f);
-        return std::make_shared<PM>(nIterations, photonsPerIteration, 10, radius);
+        int maxDepth = j.value("maxDepth", 10);
+        return std::make_shared<PM>(nIterations, photonsPerIteration, maxDepth, radius);
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;
@@ -259,10 +260,11 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
     if (scenejson.at("integrator").at("type") == "pm") {
         int nIterations = scenejson.at("integrator").value("nIterations", 10);
         int photonsPerIteration = scenejson.at("integrator").value("photonsPerIteration", 100);
+        int maxDepth = scenejson.at("integrator").value("maxDepth", 10);
         float radius = scenejson.at("integrator").value("radius", 1.f);
         outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
             "_" + std::to_string(yReso) + "-" + std::to_string(nIterations) + "iterations-" + std::to_string(photonsPerIteration) + "photons-" +
-            std::to_string(radius) + "radius.png";
+            std::to_string(maxDepth) + "maxDepth-" + std::to_string(radius) + "radius.png";
     }
 
     if (cmdOption.outFilename != "") outfilename = cmdOption.outFilename;

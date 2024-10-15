@@ -61,6 +61,40 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
             beta *= Le * absDot(normalize(photonRay.d), nLight) / (lightSelectPdf * pPoint * pDir);
             if (beta == Spectrum(0)) continue;
 
+            // trace a photon
+            for (int photonbounces = 0; photonbounces < maxDepth; ++photonbounces) {
+                float ray_t;
+                Interaction intr;
+                if (scene.intersect(photonRay, ray_t, intr)) {
+                    // search visible points and add contribution
+                    ParallelFor([&](int j) {
+                        for (int i = 0; i < xReso; ++i) {
+                            int index = j * yReso + i;
+                            PMPixel &pixel = pixels[index];
+                            if (pixel.vp.beta == Spectrum(0.f)) continue;
+                            if (distanceSquared(intr.p, pixel.vp.intr.p) < radius * radius) {
+                                //pixel.LPhoton += beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                Spectrum phi = beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                for (int k = 0; k < 3; ++k)
+                                    pixel.LPhoton[k] += phi[k];
+                            }
+                        }
+
+                        }, yReso);
+
+                    // possibly bounce and generate next ray direction
+                    //if (photonbounces >= maxDepth - 1 || random_float() > .8f) break;
+                    if (photonbounces >= maxDepth - 1) break;
+                    Vector3f wi;
+                    float pdf;
+                    Spectrum f = intr.primitive->getMaterial()->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
+                    if (f == Spectrum(0) || pdf == 0) break;
+                    //beta *= 1.25f * f * absDot(intr.n, -photonRay.d) / pdf;
+                    beta *= f * absDot(intr.n, -photonRay.d) / pdf;
+                    photonRay = intr.spawnRay(wi);
+                }
+            }
+            /*
             float ray_t;
             Interaction intr;
             if (scene.intersect(photonRay, ray_t, intr)) {
@@ -78,8 +112,8 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                     }
 
                     }, yReso);
-                
             }
+            */
         }
 
         // clear Visible Points 

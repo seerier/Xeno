@@ -4,11 +4,11 @@
     "imageHeight": 1000,
     "integrator": {
         "type": "pm",
-        "nIterations": 100,
-        "photonsPerIteration": 500,
-        "radius": 15,
+        "nIterations": 10,
+        "photonsPerIteration": 5000,
+        "radius": 5,
         "spp": 256,
-        "maxDepth": 1
+        "maxDepth": 10
     },
     "accelerator": {
         "type": "bvh"
