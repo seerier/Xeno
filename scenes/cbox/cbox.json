@@ -1,9 +1,9 @@
 {
-    "name": "PM-CBox",
+    "name": "KdTree-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "pm",
+        "type": "MISPathTracer",
         "nIterations": 10,
         "photonsPerIteration": 5000,
         "radius": 5,
@@ -11,7 +11,7 @@
         "maxDepth": 10
     },
     "accelerator": {
-        "type": "bvh"
+        "type": "Kdtree"
     },
     "sensor": {
         "type": "pinhole",

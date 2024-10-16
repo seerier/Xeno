@@ -1,13 +1,13 @@
 {
-    "name": "BVH-teapot",
+    "name": "KdTree-teapot",
     "imageWidth": 800,
     "imageHeight": 600,
     "integrator": {
         "type": "MISPathTracer",
-        "spp": 8
+        "spp": 1024
     },
     "accelerator": {
-        "type": "BVH"
+        "type": "kdtree"
     },
     "sensor": {
         "type": "pinhole",

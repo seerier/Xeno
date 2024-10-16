@@ -1193,6 +1193,16 @@ public:
         return std::sqrt(distanceSquaredTo(b));
     }
 
+    T surfaceArea() const {
+        Vector3<T> diag = diagonal();
+        return 2 * (diag.x * diag.y + diag.y * diag.z + diag.z * diag.x);
+    }
+
+    T volume() const {
+        Vector3<T> diag = diagonal();
+        return diag.x * diag.y * diag.z;
+    }
+
 
     Point3<T> lerp(const Point3<float> &t) const {
         return Point3<T>((1 - t.x) * pMin.x + t.x * pMax.x, (1 - t.y) * pMin.y + t.y * pMax.y,

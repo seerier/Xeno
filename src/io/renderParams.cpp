@@ -3,6 +3,7 @@
 #include"fileutil.h"
 #include"transform.h"
 #include"accelerators/bvh.h"
+#include"accelerators/kdtree.h"
 #include"accelerators/objectList.h"
 #include"integrators/simplePathTracer.h"
 #include"integrators/neePathTracer.h"
@@ -293,8 +294,14 @@ std::shared_ptr<Primitive> RenderParams::createAccelerator(const json &j) const 
         }
         return list;
     }
-    else {
+    else if (type=="bvh") {
         return std::make_shared<BVH>(primitives);
+    }
+    else if (type=="kdtree") {
+        return std::make_shared<KdTree>(primitives);
+    }
+    else {
+        return std::make_shared<KdTree>(primitives);;
     }
 }
 

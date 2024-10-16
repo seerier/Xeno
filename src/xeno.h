@@ -12,6 +12,7 @@
 #include<random>
 #include<chrono>
 #include<iomanip>
+#include<tuple>
 
 #include"glog/logging.h"
 #include"json.hpp"
