@@ -28,6 +28,7 @@ public:
     bool intersect(const Ray &r, float &ray_t, Interaction &intr) const override {
         if (!shape->intersect(r, ray_t, intr)) return false;
         intr.primitive = this;
+        intr.material = material.get();
         return true;
     }
 

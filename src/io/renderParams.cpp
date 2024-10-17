@@ -8,6 +8,7 @@
 #include"integrators/simplePathTracer.h"
 #include"integrators/neePathTracer.h"
 #include"integrators/misPathTracer.h"
+#include"integrators/pathTracer.h"
 #include"integrators/normal.h"
 #include"integrators/pm.h"
 #include"materials/diffuse.h"
@@ -47,6 +48,13 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         int maxDepth = j.value("maxDepth", 10);
         if (spp != 0) return std::make_shared<MISPathTracer>(spp, maxDepth);
         else return std::make_shared<MISPathTracer>(16, maxDepth);
+    }
+    else if (type == "PathTracer") {
+        int spp = j.value("spp", 0);
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
+        int maxDepth = j.value("maxDepth", 10);
+        if (spp != 0) return std::make_shared<PathTracer>(spp, maxDepth);
+        else return std::make_shared<PathTracer>(16, maxDepth);
     }
     else if (type == "NormalIntegrator") {
         return std::make_shared<NormalIntegrator>();
@@ -251,9 +259,9 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
 
     std::string outfilename;
     if (spp != 0) outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
-        "_" + std::to_string(yReso) + "-" + std::to_string(spp);
+        "_" + std::to_string(yReso) + "-" + std::to_string(spp) + "spp";
     else outfilename = sceneName + "-" + scenejson.at("integrator").at("type").get<std::string>() + std::to_string(xReso) +
-        "_" + std::to_string(yReso);
+        "_" + std::to_string(yReso) + "spp";
 
     if (maxDepth != 0) outfilename += "-depth" + std::to_string(maxDepth);
     outfilename += ".png";

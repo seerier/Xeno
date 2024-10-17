@@ -3,7 +3,7 @@
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "PathTracer",
+        "type": "MISPathTracer",
         "nIterations": 10,
         "photonsPerIteration": 5000,
         "radius": 5,

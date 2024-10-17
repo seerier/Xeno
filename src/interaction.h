@@ -24,7 +24,7 @@ public:
     Vector3f wo;
 
     // Material related members
-    //const Material *material = nullptr;
+    const Material *material = nullptr;
     Point2f uv;
 
     // Ptrs
