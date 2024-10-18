@@ -84,13 +84,13 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
 
                     // possibly bounce and generate next ray direction
                     //if (photonbounces >= maxDepth - 1 || random_float() > .8f) break;
-                    if (photonbounces >= maxDepth - 1) break;
+                    if (photonbounces >= maxDepth - 1 || random_float() > .8f) break;
                     Vector3f wi;
                     float pdf;
                     Spectrum f = intr.primitive->getMaterial()->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
                     if (f == Spectrum(0) || pdf == 0) break;
-                    //beta *= 1.25f * f * absDot(intr.n, -photonRay.d) / pdf;
-                    beta *= f * absDot(intr.n, -photonRay.d) / pdf;
+                    beta *= 1.25f * f * absDot(intr.n, wi) / pdf;
+                    //beta *= f * absDot(intr.n, wi) / pdf;
                     photonRay = intr.spawnRay(wi);
                 }
             }

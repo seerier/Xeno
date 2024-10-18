@@ -11,6 +11,7 @@
 #include"integrators/pathTracer.h"
 #include"integrators/normal.h"
 #include"integrators/pm.h"
+#include"integrators/sppm.h"
 #include"materials/diffuse.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
@@ -65,6 +66,13 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         float radius = j.value("radius", 1.f);
         int maxDepth = j.value("maxDepth", 10);
         return std::make_shared<PM>(nIterations, photonsPerIteration, maxDepth, radius);
+    }
+    else if (type == "sppm") {
+        int nIterations = j.value("nIterations", 10);
+        int photonsPerIteration = j.value("photonsPerIteration", 100);
+        float radius = j.value("radius", 1.f);
+        int maxDepth = j.value("maxDepth", 10);
+        return std::make_shared<SPPM>(nIterations, photonsPerIteration, maxDepth, radius);
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;
@@ -266,7 +274,7 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
     if (maxDepth != 0) outfilename += "-depth" + std::to_string(maxDepth);
     outfilename += ".png";
 
-    if (scenejson.at("integrator").at("type") == "pm") {
+    if (scenejson.at("integrator").at("type") == "pm" || scenejson.at("integrator").at("type") == "sppm") {
         int nIterations = scenejson.at("integrator").value("nIterations", 10);
         int photonsPerIteration = scenejson.at("integrator").value("photonsPerIteration", 100);
         int maxDepth = scenejson.at("integrator").value("maxDepth", 10);

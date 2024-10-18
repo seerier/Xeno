@@ -281,7 +281,9 @@ public:
         return std::sqrt(lengthSquared());
     }
 
-    
+    T sum() const{
+        return x + y + z;
+    }
 
     // Vector3 Public Data
     T x, y, z;

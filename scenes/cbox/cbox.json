@@ -1,12 +1,12 @@
 {
-    "name": "MyHikari-CBox",
+    "name": "radiusChangeTry-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "PathTracer",
+        "type": "sppm",
         "nIterations": 10,
         "photonsPerIteration": 5000,
-        "radius": 5,
+        "radius": 0.75,
         "spp": 2048,
         "maxDepth": 10
     },

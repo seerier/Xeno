@@ -1,11 +1,11 @@
 {
-    "name": "MyHikari-CBox",
+    "name": "OldSPPM-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "MISPathTracer",
+        "type": "sppm",
         "nIterations": 10,
-        "photonsPerIteration": 5000,
+        "photonsPerIteration": 3000,
         "radius": 5,
         "spp": 2048,
         "maxDepth": 10
