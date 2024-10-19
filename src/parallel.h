@@ -27,12 +27,8 @@ class AtomicFloat {
         bits = floatToBits(v);
         return v;
     }
-    void Add(float v) {
-#ifdef PBRT_float_AS_DOUBLE
-        uint64_t oldBits = bits, newBits;
-#else
+    void add(float v) {
         uint32_t oldBits = bits, newBits;
-#endif
         do {
             newBits = floatToBits(bitsToFloat(oldBits) + v);
         } while (!bits.compare_exchange_weak(oldBits, newBits));
@@ -40,11 +36,7 @@ class AtomicFloat {
 
   private:
 // Atomicfloat Private Data
-//#ifdef PBRT_Float_AS_DOUBLE
-//    std::atomic<uint64_t> bits;
-//#else
     std::atomic<uint32_t> bits;
-//#endif
 };
 
 // Simple one-use barrier; ensures that multiple threads all reach a

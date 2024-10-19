@@ -93,6 +93,7 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                     //beta *= f * absDot(intr.n, wi) / pdf;
                     photonRay = intr.spawnRay(wi);
                 }
+                else break;
             }
             /*
             float ray_t;

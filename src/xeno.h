@@ -13,6 +13,7 @@
 #include<chrono>
 #include<iomanip>
 #include<tuple>
+#include<atomic>
 
 #include"glog/logging.h"
 #include"json.hpp"

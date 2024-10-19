@@ -219,7 +219,7 @@ thread_local int ThreadIndex;
 int MaxThreadIndex() {
     //return PbrtOptions.nThreads == 0 ? NumSystemCores() : PbrtOptions.nThreads;
     //return 10u;
-    return cmdOption.nthreads == 0 ? 12u : cmdOption.nthreads;
+    return cmdOption.nthreads == 0 ? 10u : cmdOption.nthreads;
 }
 
 void ParallelFor2D(std::function<void(Point2i)> func, const Point2i &count) {

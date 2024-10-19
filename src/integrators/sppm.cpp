@@ -5,7 +5,8 @@ namespace xeno {
 
 struct SPPMPixel {
     Spectrum Ld;
-    Spectrum LPhoton; // maybe float is not enough and suffer from overflow
+    //Spectrum LPhoton;
+    AtomicFloat LPhoton[3];
     struct VisiblePoint {
         VisiblePoint() {}
         VisiblePoint(const Interaction &intr, const Spectrum &beta) :intr(intr), beta(beta) {}
@@ -13,7 +14,7 @@ struct SPPMPixel {
         Spectrum beta;
     } vp;
     float N = 0;
-    int M = 0;
+    std::atomic<int> M = 0;
     float radius;
     Spectrum tau;
 };
@@ -39,10 +40,10 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                 Ray ray = sensor.generateRay(i, j, sample);
                 float ray_t;
                 Interaction intr;
-                if (!scene.intersect(ray, ray_t, intr)) continue;
 
                 int index = j * yReso + i;
-                pixels[index].radius = radius;
+                if (iter == 0) pixels[index].radius = radius;
+                if (!scene.intersect(ray, ray_t, intr)) continue;
 
                 if (intr.primitive->isEmitter()) pixels[index].Ld += intr.primitive->getAreaLight()->L(intr, -ray.d);
                 float lightSelectPdf;
@@ -55,8 +56,8 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
             }
             }, yReso);
 
-        // generate photons
-        for (int photonIndex = 0; photonIndex < photonsPerIteration; ++photonIndex) {
+        ParallelFor([&](int photonIndex) {
+
             // throughput
             Spectrum beta(1.f);
 
@@ -69,18 +70,18 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
             float pPoint, pDir;
             Spectrum Le = scene.lights[lightIndex]->sample_Le(random2D(), random2D(), photonRay, &nLight, &pPoint, &pDir);
 
-            if (Le == Spectrum(0) || pPoint == 0 || pDir == 0) continue;
+            if (Le == Spectrum(0) || pPoint == 0 || pDir == 0) return;
             beta = Le * absDot(normalize(photonRay.d), nLight) / (lightSelectPdf * pPoint * pDir);
-            if (beta == Spectrum(0)) continue;
+            if (beta == Spectrum(0)) return;
 
             // trace a photon
+            float ray_t;
+            Interaction intr;
             for (int photonbounces = 0; photonbounces < maxDepth; ++photonbounces) {
-                float ray_t;
-                Interaction intr;
                 if (scene.intersect(photonRay, ray_t, intr)) {
                     if (photonbounces > 0) {
                         // search visible points and add contribution
-                        ParallelFor([&](int j) {
+                        for (int j = 0; j < yReso; ++j) {
                             for (int i = 0; i < xReso; ++i) {
                                 int index = j * yReso + i;
                                 SPPMPixel &pixel = pixels[index];
@@ -89,12 +90,16 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                                     //pixel.LPhoton += beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
                                     //Spectrum phi = beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
                                     //pixel.LPhoton += beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
-                                    pixel.LPhoton += beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
-                                    
+                                    //pixel.LPhoton += beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                    Spectrum LPhoton = beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                    for (int i = 0; i < 3; ++i) {
+                                        //pixel.LPhoton[i] += LPhoton[i];
+                                        pixel.LPhoton[i].add(LPhoton[i]);
+                                    }
                                     pixel.M++;
                                 }
                             }
-                            }, yReso);
+                        }
                     }
 
                     // possibly bounce and generate next ray direction
@@ -107,15 +112,17 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                     if (f == Spectrum(0) || pdf == 0) break;
                     Spectrum newBeta = beta * f * absDot(intr.n, wi) / pdf;
                     float continuePdf = std::min(1.f, newBeta.sum() / beta.sum());
-                    continuePdf = .8f;
+                    //continuePdf = .8f;
                     if (random_float() > continuePdf) break;
                     beta = newBeta / continuePdf;
-                    
+
                     //beta *= f * absDot(intr.n, wi) / pdf;
                     photonRay = intr.spawnRay(wi);
                 }
+                else break;
             }
-        }
+            }, photonsPerIteration, 8192);
+        
 
         // handle some mathematical operations in sppm
         ParallelFor([&](int j) {
@@ -126,11 +133,13 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                             float gamma = 2.f / 3.f;
                             float Nnew = p.N + gamma * p.M;
                             float Rnew = p.radius * std::sqrt(Nnew / (p.N + p.M));
-                            p.tau = (p.tau + p.vp.beta * p.LPhoton) * (Rnew * Rnew) / (p.radius * p.radius);
+                            Spectrum LPhoton;
+                            for (int i = 0; i < 3; ++i) LPhoton[i] = p.LPhoton[i];
+                            p.tau = (p.tau + p.vp.beta * LPhoton) * (Rnew * Rnew) / (p.radius * p.radius);
                             p.radius = Rnew;
                             p.N = Nnew;
                             p.M = 0;
-                            p.LPhoton = Spectrum(0.f);
+                            for (int i = 0; i < 3; ++i) p.LPhoton[i] = 0;
                         }
 
                         // reset and prepare for next iteration
@@ -151,20 +160,6 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                         pixel.Ld /= nIterations;
                         Spectrum rgbVal;
                         rgbVal += pixel.tau + pixel.Ld;
-                        //rgbVal += pixel.Ld;
-                        /*
-                        for (int i = 0; i < 2; ++i) {
-                            pixel.tau[i] += 1e30;
-                        }
-                        rgbVal += pixel.tau;
-                        */
-
-                        /*
-                        for (int i = 0; i < 2; ++i) {
-                            pixel.Ld[i] += 1e30;
-                        }
-                        rgbVal += pixel.Ld;
-                        */
 
                         sensor.film->getRadiance(i, j, rgbVal);
                     }

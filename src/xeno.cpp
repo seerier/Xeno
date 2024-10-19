@@ -40,6 +40,30 @@ void help() {
     cout << "-nthreads  parallel threads" << endl;
 }
 
+void cmdOutput(const json &j, const CmdOptions &cmdOption) {
+    //int spp = data.at("integrator").value("spp", 0);
+    //if (cmdOption.spp != 0) spp = cmdOption.spp;
+    //std::cout << "spp = " << spp << std::endl;
+    auto ji = j.at("integrator");
+    auto type = ji.at("type");
+    if (ji.at("type") == "pm" || ji.at("type") == "sppm") {
+        int nIterations = ji.value("nIterations", 10);
+        int photonsPerIteration = ji.value("photonsPerIteration", 100);
+        int maxDepth = ji.value("maxDepth", 10);
+        float radius = ji.value("radius", 1.f);
+        cout << "Integrator type: " << type << endl
+            << "nIterations: " << nIterations << endl
+            << "photonsPerIteration: " << photonsPerIteration << endl
+            << "maxDepth: " << maxDepth << endl
+            << "radius: " << radius << endl;
+    }
+    else {
+        int spp = ji.value("spp", 0);
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
+        std::cout << "spp = " << spp << std::endl;
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     //google::InitGoogleLogging(argv[0]);
@@ -114,9 +138,8 @@ int main(int argc, char *argv[]) {
     auto end = std::chrono::high_resolution_clock::now();
     ParallelCleanup();
 
-    int spp = data.at("integrator").value("spp", 0);
-    if (cmdOption.spp != 0) spp = cmdOption.spp;
-    std::cout << "spp = " << spp << std::endl;
+    cmdOutput(data, cmdOption);
+    
     std::chrono::duration<double> buildDuration = start - buildStart;
     std::chrono::duration<double> duration = end - start;
     std::ostringstream rendertimeStr, initializationTimeStr;

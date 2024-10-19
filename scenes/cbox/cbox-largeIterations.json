@@ -5,7 +5,7 @@
     "integrator": {
         "type": "sppm",
         "nIterations": 100,
-        "photonsPerIteration": 1001,
+        "photonsPerIteration": 1020011,
         "radius": 5,
         "spp": 2048,
         "maxDepth": 2
@@ -32,7 +32,7 @@
                 0
             ]
         },
-        "fov": 30
+        "fov": 40
     },
     "materials": [
         {
