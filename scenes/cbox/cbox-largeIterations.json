@@ -1,14 +1,14 @@
 {
-    "name": "CBox",
-    "imageWidth": 100,
-    "imageHeight": 100,
+    "name": "memoryLeak-inSPPM-NodePtr-CBox",
+    "imageWidth": 500,
+    "imageHeight": 500,
     "integrator": {
         "type": "sppm",
         "nIterations": 100,
-        "photonsPerIteration": 1020011,
+        "photonsPerIteration": 1023717,
         "radius": 5,
         "spp": 2048,
-        "maxDepth": 2
+        "maxDepth": 10
     },
     "accelerator": {
         "type": "bvh"

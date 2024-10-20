@@ -67,7 +67,7 @@ BVHNode *BVH::buildBVH(std::vector<PrimitiveInfo> &primitiveInfos, std::vector<s
             wholeBound.expandby(primitiveInfos[i].aabb);
             centerBound.expandby(primitiveInfos[i].center);
         }
-        int splitAxis = centerBound.maxExtent();
+        int splitAxis = centerBound.maxDimension();
         int offset = orderedPrims.size();
 
         // in case that all the centers locate in the same point, create a leaf node directly

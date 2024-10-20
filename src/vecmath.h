@@ -371,7 +371,7 @@ public:
     }
 
     Point2<T> operator-(const Vector2<T> &v) const {
-        return Vector2<T>(x - v.x, y - v.y);
+        return Point2<T>(x - v.x, y - v.y);
     }
 
     Point2<T> &operator-=(const Vector2<T> &v) {
@@ -521,7 +521,7 @@ public:
     }
 
     Point3<T> operator-(const Vector3<T> &v) const {
-        return Vector3<T>(x - v.x, y - v.y, z - v.z);
+        return Point3<T>(x - v.x, y - v.y, z - v.z);
     }
 
     Point3<T> &operator-=(const Vector3<T> &v) {
@@ -890,13 +890,13 @@ public:
         return pMax - pMin;
     }
 
-    int maxExtent() const {
+    int maxDimension() const {
         Vector2<T> diag = diagonal();
         if (diag.x > diag.y) return 0;
         return 1;
     }
 
-    int minExtent() const {
+    int minDimension() const {
         Vector2<T> diag = diagonal();
         if (diag.x < diag.y) return 0;
         return 1;
@@ -1073,14 +1073,24 @@ public:
         return pMax - pMin;
     }
 
-    int maxExtent() const {
+    int maxDimension() const {
         Vector3<T> diag = diagonal();
         return (diag.x > diag.y) ? (diag.x > diag.z ? 0 : 2) : (diag.y > diag.z ? 1 : 2);
     }
 
-    int minExtent() const {
+    int minDimension() const {
         Vector3<T> diag = diagonal();
         return (diag.x < diag.y) ? (diag.x < diag.z ? 0 : 2) : (diag.y < diag.z ? 1 : 2);
+    }
+
+    T maxExtent() const {
+        Vector3<T> diag = diagonal();
+        return std::max(diag.x, std::max(diag.y, diag.z));
+    }
+
+    T minExtent() const {
+        Vector3<T> diag = diagonal();
+        return std::min(diag.x, std::min(diag.y, diag.z));
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Bounds3<T> &b) {
@@ -1211,7 +1221,13 @@ public:
                         (1 - t.z) * pMin.z + t.z * pMax.z);
     }
 
-
+    Vector3<T> normalizedOffset(const Point3<T> &p) const {
+        Vector3f v = p - pMin;
+        if (pMax.x > pMin.x) v.x /= (pMax.x - pMin.x);
+        if (pMax.y > pMin.y) v.y /= (pMax.y - pMin.y);
+        if (pMax.z > pMin.z) v.z /= (pMax.z - pMin.z);
+        return v;
+    }
 
     // Bounds3 Public Data
     Point3<T> pMin, pMax;

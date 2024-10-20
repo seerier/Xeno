@@ -19,6 +19,35 @@ struct SPPMPixel {
     Spectrum tau;
 };
 
+struct SPPMPixelListNode {
+    SPPMPixel *pixel;
+    SPPMPixelListNode *next;
+};
+
+void deleteList(SPPMPixelListNode* head) {
+    while (head != nullptr) {
+        SPPMPixelListNode* nextNode = head->next;
+        delete head;
+        head = nextNode;
+    }
+}
+
+static bool toGrid(const Point3f &p, const Bounds3f &bounds,
+                   const int gridRes[3], Point3i *pi) {
+    bool inBounds = true;
+    Vector3f pg = bounds.normalizedOffset(p);
+    for (int i = 0; i < 3; ++i) {
+        (*pi)[i] = (int)(gridRes[i] * pg[i]);
+        inBounds &= ((*pi)[i] >= 0 && (*pi)[i] < gridRes[i]);
+        (*pi)[i] = clamp((*pi)[i], 0, gridRes[i] - 1);
+    }
+    return inBounds;
+}
+
+inline unsigned int hash(const Point3i &p, int hashSize) {
+    return (unsigned int)((p.x * 73856093) ^ (p.y * 19349663) ^ (p.z * 83492791)) % hashSize;
+}
+
 void SPPM::Render(Sensor &sensor, const Scene &scene) const{
 
     int xReso = sensor.film->xResolution;
@@ -26,7 +55,6 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
     float inv_yReso = 1.f / (yReso - 1);
     int nPixels = xReso * yReso;
 
-    //std::unique_ptr<SPPMPixel[]> pixels(new SPPMPixel[nPixels])
     // initialize SPPMPixels
     std::unique_ptr<SPPMPixel[]> pixels(new SPPMPixel[nPixels]);
 
@@ -56,8 +84,56 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
             }
             }, yReso);
 
-        ParallelFor([&](int photonIndex) {
+        // create a hash grid for visible points
+        // local variables needed
+            int gridRes[3];
+            Bounds3f gridBound;
+            const int hashSize = nPixels;
+            std::vector<std::atomic<SPPMPixelListNode *>> grid(hashSize);
+            //std::vector<std::atomic<std::shared_ptr<SPPMPixelListNode>>> grid(hashSize);
+            float maxRadius = .0f;
+        {
+            // compute grid extent and resolution
+            for (int i = 0; i < nPixels; ++i) {
+                const SPPMPixel &pixel = pixels[i];
+                if (pixel.vp.beta == Spectrum(0)) continue;
+                Bounds3f bound = Bounds3f(pixel.vp.intr.p).expand(pixel.radius);
+                gridBound.expandby(bound);
+                maxRadius = std::max(maxRadius, pixel.radius);
+            }
+            Vector3f diag = gridBound.diagonal();
+            float maxDiag = maxComponent(diag);
+            int baseGridRes = std::max(1, int(maxDiag / maxRadius));
+            for (int i = 0; i < 3; ++i) {
+                gridRes[i] = std::max(int(baseGridRes * diag[i] / maxDiag), 1);
+            }
 
+            // map visible points to grid
+            ParallelFor([&](int pixelIndex) {
+                SPPMPixel &pixel = pixels[pixelIndex];
+                if (!(pixel.vp.beta == Spectrum(0))) {
+                    float r = pixel.radius;
+                    Point3i pMin, pMax;
+                    toGrid(pixel.vp.intr.p - Vector3f(r, r, r), gridBound, gridRes, &pMin);
+                    toGrid(pixel.vp.intr.p + Vector3f(r, r, r), gridBound, gridRes, &pMax);
+                    for (int k = pMin.z; k <= pMax.z; ++k)
+                        for (int j = pMin.y; j <= pMax.y; ++j)
+                            for (int i = pMin.x; i <= pMax.x; ++i) {
+                                int hashIndex = hash(Point3i(i, j, k), hashSize);
+                                //std::unique_ptr<SPPMPixelListNode> node = std::make_unique<SPPMPixelListNode>();
+                                // there is a memory leak!!!
+                                SPPMPixelListNode *node = new SPPMPixelListNode();
+                                //std::shared_ptr<SPPMPixelListNode> node = std::make_shared<SPPMPixelListNode>();
+                                node->pixel = &pixel;
+                                node->next = grid[hashIndex];
+                                while (grid[hashIndex].compare_exchange_weak(node->next, node) == false);
+                            }
+                }
+                }, nPixels, 4096);
+        }
+
+        // photon pass
+        ParallelFor([&](int photonIndex) {
             // throughput
             Spectrum beta(1.f);
 
@@ -81,24 +157,21 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                 if (scene.intersect(photonRay, ray_t, intr)) {
                     if (photonbounces > 0) {
                         // search visible points and add contribution
-                        for (int j = 0; j < yReso; ++j) {
-                            for (int i = 0; i < xReso; ++i) {
-                                int index = j * yReso + i;
-                                SPPMPixel &pixel = pixels[index];
-                                if (pixel.vp.beta == Spectrum(0.f)) continue;
-                                if (distanceSquared(intr.p, pixel.vp.intr.p) < pixel.radius * pixel.radius) {
-                                    //pixel.LPhoton += beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
-                                    //Spectrum phi = beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
-                                    //pixel.LPhoton += beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
-                                    //pixel.LPhoton += beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                        Point3i pi;
+                        if (toGrid(intr.p, gridBound, gridRes, &pi)) {
+                            int hashIndex = hash(pi, hashSize);
+                            
+                            for (SPPMPixelListNode *node = grid[hashIndex].load(std::memory_order_relaxed); node != nullptr; node = node->next) {
+                                SPPMPixel &pixel = *node->pixel;
+                                if (pixel.vp.beta == Spectrum(0)) continue;
+                                if (distanceSquared(pixel.vp.intr.p, intr.p) < pixel.radius * pixel.radius) {
                                     Spectrum LPhoton = beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
                                     for (int i = 0; i < 3; ++i) {
-                                        //pixel.LPhoton[i] += LPhoton[i];
                                         pixel.LPhoton[i].add(LPhoton[i]);
                                     }
                                     pixel.M++;
                                 }
-                            }
+                            }                            
                         }
                     }
 
@@ -107,7 +180,6 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                     //if (photonbounces >= maxDepth - 1) break;
                     Vector3f wi;
                     float pdf;
-                    //Spectrum f = intr.primitive->getMaterial()->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
                     Spectrum f = intr.material->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
                     if (f == Spectrum(0) || pdf == 0) break;
                     Spectrum newBeta = beta * f * absDot(intr.n, wi) / pdf;
@@ -116,7 +188,6 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                     if (random_float() > continuePdf) break;
                     beta = newBeta / continuePdf;
 
-                    //beta *= f * absDot(intr.n, wi) / pdf;
                     photonRay = intr.spawnRay(wi);
                 }
                 else break;
@@ -144,6 +215,7 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
 
                         // reset and prepare for next iteration
                         p.vp.beta = Spectrum(0.f);
+                        deleteList(grid[index]);
                     }
 
                     }, yReso);

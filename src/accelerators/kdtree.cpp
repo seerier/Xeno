@@ -118,7 +118,7 @@ void KdTree::build(int nodeIndex, const Bounds3f &nodeBound, const std::vector<B
     float bestCost = Infinity, leafCost = nPrimitives * isectCost;
     float invTotalSA = 1.f / nodeBound.surfaceArea();
     Vector3f d = nodeBound.diagonal();
-    int axis = nodeBound.maxExtent();
+    int axis = nodeBound.maxDimension();
 
     int retries = 0;
     // ready to perform split

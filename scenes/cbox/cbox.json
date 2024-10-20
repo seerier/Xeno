@@ -1,14 +1,14 @@
 {
     "name": "CBox",
-    "imageWidth": 100,
-    "imageHeight": 100,
+    "imageWidth": 1000,
+    "imageHeight": 1000,
     "integrator": {
         "type": "sppm",
         "nIterations": 100,
-        "photonsPerIteration": 1001,
+        "photonsPerIteration": 10000000,
         "radius": 5,
         "spp": 2048,
-        "maxDepth": 2
+        "maxDepth": 10
     },
     "accelerator": {
         "type": "bvh"
@@ -32,7 +32,7 @@
                 0
             ]
         },
-        "fov": 30
+        "fov": 40
     },
     "materials": [
         {
