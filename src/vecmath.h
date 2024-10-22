@@ -1338,10 +1338,6 @@ inline Bounds2iIterator end(const Bounds2i &b) {
 }
 
 
-
-
-
-
 // Stream Output
 
 template <typename T>
@@ -1511,6 +1507,16 @@ inline void coordinateSystem(const Vector3<T> &v1, Vector3<T> *v2,
     *v3 = cross(v1, *v2);
 }
 
+template <typename T>
+inline void coordinateSystem(const Normal3<T> &v1, Vector3<T> *v2,
+                             Vector3<T> *v3) {
+    if (std::abs(v1.x) > std::abs(v1.y))
+        *v2 = Vector3<T>(-v1.z, 0, v1.x) / std::sqrt(v1.x * v1.x + v1.z * v1.z);
+    else
+        *v2 = Vector3<T>(0, v1.z, -v1.y) / std::sqrt(v1.y * v1.y + v1.z * v1.z);
+    *v3 = cross(v1, *v2);
+}
+
 inline Vector3f sphericalDirection(float sinTheta, float cosTheta, float phi) {
     return Vector3f(sinTheta * std::cos(phi), sinTheta * std::sin(phi),
                     cosTheta);
@@ -1552,5 +1558,76 @@ inline Vector3f cosineSampleHemisphere(const Point2f &sample) {
     return Vector3f(cosf(phi) * sqrtf(sample.y), sinf(phi) * sqrtf(sample.y), sqrtf(1 - sample.y));
 }
 
+
+
+class Frame {
+public:
+    Frame() :x(1, 0, 0), y(0, 1, 0), z(0, 0, 1) {}
+    Frame(const Vector3f &x, const Vector3f &y, const Vector3f &z);
+
+    static Frame fromZ(const Vector3f &z) {
+        Vector3f x, y;
+        coordinateSystem(z, &x, &y);
+        return Frame(x, y, z);
+    }
+
+    static Frame fromZ(const Normal3f &z) {
+        Vector3f x, y;
+        coordinateSystem(z, &x, &y);
+        return Frame(x, y, Vector3f(z));
+    }
+
+    static Frame fromX(const Vector3f &x) {
+        Vector3f y, z;
+        coordinateSystem(x, &y, &z);
+        return Frame(x, y, z);
+    }
+
+    static Frame fromX(const Normal3f &x) {
+        Vector3f y, z;
+        coordinateSystem(x, &y, &z);
+        return Frame(Vector3f(x), y, z);
+    }
+
+    static Frame fromY(const Vector3f &y) {
+        Vector3f z, x;
+        coordinateSystem(y, &z, &x);
+        return Frame(x, y, z);
+    }
+
+    static Frame fromY(const Normal3f &y) {
+        Vector3f z, x;
+        coordinateSystem(y, &z, &x);
+        return Frame(x, Vector3f(y), z);
+    }
+
+    Vector3f toLocal(const Vector3f &v) {
+        return Vector3f(dot(v, x), dot(v, y), dot(v, z));
+    }
+
+    Normal3f toLocal(const Normal3f &v) {
+        return Normal3f(dot(v, x), dot(v, y), dot(v, z));
+    }
+
+    Vector3f fromLocal(const Vector3f &v) {
+        return x * v.x + y * v.y + z * v.z;
+    }
+
+    Normal3f fromLocal(const Normal3f &v) {
+        return Normal3f(x * v.x + y * v.y + z * v.z);
+        //Normal3f(fromLocal(Vector3f(v)));
+    }
+
+    Vector3f x, y, z;
+};
+
+inline Frame::Frame(const Vector3f &x, const Vector3f &y, const Vector3f &z) : x(x), y(y), z(z) {
+    DCHECK_LT(std::abs(x.lengthSquared() - 1), 1e-4);
+    DCHECK_LT(std::abs(y.lengthSquared() - 1), 1e-4);
+    DCHECK_LT(std::abs(z.lengthSquared() - 1), 1e-4);
+    DCHECK_LT(std::abs(dot(x, y)), 1e-4);
+    DCHECK_LT(std::abs(dot(y, z)), 1e-4);
+    DCHECK_LT(std::abs(dot(z, x)), 1e-4);
+}
 
 } // namespace xeno
