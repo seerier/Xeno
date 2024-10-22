@@ -8,7 +8,8 @@ class Interaction {
 public:
     Interaction() {}
     Interaction(const Point3f &p, const Normal3f &n, const Vector3f &wo, const Point2f uv = Point2f(0, 0))
-        :p(p), n(n), wo(normalize(wo)), uv(uv) {}
+        :p(p), n(n), wo(normalize(wo)), uv(uv) {
+    }
 
     Spectrum Le(const Vector3f &w) const;
 
@@ -17,6 +18,10 @@ public:
     }
 
     Ray spawnRayTo(const Interaction &i) const;
+
+    BSDF getBSDF() const {
+        return material->getBSDF(*this);
+    }
 
     // Geometry related members
     Point3f p;

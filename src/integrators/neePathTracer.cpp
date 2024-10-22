@@ -57,7 +57,8 @@ Spectrum NEEPathTracer::Li(Ray &ray, const Scene &scene) const {
         float pdf;
         Vector3f wi;
         VisibilityTester vis;
-        const Material *mat = intr.primitive->getMaterial();
+        BSDF bsdf = intr.getBSDF();
+        //const Material *mat = intr.primitive->getMaterial();
 
         float lightSelectPdf;
         int lightIndex = scene.uniformSampleOneLight(random_float(), &lightSelectPdf);
@@ -68,7 +69,8 @@ Spectrum NEEPathTracer::Li(Ray &ray, const Scene &scene) const {
         Spectrum Ld = scene.lights[lightIndex]->sample_Li(intr, Point2f(random_float(), random_float()), &wi, &pdf, &vis);
 
         if (pdf != 0 && Ld != Spectrum(0, 0, 0)) {
-            Spectrum f = mat->f(normalize(-ray.d), wi, intr.n);
+            //Spectrum f = mat->f(normalize(-ray.d), wi, intr.n);
+            Spectrum f = bsdf.f(-ray.d, wi);
             if (f != Spectrum(0, 0, 0)) {
                 if (vis.unoccluded(scene)) {
                     Li += beta * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
@@ -78,7 +80,8 @@ Spectrum NEEPathTracer::Li(Ray &ray, const Scene &scene) const {
         }
 
         // generate next ray direction
-        Spectrum nextF = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        //Spectrum nextF = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        Spectrum nextF = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf);
         if (pdf == 0 || nextF == Spectrum(0, 0, 0)) return Li;
         beta *= nextF * absDot(intr.n, wi) / pdf;
         beta_maxComponent = maxComponent(beta);

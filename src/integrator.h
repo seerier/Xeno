@@ -12,6 +12,6 @@ public:
     virtual ~Integrator() {}
 };
 
-Spectrum estimateDirect(const Scene &scene, const Interaction &intr, const Light &light);
+Spectrum estimateDirect(const Scene &scene, const Interaction &intr, const BSDF &bsdf, const Light &light);
 
 } //namespace xeno

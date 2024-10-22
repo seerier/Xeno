@@ -1601,19 +1601,19 @@ public:
         return Frame(x, Vector3f(y), z);
     }
 
-    Vector3f toLocal(const Vector3f &v) {
+    Vector3f toLocal(const Vector3f &v) const {
         return Vector3f(dot(v, x), dot(v, y), dot(v, z));
     }
 
-    Normal3f toLocal(const Normal3f &v) {
+    Normal3f toLocal(const Normal3f &v) const {
         return Normal3f(dot(v, x), dot(v, y), dot(v, z));
     }
 
-    Vector3f fromLocal(const Vector3f &v) {
+    Vector3f fromLocal(const Vector3f &v) const {
         return x * v.x + y * v.y + z * v.z;
     }
 
-    Normal3f fromLocal(const Normal3f &v) {
+    Normal3f fromLocal(const Normal3f &v) const {
         return Normal3f(x * v.x + y * v.y + z * v.z);
         //Normal3f(fromLocal(Vector3f(v)));
     }

@@ -1,11 +1,11 @@
 {
-    "name": "CBox",
-    "imageWidth": 50,
-    "imageHeight": 50,
+    "name": "bsdf-CBox",
+    "imageWidth": 100,
+    "imageHeight": 100,
     "integrator": {
         "type": "pm",
-        "nIterations": 1,
-        "photonsPerIteration": 1000000,
+        "nIterations": 10,
+        "photonsPerIteration": 10000,
         "radius": 5,
         "spp": 2048,
         "maxDepth": 2

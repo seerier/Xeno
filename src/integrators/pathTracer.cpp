@@ -38,15 +38,16 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
         float pdf;
         Vector3f wi;
         VisibilityTester vis;
-        const Material *mat = intr.primitive->getMaterial();
+        BSDF bsdf = intr.getBSDF();
 
         // estimate direct light to this intersect point
         float lightSelectPdf;
         int lightIndex = scene.uniformSampleOneLight(random_float(), &lightSelectPdf);
-        Li += beta * estimateDirect(scene, intr, *scene.lights[lightIndex]) / lightSelectPdf;
+        Li += beta * estimateDirect(scene, intr, bsdf, *scene.lights[lightIndex]) / lightSelectPdf;
 
         // generate next ray direction
-        Spectrum nextF = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        //Spectrum nextF = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        Spectrum nextF = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf);
         if (pdf == 0 || nextF == Spectrum(0, 0, 0)) return Li;
         beta *= nextF * absDot(intr.n, wi) / pdf;
         beta_maxComponent = maxComponent(beta);

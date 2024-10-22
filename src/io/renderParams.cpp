@@ -32,15 +32,11 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         else return std::make_shared<SimplePathTracer>();
     }
     else if (type == "NEEPathTracer") {
-        /*
-        int spp = j.at("spp").get<int>();
-        if (cmdOption.spp != 0) spp = cmdOption.spp;
-        return std::make_shared<PathTracer>(spp);
-        */
         int spp = j.value("spp", 0);
         if (cmdOption.spp != 0) spp = cmdOption.spp;
-        if (spp != 0) return std::make_shared<NEEPathTracer>(spp);
-        else return std::make_shared<NEEPathTracer>();
+        int maxDepth = j.value("maxDepth", 10);
+        if (spp != 0) return std::make_shared<NEEPathTracer>(spp, maxDepth);
+        else return std::make_shared<NEEPathTracer>(16, maxDepth);
     }
     else if (type == "MISPathTracer") {
 

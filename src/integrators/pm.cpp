@@ -11,6 +11,7 @@ struct PMPixel {
         VisiblePoint(const Interaction &intr, const Spectrum &beta) :intr(intr), beta(beta) {}
         Interaction intr;
         Spectrum beta;
+        BSDF bsdf;
     } vp;
 };
 
@@ -40,6 +41,7 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                 //pixels[index].vp.intr = std::move(intr);
                 pixels[index].vp.intr = intr;
                 pixels[index].vp.beta = beta;
+                pixels[index].vp.bsdf = intr.getBSDF();
             }
             }, yReso);
 
@@ -74,7 +76,8 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                             if (pixel.vp.beta == Spectrum(0.f)) continue;
                             if (distanceSquared(intr.p, pixel.vp.intr.p) < radius * radius) {
                                 //pixel.LPhoton += beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
-                                Spectrum phi = beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                //Spectrum phi = beta * pixel.vp.beta * pixel.vp.intr.primitive->getMaterial()->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                Spectrum phi = beta * pixel.vp.beta * pixel.vp.bsdf.f(pixel.vp.intr.wo, -photonRay.d);
                                 for (int k = 0; k < 3; ++k)
                                     pixel.LPhoton[k] += phi[k];
                             }
@@ -87,7 +90,9 @@ void PM::Render(Sensor &sensor, const Scene &scene) const{
                     if (photonbounces >= maxDepth - 1 || random_float() > .8f) break;
                     Vector3f wi;
                     float pdf;
-                    Spectrum f = intr.primitive->getMaterial()->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
+                    //Spectrum f = intr.primitive->getMaterial()->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
+                    BSDF bsdf = intr.getBSDF();
+                    Spectrum f = bsdf.sample_f(-photonRay.d, random2D(), &wi, &pdf);
                     if (f == Spectrum(0) || pdf == 0) break;
                     beta *= 1.25f * f * absDot(intr.n, wi) / pdf;
                     //beta *= f * absDot(intr.n, wi) / pdf;

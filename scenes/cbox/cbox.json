@@ -1,13 +1,13 @@
 {
-    "name": "RayNorm-CBox",
+    "name": "bsdf-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "PathTracer",
-        "nIterations": 100,
-        "photonsPerIteration": 10000000,
+        "type": "sppm",
+        "nIterations": 10,
+        "photonsPerIteration": 1000000,
         "radius": 5,
-        "spp": 100,
+        "spp": 128,
         "maxDepth": 10
     },
     "accelerator": {

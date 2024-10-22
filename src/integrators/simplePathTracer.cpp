@@ -27,8 +27,8 @@ Spectrum SimplePathTracer::Li(Ray &ray, const Scene &scene) const {
 
         float pdf;
         Vector3f wi;
-        const Material *mat = intr.primitive->getMaterial();
-        Spectrum f = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        BSDF bsdf = intr.getBSDF();
+        Spectrum f = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf);
 
         if (pdf == 0 || f == Spectrum(0, 0, 0)) return Li;
         ray = intr.spawnRay(wi);

@@ -12,6 +12,7 @@ struct SPPMPixel {
         VisiblePoint(const Interaction &intr, const Spectrum &beta) :intr(intr), beta(beta) {}
         Interaction intr;
         Spectrum beta;
+        BSDF bsdf;
     } vp;
     float N = 0;
     std::atomic<int> M = 0;
@@ -76,11 +77,14 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                 if (intr.primitive->isEmitter()) pixels[index].Ld += intr.primitive->getAreaLight()->L(intr, -ray.d);
                 float lightSelectPdf;
                 int lightIndex = scene.uniformSampleOneLight(random_float(), &lightSelectPdf);
-                pixels[index].Ld += beta * estimateDirect(scene, intr, *scene.lights[lightIndex]) / lightSelectPdf;
+
+                BSDF bsdf = intr.getBSDF();
+                pixels[index].Ld += beta * estimateDirect(scene, intr, bsdf, *scene.lights[lightIndex]) / lightSelectPdf;
 
                 //pixels[index].vp.intr = std::move(intr);
                 pixels[index].vp.intr = intr;
                 pixels[index].vp.beta = beta;
+                pixels[index].vp.bsdf = bsdf;
             }
             }, yReso);
 
@@ -155,6 +159,7 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
             Interaction intr;
             for (int photonbounces = 0; photonbounces < maxDepth; ++photonbounces) {
                 if (scene.intersect(photonRay, ray_t, intr)) {
+                    BSDF bsdf = intr.getBSDF();
                     if (photonbounces > 0) {
                         // search visible points and add contribution
                         Point3i pi;
@@ -165,7 +170,8 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                                 SPPMPixel &pixel = *node->pixel;
                                 if (pixel.vp.beta == Spectrum(0)) continue;
                                 if (distanceSquared(pixel.vp.intr.p, intr.p) < pixel.radius * pixel.radius) {
-                                    Spectrum LPhoton = beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                    //Spectrum LPhoton = beta * pixel.vp.intr.material->f(pixel.vp.intr.wo, -photonRay.d, pixel.vp.intr.n);
+                                    Spectrum LPhoton = beta * pixel.vp.bsdf.f(pixel.vp.intr.wo, -photonRay.d);
                                     for (int i = 0; i < 3; ++i) {
                                         pixel.LPhoton[i].add(LPhoton[i]);
                                     }
@@ -180,7 +186,10 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                     //if (photonbounces >= maxDepth - 1) break;
                     Vector3f wi;
                     float pdf;
-                    Spectrum f = intr.material->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
+
+                    //Spectrum f = intr.material->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
+                    Spectrum f = bsdf.sample_f(-photonRay.d, random2D(), &wi, &pdf);
+
                     if (f == Spectrum(0) || pdf == 0) break;
                     Spectrum newBeta = beta * f * absDot(intr.n, wi) / pdf;
                     float continuePdf = std::min(1.f, newBeta.sum() / beta.sum());

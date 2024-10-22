@@ -4,7 +4,6 @@
 namespace xeno {
 
 Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
-    //return Vector3f(0.2f, 0.3f, 0.5f);
     
     float ray_t;
     Interaction intr;
@@ -48,7 +47,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         float pdf;
         Vector3f wi;
         VisibilityTester vis;
-        const Material *mat = intr.primitive->getMaterial();
+        BSDF bsdf = intr.getBSDF();
 
         float lightSelectPdf;
         int lightIndex = scene.uniformSampleOneLight(random_float(), &lightSelectPdf);
@@ -56,20 +55,17 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         Spectrum Ld = scene.lights[lightIndex]->sample_Li(intr, Point2f(random_float(), random_float()), &wi, &pdf, &vis);
 
         if (pdf != 0 && Ld != Spectrum(0, 0, 0)) {
-            Spectrum f = mat->f(normalize(-ray.d), wi, intr.n);
+            Spectrum f = bsdf.f(-ray.d, wi);
             if (f != Spectrum(0, 0, 0)) {
                 if (vis.unoccluded(scene)) {
-                    //Li += beta * Ld * f * absDot(intr.n, wi) / pdf;
-                    //float weight = balanceHeuristic(pdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
-                    float weight = balanceHeuristic(pdf, mat->pdf((normalize(-ray.d)), wi, intr.n));
-                    //Li += weight * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
+                    float weight = balanceHeuristic(pdf, bsdf.pdf(-ray.d, wi));
                     Li += weight * beta * Ld * f * absDot(intr.n, wi) / (lightSelectPdf * pdf);
                 }
             }
         }
 
         // generate next ray direction
-        Spectrum nextF = mat->sample_f(normalize(-ray.d), &wi, intr.n, Point2f(random_float(), random_float()), &pdf);
+        Spectrum nextF = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf);
         if (pdf == 0 || nextF == Spectrum(0, 0, 0)) return Li;
         beta *= nextF * absDot(intr.n, wi) / pdf;
         beta_maxComponent = maxComponent(beta);
@@ -78,8 +74,6 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         ray = intr.spawnRay(wi);
         preIntr = intr;
         matPdf = pdf;
-
-
 
         ++bounces;
     }
@@ -108,14 +102,9 @@ void MISPathTracer::Render(Sensor &sensor, const Scene &scene) const {
             }
             rgbVal /= spp;
             sensor.film->getRadiance(i, j, rgbVal);
-            //int finished = ++lines;
-            //int percentage = 100 * finished * inv_yReso;
-            //std::cout << "\rRendering Progress: " << percentage << "%" << std::flush;
         }
         }, yReso);
-    
-
-    
+       
     sensor.film->writePng();
 
 }
