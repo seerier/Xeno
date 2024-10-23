@@ -18,9 +18,37 @@
 #include"shapes/triangleMesh.h"
 #include"shapes/triangle.h"
 #include"sensors/pinhole.h"
+#include"textures/imageTexture.h"
 
 
 namespace xeno {
+
+inline std::vector<float> threeValueCheck(const json &j, const std::string &name, const std::string attribute) {
+    auto threeValue = j.at(attribute);
+    if (threeValue.is_array()) {
+        if (threeValue.size() == 3) {
+            return threeValue.get<std::vector<float>>();
+        }
+        else {
+            LOG(ERROR) << attribute + " in " + name + " doesn't have three values";
+            throw std::runtime_error(attribute + " in " + name + " doesn't have three values");
+        }
+    }
+    else {
+        LOG(ERROR) << attribute + " in " + name + " is not array";
+        throw std::runtime_error(attribute + " in " + name + " is not array");
+    }
+}
+
+inline Point3f threeValue2Point3f(const std::vector<float> &values) {
+    return Point3f(values[0], values[1], values[2]);
+}
+
+inline Vector3f threeValue2Vector3f(const std::vector<float> &values) {
+    return Vector3f(values[0], values[1], values[2]);
+}
+
+
 
 std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const {
     std::string type = j.at("type").get<std::string>();
@@ -81,6 +109,7 @@ void RenderParams::createMaterial(const json &j) {
     if (type == "Diffuse") {
         std::vector<float> albedo;
         auto albedoValue = j.at("albedo");
+        /*
         if (albedoValue.is_array()) {
             if (albedoValue.size() == 3) {
                 albedo = albedoValue.get<std::vector<float>>();
@@ -98,7 +127,27 @@ void RenderParams::createMaterial(const json &j) {
                 throw std::runtime_error("albedo in " + name + " is not number or array");
             }
         }
-        materials.emplace(name, std::make_shared<Diffuse>(albedo[0], albedo[1], albedo[2]));
+        */
+        if (albedoValue.is_array()) {
+            if (albedoValue.size() == 3) {
+                albedo = albedoValue.get<std::vector<float>>();
+                materials.emplace(name, std::make_shared<Diffuse>(Spectrum(albedo[0], albedo[1], albedo[2])));
+            }
+            else {
+                std::cerr << "albedo in " << name << " doesn't have three values" << std::endl;
+                throw std::runtime_error("albedo in " + name + " doesn't have three values");
+            }
+        }
+        else if (albedoValue.is_number()) {
+            albedo = std::vector<float>(3, albedoValue.get<float>());
+            materials.emplace(name, std::make_shared<Diffuse>(Spectrum(albedo[0], albedo[1], albedo[2])));
+        }
+        else if (albedoValue.is_string()) {
+            std::string path = albedoValue.get<std::string>();
+            std::string absPath = resolveFilename(path);
+            materials.emplace(name, std::make_shared<Diffuse>(std::make_shared<ImageTexture>(absPath)));
+        }
+        //materials.emplace(name, std::make_shared<Diffuse>(Spectrum(albedo[0], albedo[1], albedo[2])));
         return;
     }
 
@@ -106,30 +155,6 @@ void RenderParams::createMaterial(const json &j) {
     throw std::runtime_error("Unknown material name: " + name);
 }
 
-inline std::vector<float> threeValueCheck(const json &j, const std::string &name, const std::string attribute) {
-    auto threeValue = j.at(attribute);
-    if (threeValue.is_array()) {
-        if (threeValue.size() == 3) {
-            return threeValue.get<std::vector<float>>();
-        }
-        else {
-            LOG(ERROR) << attribute + " in " + name + " doesn't have three values";
-            throw std::runtime_error(attribute + " in " + name + " doesn't have three values");
-        }
-    }
-    else {
-        LOG(ERROR) << attribute + " in " + name + " is not array";
-        throw std::runtime_error(attribute + " in " + name + " is not array");
-    }
-}
-
-inline Point3f threeValue2Point3f(const std::vector<float> &values) {
-    return Point3f(values[0], values[1], values[2]);
-}
-
-inline Vector3f threeValue2Vector3f(const std::vector<float> &values) {
-    return Vector3f(values[0], values[1], values[2]);
-}
 
 void RenderParams::createShape(const json &j) {
     std::string name = j.at("name").get<std::string>();

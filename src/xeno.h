@@ -89,6 +89,10 @@ class AreaLight;
 class Primitive;
 class GeometricPrimitive;
 
+//texture
+class Texture;
+class ConstantTexture;
+
 
 // Global Constants
 static constexpr float Pi = 3.1415926535f;

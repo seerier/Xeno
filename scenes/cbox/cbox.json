@@ -1,5 +1,5 @@
 {
-    "name": "bsdf-CBox",
+    "name": "texture-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {

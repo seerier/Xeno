@@ -46,4 +46,4 @@ file(GLOB XENO_SOURCE
 add_executable(xeno ${XENO_SOURCE} ${XENO_CORE_SOURCE})
 
 target_link_libraries(xeno glog::glog)
-target_include_directories(xeno PRIVATE ext/glog/src ext/json/single_include/nlohmann src)
+target_include_directories(xeno PRIVATE ext/glog/src ext/json/single_include/nlohmann ext src)

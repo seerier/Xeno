@@ -2,6 +2,7 @@
 
 #include "material.h"
 #include "interaction.h"
+#include "textures/constantTexture.h"
 
 namespace xeno {
 
@@ -29,30 +30,21 @@ private:
 
 class Diffuse : public Material {
 public:
-    Diffuse(float k = 0.5f) :kd(k, k, k) {}
-    Diffuse(float r, float g, float b) :kd(r, g, b) {}
-    Diffuse(const Spectrum &s) :kd(s) {}
 
-    Spectrum f(const Vector3f &wo, const Vector3f &wi, const Normal3f &n) const override {
-        if (dot(wo, n) < 0 || dot(wi, n) < 0) return Spectrum(0, 0, 0);
-        return kd * InvPi;
-    }
-
-    Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Normal3f &n, const Point2f &sample, float *pdf) const override;
-
-    float pdf(const Vector3f &wo, const Vector3f &wi, const Normal3f &n) const override {
-        return InvPi;
-    }
+    Diffuse(float k) :kd(std::make_shared<ConstantTexture>(k)) {}
+    Diffuse(const Spectrum &s) :kd(std::make_shared<ConstantTexture>(s)) {}
+    Diffuse(const std::shared_ptr<Texture> &k) : kd(k) {}
 
     BSDF getBSDF(const Interaction &intr) const {
         //BxDF *bxdf = new DiffuseBxDF(kd);
-        std::shared_ptr<BxDF> bxdf = std::make_shared<DiffuseBxDF>(kd);
+        std::shared_ptr<BxDF> bxdf = std::make_shared<DiffuseBxDF>(kd->lookup(intr.uv));
         Frame frame = Frame::fromZ(intr.n);
         return BSDF(bxdf, frame);
     }
 
 private:
-    Spectrum kd;
+    //Spectrum kd;
+    std::shared_ptr<Texture> kd;
 };
 
 } // namespace xeno

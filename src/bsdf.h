@@ -1,3 +1,5 @@
+#pragma once
+
 #include "bxdf.h"
 
 namespace xeno {
