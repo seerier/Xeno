@@ -24,21 +24,6 @@ Spectrum NEEPathTracer::Li(Ray &ray, const Scene &scene) const {
             return Li;
         }
 
-        /*
-        if (intr.primitive->isEmitter()) {
-            if (bounces == 0) {
-                Li += beta * intr.Le(-ray.d);
-            }
-            
-            else {
-                //float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d);
-                float lightPdf = intr.primitive->getAreaLight()->pdf_Li(preIntr, ray.d) / scene.lights.size();
-                float weight = balanceHeuristic(matPdf, lightPdf);
-                Li += weight * beta * intr.Le(-ray.d);
-            }
-            
-        }
-        */
         if (bounces == 0) {
             if (intr.primitive->isEmitter()) {
                 Li += beta * intr.Le(-ray.d);

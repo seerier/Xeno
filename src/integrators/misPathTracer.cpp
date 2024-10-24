@@ -17,6 +17,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
     Spectrum beta(1, 1, 1);
 
     float beta_maxComponent = 1;
+    bool specularBounce = false;
 
     while (1) {
         if (!scene.intersect(ray, ray_t, intr)) {
@@ -24,7 +25,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         }
 
         if (intr.primitive->isEmitter()) {
-            if (bounces == 0) {
+            if (bounces == 0 || specularBounce) {
                 Li += beta * intr.Le(-ray.d);
             }
             else {
@@ -65,7 +66,8 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         }
 
         // generate next ray direction
-        Spectrum nextF = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf);
+        BxDFType type;
+        Spectrum nextF = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf, &type);
         if (pdf == 0 || nextF == Spectrum(0, 0, 0)) return Li;
         beta *= nextF * absDot(intr.n, wi) / pdf;
         beta_maxComponent = maxComponent(beta);
@@ -74,6 +76,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         ray = intr.spawnRay(wi);
         preIntr = intr;
         matPdf = pdf;
+        specularBounce = isSpecular(type);
 
         ++bounces;
     }

@@ -13,6 +13,7 @@
 #include"integrators/pm.h"
 #include"integrators/sppm.h"
 #include"materials/diffuse.h"
+#include"materials/mirror.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
 #include"shapes/triangleMesh.h"
@@ -53,11 +54,11 @@ inline Vector3f threeValue2Vector3f(const std::vector<float> &values) {
 std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const {
     std::string type = j.at("type").get<std::string>();
     if (type == "SimplePathTracer") {
-        //int spp = j.at("spp").get<int>();
         int spp = j.value("spp", 0);
         if (cmdOption.spp != 0) spp = cmdOption.spp;
-        if (spp != 0) return std::make_shared<SimplePathTracer>(spp);
-        else return std::make_shared<SimplePathTracer>();
+        int maxDepth = j.value("maxDepth", 10);
+        if (spp != 0) return std::make_shared<SimplePathTracer>(spp, maxDepth);
+        else return std::make_shared<SimplePathTracer>(16, maxDepth);
     }
     else if (type == "NEEPathTracer") {
         int spp = j.value("spp", 0);
@@ -109,25 +110,6 @@ void RenderParams::createMaterial(const json &j) {
     if (type == "Diffuse") {
         std::vector<float> albedo;
         auto albedoValue = j.at("albedo");
-        /*
-        if (albedoValue.is_array()) {
-            if (albedoValue.size() == 3) {
-                albedo = albedoValue.get<std::vector<float>>();
-            }
-            else {
-                std::cerr << "albedo in " << name << " doesn't have three values" << std::endl;
-                throw std::runtime_error("albedo in " + name + " doesn't have three values");
-            }
-        }
-        else {
-            if (albedoValue.is_number()) {
-                albedo = std::vector<float>(3, albedoValue.get<float>());
-            }
-            else {
-                throw std::runtime_error("albedo in " + name + " is not number or array");
-            }
-        }
-        */
         if (albedoValue.is_array()) {
             if (albedoValue.size() == 3) {
                 albedo = albedoValue.get<std::vector<float>>();
@@ -148,6 +130,10 @@ void RenderParams::createMaterial(const json &j) {
             materials.emplace(name, std::make_shared<Diffuse>(std::make_shared<ImageTexture>(absPath)));
         }
         //materials.emplace(name, std::make_shared<Diffuse>(Spectrum(albedo[0], albedo[1], albedo[2])));
+        return;
+    }
+    else if (type == "Mirror") {
+        materials.emplace(name, std::make_shared<Mirror>());
         return;
     }
 

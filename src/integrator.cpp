@@ -22,7 +22,9 @@ Spectrum estimateDirect(const Scene &scene, const Interaction &intr, const BSDF 
     }
 
     //Spectrum f = intr.material->sample_f(intr.wo, &wi, intr.n, random2D(), &pdf);
-    Spectrum f = bsdf.sample_f(intr.wo, random2D(), &wi, &pdf);
+    //Spectrum f = bsdf.sample_f(intr.wo, random2D(), &wi, &pdf);
+    BxDFType type;
+    Spectrum f = bsdf.sample_f(intr.wo, random2D(), &wi, &pdf, &type);
     f *= absDot(intr.n, wi);
     if (pdf > 0 && f != Spectrum(.0f)) {
         float ray_t;
@@ -31,8 +33,13 @@ Spectrum estimateDirect(const Scene &scene, const Interaction &intr, const BSDF 
             if (possibleLightInteraction.primitive->getAreaLight() == &light) {
                 Spectrum Le = possibleLightInteraction.Le(-wi);
                 if (Le != Spectrum(.0f)) {
-                    float lightPdf = light.pdf_Li(intr, wi);
-                    L += f * Le * balanceHeuristic(pdf, lightPdf) / pdf;
+                    if (isSpecular(type)) {
+                        L += f * Le / pdf;
+                    }
+                    else {
+                        float lightPdf = light.pdf_Li(intr, wi);
+                        L += f * Le * balanceHeuristic(pdf, lightPdf) / pdf;
+                    }
                 }
             }
         }

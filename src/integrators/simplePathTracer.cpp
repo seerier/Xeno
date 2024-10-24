@@ -23,7 +23,7 @@ Spectrum SimplePathTracer::Li(Ray &ray, const Scene &scene) const {
             Li += beta * intr.Le(-ray.d);
             break;
         }
-        if (bounces >= 50) break;
+        if (bounces >= maxDepth) break;
 
         float pdf;
         Vector3f wi;

@@ -22,9 +22,11 @@ public:
         return bxdf->f(toLocal(wo), toLocal(wi));
     }
 
-    Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf) const {
+    Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf,
+        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL) const {
+        
         Vector3f wiLocal = toLocal(*wi);
-        Spectrum f = bxdf->sample_f(toLocal(wo), sample, &wiLocal, pdf);
+        Spectrum f = bxdf->sample_f(toLocal(wo), sample, &wiLocal, pdf, sampledType, type);
         *wi = fromLocal(wiLocal);
         return f;
     }

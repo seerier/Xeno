@@ -18,7 +18,8 @@ public:
         return kd * InvPi;
     }
 
-    Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf) const override;
+    Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf,
+        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL) const override;
 
     float pdf(const Vector3f &wo, const Vector3f &wi) const override {
         return InvPi;

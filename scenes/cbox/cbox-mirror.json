@@ -1,18 +1,38 @@
 {
-    "name": "luminaireToCbox",
+    "name": "mirrorFixed-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "PathTracer",
-        "spp": 16
+        "type": "MISPathTracer",
+        "nIterations": 10,
+        "photonsPerIteration": 1000000,
+        "radius": 5,
+        "spp": 256,
+        "maxDepth": 10
+    },
+    "accelerator": {
+        "type": "bvh"
     },
     "sensor": {
         "type": "pinhole",
         "transform": {
-            "pos": [278, 278, -800],
-            "lookat": [278, 278, 0],
-            "up": [0, 1, 0]
-        }
+            "pos": [
+                278,
+                278,
+                -800
+            ],
+            "lookat": [
+                278,
+                278,
+                0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 40
     },
     "materials": [
         {
@@ -50,95 +70,124 @@
                 0,
                 0
             ]
+        },
+        {
+            "name": "wood",
+            "type": "Diffuse",
+            "albedo": "textures/wood.png"
+        },
+        {
+            "name": "duskSky",
+            "type": "Diffuse",
+            "albedo": "textures/DSC_8129.png"
+        },
+        {
+            "name": "mirror",
+            "type": "Mirror"
         }
     ],
     "shapes": [
         {
             "name": "smallbox",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_smallbox.obj"
+            "path": "geometry\\cbox_smallbox.obj"
         },
         {
             "name": "largebox",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_largebox.obj"
-        }
-        ,
+            "path": "geometry\\cbox_largebox.obj"
+        },
         {
             "name": "back",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_back.obj"
+            "path": "geometry\\cbox_back.obj"
         },
         {
             "name": "floor",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_floor.obj"
+            "path": "geometry\\cbox_floor.obj"
         },
         {
             "name": "ceiling",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_ceiling.obj"
-        }
-        ,
+            "path": "geometry\\cbox_ceiling.obj"
+        },
         {
             "name": "redwall",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_redwall.obj"
-        }
-        ,
+            "path": "geometry\\cbox_redwall.obj"
+        },
         {
             "name": "greenwall",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_greenwall.obj"
-        }
-        ,
+            "path": "geometry\\cbox_greenwall.obj"
+        },
         {
             "name": "luminaire",
             "type": "ObjTriangleMesh",
-            "path": "E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\geometry\\cbox_luminaire.obj"
-        }
-        ,{
-            "name": "lightTriangle1",
-            "type": "Triangle",
-            "v0": [
+            "path": "geometry\\cbox_luminaire.obj"
+        },
+        {
+            "name": "lightQuad",
+            "type": "Quad",
+            "p": [
                 213,
                 544,
                 227
             ],
-            "v1": [
-                343,
-                544,
-                227
+            "e0": [
+                130,
+                0,
+                0
             ],
-            "v2": [
-                213,
-                544,
-                332
+            "e1": [
+                0,
+                0,
+                105
             ]
-        }
-        ,{
-            "name": "lightTriangle2",
-            "type": "Triangle",
-            "v0": [
-                343,
-                544,
-                227
+        },
+        {
+            "name": "woodBack",
+            "type": "Quad",
+            "p": [
+                0,
+                0,
+                559.20001
             ],
-            "v1": [
-                343,
-                544,
-                332
+            "e0": [
+                0,
+                548.8,
+                0
             ],
-            "v2": [
-                213,
-                544,
-                332
+            "e1": [
+                556,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "skyCeil",
+            "type": "Quad",
+            "p": [
+                556,
+                548.79999,
+                559.20001
+            ],
+            "e0": [
+                -556,
+                0,
+                0
+            ],
+            "e1": [
+                0,
+                0,
+                -559.20001
             ]
         }
     ],
     "lights": [
         {
-            "name": "light1",
+            "name": "light",
             "type": "AreaLight",
             "emission": [
                 15,
@@ -147,7 +196,6 @@
             ],
             "shape": "luminaire"
         }
-        
     ],
     "primitives": [
         {
@@ -159,25 +207,22 @@
             "material": "redMat"
         },
         {
-            "shape": "ceiling",
+            "shape": "skyCeil",
             "material": "whiteMat"
         },
         {
             "shape": "floor",
-            "material": "whiteMat"
+            "material": "mirror"
         },
         {
-            "shape": "back",
-            "material": "whiteMat"
+            "shape": "woodBack",
+            "material": "wood"
         },
         {
             "shape": "luminaire",
             "material": "blackMat",
-            "areaLight": "light1"
+            "areaLight": "light"
         },
-        
-        
-        
         {
             "shape": "largebox",
             "material": "whiteMat"

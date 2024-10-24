@@ -1,13 +1,13 @@
 {
-    "name": "bsdf-CBox",
+    "name": "CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "NEEPathTracer",
+        "type": "MISPathTracer",
         "nIterations": 10,
         "photonsPerIteration": 3000,
         "radius": 5,
-        "spp": 100,
+        "spp": 64,
         "maxDepth": 10
     },
     "accelerator": {
