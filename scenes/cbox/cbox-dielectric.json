@@ -1,13 +1,13 @@
 {
-    "name": "DielectricTest-CBox",
+    "name": "Dielectric1.5-noWood-LargeBox-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
         "type": "sppm",
         "nIterations": 100,
-        "photonsPerIteration": 1000010,
-        "radius": 5,
-        "spp": 128,
+        "photonsPerIteration": 3000020,
+        "radius": 1,
+        "spp": 256,
         "maxDepth": 10
     },
     "accelerator": {
@@ -70,6 +70,25 @@
                 0,
                 0
             ]
+        },
+        {
+            "name": "wood",
+            "type": "Diffuse",
+            "albedo": "textures/wood.png"
+        },
+        {
+            "name": "duskSky",
+            "type": "Diffuse",
+            "albedo": "textures/DSC_8129.png"
+        },
+        {
+            "name": "mirror",
+            "type": "Mirror"
+        },
+        {
+            "name": "dielectric",
+            "type": "Dielectric",
+            "ior": 1.5
         }
     ],
     "shapes": [
@@ -131,6 +150,44 @@
                 0,
                 105
             ]
+        },
+        {
+            "name": "woodBack",
+            "type": "Quad",
+            "p": [
+                0,
+                0,
+                559.20001
+            ],
+            "e0": [
+                0,
+                548.8,
+                0
+            ],
+            "e1": [
+                556,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "skyCeil",
+            "type": "Quad",
+            "p": [
+                556,
+                548.79999,
+                559.20001
+            ],
+            "e0": [
+                -556,
+                0,
+                0
+            ],
+            "e1": [
+                0,
+                0,
+                -559.20001
+            ]
         }
     ],
     "lights": [
@@ -138,9 +195,9 @@
             "name": "light",
             "type": "AreaLight",
             "emission": [
-                17,
                 15,
-                4
+                15,
+                15
             ],
             "shape": "luminaire"
         }
@@ -155,7 +212,7 @@
             "material": "redMat"
         },
         {
-            "shape": "ceiling",
+            "shape": "skyCeil",
             "material": "whiteMat"
         },
         {
@@ -163,7 +220,7 @@
             "material": "whiteMat"
         },
         {
-            "shape": "back",
+            "shape": "woodBack",
             "material": "whiteMat"
         },
         {
@@ -173,7 +230,7 @@
         },
         {
             "shape": "largebox",
-            "material": "whiteMat"
+            "material": "dielectric"
         },
         {
             "shape": "smallbox",

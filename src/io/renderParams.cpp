@@ -14,6 +14,7 @@
 #include"integrators/sppm.h"
 #include"materials/diffuse.h"
 #include"materials/mirror.h"
+#include"materials/dielectric.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
 #include"shapes/triangleMesh.h"
@@ -134,6 +135,11 @@ void RenderParams::createMaterial(const json &j) {
     }
     else if (type == "Mirror") {
         materials.emplace(name, std::make_shared<Mirror>());
+        return;
+    }
+    else if (type == "Dielectric") {
+        float ior = j.value("ior", 1.f);
+        materials.emplace(name, std::make_shared<Dielectric>(ior));
         return;
     }
 

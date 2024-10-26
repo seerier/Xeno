@@ -3,7 +3,7 @@
 namespace xeno {
 
 Spectrum DiffuseBxDF::sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf,
-    BxDFType *sampledType, BxDFType type) const {
+    BxDFType *sampledType, BxDFType type, TransportMode mode) const {
     if (wo.z < 0 || !(type & BxDFType::REFLECTION)) {
         *pdf = 0;
         return Spectrum(0);

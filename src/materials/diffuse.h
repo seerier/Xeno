@@ -12,17 +12,21 @@ public:
     DiffuseBxDF(float r, float g, float b) :kd(r, g, b) {}
     DiffuseBxDF(const Spectrum &s) :kd(s) {}
 
-    Spectrum f(const Vector3f &wo, const Vector3f &wi) const override {
+    Spectrum f(const Vector3f &wo, const Vector3f &wi, TransportMode mode = TransportMode::Camera) const override {
         //if (dot(wo, n) < 0 || dot(wi, n) < 0) return Spectrum(0, 0, 0);
         if (wo.z < 0 || wi.z < 0) return Spectrum(0);
         return kd * InvPi;
     }
 
     Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf,
-        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL) const override;
+        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL, TransportMode mode = TransportMode::Camera) const override;
 
-    float pdf(const Vector3f &wo, const Vector3f &wi) const override {
+    float pdf(const Vector3f &wo, const Vector3f &wi, TransportMode mode = TransportMode::Camera) const override {
         return InvPi;
+    }
+
+    BxDFType flags() const override {
+        return BxDFType::DIFFUSE_REFLECTION;
     }
 
 private:

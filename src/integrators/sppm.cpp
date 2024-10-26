@@ -72,6 +72,39 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
 
                 int index = j * yReso + i;
                 if (iter == 0) pixels[index].radius = radius;
+                
+                for (int cameraRayBounce = 0; cameraRayBounce < maxDepth; cameraRayBounce++) {
+                    if (!scene.intersect(ray, ray_t, intr)) break;
+
+                    if (cameraRayBounce == 0 && intr.primitive->isEmitter()) {
+                        pixels[index].Ld += intr.primitive->getAreaLight()->L(intr, -ray.d);
+                    }
+                    float lightSelectPdf;
+                    float lightIndex = scene.uniformSampleOneLight(random_float(), &lightSelectPdf);
+                    BSDF bsdf = intr.getBSDF();
+                    pixels[index].Ld += beta * estimateDirect(scene, intr, bsdf, *scene.lights[lightIndex]) / lightSelectPdf;
+
+                    //if(isDiffuse(bsdf)||)
+                    BxDFType flags = bsdf.flags();
+                    if (isDiffuse(flags) || (isGlossy(flags) && cameraRayBounce == maxDepth - 1)) {
+                        pixels[index].vp.intr = intr;
+                        pixels[index].vp.beta = beta;
+                        pixels[index].vp.bsdf = bsdf;
+                        break;
+                    }
+
+                    if (cameraRayBounce == maxDepth - 1) break;
+                    Vector3f wi;
+                    float pdf;
+                    Spectrum f = bsdf.sample_f(-ray.d, random2D(), &wi, &pdf);
+                    if (pdf == 0 || f == Spectrum(0)) {
+                        break;
+                    }
+                    beta *= f * absDot(wi, intr.n) / pdf;
+                    ray = intr.spawnRay(wi);
+                }
+
+                /*
                 if (!scene.intersect(ray, ray_t, intr)) continue;
 
                 if (intr.primitive->isEmitter()) pixels[index].Ld += intr.primitive->getAreaLight()->L(intr, -ray.d);
@@ -85,6 +118,7 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                 pixels[index].vp.intr = intr;
                 pixels[index].vp.beta = beta;
                 pixels[index].vp.bsdf = bsdf;
+                */
             }
             }, yReso);
 
@@ -188,7 +222,7 @@ void SPPM::Render(Sensor &sensor, const Scene &scene) const{
                     float pdf;
 
                     //Spectrum f = intr.material->sample_f(-photonRay.d, &wi, intr.n, random2D(), &pdf);
-                    Spectrum f = bsdf.sample_f(-photonRay.d, random2D(), &wi, &pdf);
+                    Spectrum f = bsdf.sample_f(-photonRay.d, random2D(), &wi, &pdf, nullptr, BxDFType::ALL, TransportMode::LightSource);
 
                     if (f == Spectrum(0) || pdf == 0) break;
                     Spectrum newBeta = beta * f * absDot(intr.n, wi) / pdf;

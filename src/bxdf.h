@@ -4,6 +4,11 @@
 
 namespace xeno {
 
+enum TransportMode {
+    Camera,
+    LightSource
+};
+
 enum BxDFType {
     REFLECTION = 1 << 0,
     TRANSMISSION = 1 << 1,
@@ -40,14 +45,43 @@ inline bool isSpecular(BxDFType type) {
     return type & BxDFType::SPECULAR;
 }
 
+inline bool refract(Vector3f wi, float eta, float *etap, Vector3f *wt) {
+    float cosTheta_i = wi.z;
+    Normal3f n(0, 0, 1);
+    // Potentially flip interface orientation for Snell's law
+    if (cosTheta_i < 0) {
+        eta = 1 / eta;
+        cosTheta_i = -cosTheta_i;
+        n = -n;
+    }
+
+    // Compute $\cos\,\theta_\roman{t}$ using Snell's law
+    float sin2Theta_i = std::max<float>(0, 1 - square(cosTheta_i));
+    float sin2Theta_t = sin2Theta_i / square(eta);
+    // Handle total internal reflection case
+    if (sin2Theta_t >= 1)
+        return false;
+
+    float cosTheta_t = std::sqrt(1 - sin2Theta_t);
+
+    *wt = -wi / eta + (cosTheta_i / eta - cosTheta_t) * Vector3f(n);
+    // Provide relative IOR along ray to caller
+    if (etap)
+        *etap = eta;
+
+    return true;
+}
+
 class BxDF {
 public:
-    virtual Spectrum f(const Vector3f &wo, const Vector3f &wi) const = 0;
+    virtual Spectrum f(const Vector3f &wo, const Vector3f &wi, TransportMode mode = TransportMode::Camera) const = 0;
 
     virtual Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf,
-        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL) const = 0;
+        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL, TransportMode mode = TransportMode::Camera) const = 0;
 
-    virtual float pdf(const Vector3f &wo, const Vector3f &wi) const = 0;
+    virtual float pdf(const Vector3f &wo, const Vector3f &wi, TransportMode mode = TransportMode::Camera) const = 0;
+
+    virtual BxDFType flags() const = 0;
 
     virtual ~BxDF() {}
 };

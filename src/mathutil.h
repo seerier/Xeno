@@ -21,4 +21,9 @@ inline float balanceHeuristic(float a, float b) {
     return a / (a + b);
 }
 
+template<typename T>
+inline constexpr T square(T v) {
+    return v * v;
+}
+
 }

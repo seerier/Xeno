@@ -18,21 +18,25 @@ public:
         return frame.fromLocal(v);
     }
 
-    Spectrum f(const Vector3f &wo, const Vector3f &wi) const {
-        return bxdf->f(toLocal(wo), toLocal(wi));
+    Spectrum f(const Vector3f &wo, const Vector3f &wi, TransportMode mode = TransportMode::Camera) const {
+        return bxdf->f(toLocal(wo), toLocal(wi), mode);
     }
 
     Spectrum sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, float *pdf,
-        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL) const {
+        BxDFType *sampledType = nullptr, BxDFType type = BxDFType::ALL, TransportMode mode = TransportMode::Camera) const {
         
-        Vector3f wiLocal = toLocal(*wi);
-        Spectrum f = bxdf->sample_f(toLocal(wo), sample, &wiLocal, pdf, sampledType, type);
+        Vector3f wiLocal;
+        Spectrum f = bxdf->sample_f(toLocal(wo), sample, &wiLocal, pdf, sampledType, type, mode);
         *wi = fromLocal(wiLocal);
         return f;
     }
 
-    float pdf(const Vector3f &wo, const Vector3f &wi) const {
-        return bxdf->pdf(toLocal(wo), toLocal(wi));
+    float pdf(const Vector3f &wo, const Vector3f &wi, TransportMode mode = TransportMode::Camera) const {
+        return bxdf->pdf(toLocal(wo), toLocal(wi), mode);
+    }
+
+    BxDFType flags() const{
+        return bxdf->flags();
     }
 
     std::shared_ptr<BxDF> bxdf;
