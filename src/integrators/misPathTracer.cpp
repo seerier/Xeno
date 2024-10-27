@@ -38,7 +38,7 @@ Spectrum MISPathTracer::Li(Ray &ray, const Scene &scene) const {
         if (bounces >= maxDepth) break;
 
         // rr
-        if (bounces >= 5) {
+        if (bounces >= 50) {
             float continue_p = beta_maxComponent;
             if (continue_p > .9f) continue_p = .9f;
             if (random_float() > continue_p) return Li;

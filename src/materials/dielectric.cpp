@@ -2,7 +2,7 @@
 
 namespace xeno {
 
-Spectrum DielectricBxDF::sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi, 
+Spectrum DielectricBxDF::sample_f(const Vector3f &wo, const Point2f &sample, Vector3f *wi,
                                     float *pdf, BxDFType *sampledType, BxDFType type, 
                                     TransportMode mode) const {
     if (!isSpecular(type)) {
@@ -45,7 +45,6 @@ Spectrum DielectricBxDF::sample_f(const Vector3f &wo, const Point2f &sample, Vec
         return f;
     }
 }
-
 
 
 } // namespace xeno

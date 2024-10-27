@@ -19,7 +19,6 @@ bool Quad::intersect(const Ray &ray, float &ray_t, Interaction &intr) const {
     float v = dot(ray.d, qvec) * inv_det;
     if (v < 0 || v > 1) return false;
 
-    intr.uv.x = u, intr.uv.y = v;
     float t = dot(e1, qvec) * inv_det;
     if (t<ray.tMin || t>ray.tMax) return false;
     ray_t = t;
@@ -32,6 +31,7 @@ bool Quad::intersect(const Ray &ray, float &ray_t, Interaction &intr) const {
     intr.n = Normal3f(n);
     //intr.p = ray(ray_t);
     intr.p = p + u * e0 + v * e1;
+    intr.uv.x = u, intr.uv.y = v;
 
     intr.shape = this;
 

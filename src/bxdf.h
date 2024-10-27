@@ -50,7 +50,7 @@ inline bool refract(Vector3f wi, float eta, float *etap, Vector3f *wt) {
     Normal3f n(0, 0, 1);
     // Potentially flip interface orientation for Snell's law
     if (cosTheta_i < 0) {
-        eta = 1 / eta;
+        eta = 1.f / eta;
         cosTheta_i = -cosTheta_i;
         n = -n;
     }
@@ -62,9 +62,10 @@ inline bool refract(Vector3f wi, float eta, float *etap, Vector3f *wt) {
     if (sin2Theta_t >= 1)
         return false;
 
-    float cosTheta_t = std::sqrt(1 - sin2Theta_t);
+    float cosTheta_t = std::sqrt(std::max(0.f, 1 - sin2Theta_t));
 
     *wt = -wi / eta + (cosTheta_i / eta - cosTheta_t) * Vector3f(n);
+
     // Provide relative IOR along ray to caller
     if (etap)
         *etap = eta;

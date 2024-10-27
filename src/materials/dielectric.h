@@ -19,7 +19,7 @@ inline float rDielectric(float cos_i, float eta) {
 
     float r_parallel = (eta * cos_i - cos_t) / (eta * cos_i + cos_t);
     float r_perpendicular = (cos_i - eta * cos_t) / (cos_i + eta * cos_t);
-    return (square(r_parallel) + square(r_perpendicular));
+    return (square(r_parallel) + square(r_perpendicular)) / 2;
 }
 
 class DielectricBxDF : public BxDF {

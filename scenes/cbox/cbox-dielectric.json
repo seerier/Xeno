@@ -1,5 +1,5 @@
 {
-    "name": "Dielectric1.5-noWood-LargeBox-CBox",
+    "name": "largeBoxDielectric2-LargeBox-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
@@ -7,7 +7,7 @@
         "nIterations": 100,
         "photonsPerIteration": 3000020,
         "radius": 1,
-        "spp": 256,
+        "spp": 100,
         "maxDepth": 10
     },
     "accelerator": {
@@ -88,7 +88,7 @@
         {
             "name": "dielectric",
             "type": "Dielectric",
-            "ior": 1.5
+            "ior": 2
         }
     ],
     "shapes": [
@@ -221,7 +221,7 @@
         },
         {
             "shape": "woodBack",
-            "material": "whiteMat"
+            "material": "wood"
         },
         {
             "shape": "luminaire",

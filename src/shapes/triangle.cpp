@@ -19,7 +19,6 @@ bool Triangle::intersect(const Ray &ray, float &ray_t, Interaction &intr) const 
     float v = dot(ray.d, qvec) * inv_det;
     if (v < 0 || u + v > 1) return false;
 
-    intr.uv.x = u, intr.uv.y = v;
     float t = dot(e2, qvec) * inv_det;
     if (t<ray.tMin || t>ray.tMax) return false;
     ray_t = t;
@@ -32,6 +31,7 @@ bool Triangle::intersect(const Ray &ray, float &ray_t, Interaction &intr) const 
     intr.n = Normal3f(n);
     //intr.p = ray(ray_t);
     intr.p = v0 + u * e1 + v * e2;
+    intr.uv.x = u, intr.uv.y = v;
 
     intr.shape = this;
 
