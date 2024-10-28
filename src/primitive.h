@@ -1,6 +1,7 @@
 #pragma once
 
 #include "light.h"
+#include "transform.h"
 
 namespace xeno {
 
@@ -42,6 +43,42 @@ private:
     std::shared_ptr<Material> material;
     std::shared_ptr<AreaLight> light;
 
+};
+
+// TransformedPrimitive Declarations
+class TransformedPrimitive : public Primitive {
+  public:
+    // TransformedPrimitive Public Methods
+      TransformedPrimitive(std::shared_ptr<Primitive> primitive, const Transform &PrimitiveToWorld)
+          :primitive(primitive), PrimitiveToWorld(PrimitiveToWorld) {
+      }
+      
+
+    bool intersect(const Ray &r, float &ray_t, Interaction &intr) const override {
+        Ray ray = inverse(PrimitiveToWorld)(r);
+        if (!primitive->intersect(ray, ray_t, intr)) {
+            return false;
+        }
+        intr = PrimitiveToWorld(intr);
+        return true;
+    }
+
+    const Material *getMaterial() const override { return primitive->getMaterial(); }
+    const AreaLight *getAreaLight() const override { return primitive->getAreaLight(); }
+
+    Bounds3f aabb() const override {
+        Bounds3f bound = primitive->aabb();
+        Bounds3f newBound;
+        for (int i = 0; i < 8; ++i) {
+            newBound.expandby(PrimitiveToWorld(bound.corner(i)));
+        }
+        return newBound;
+    }
+
+  private:
+    // TransformedPrimitive Private Data
+    std::shared_ptr<Primitive> primitive;
+    const Transform PrimitiveToWorld;
 };
 
 }

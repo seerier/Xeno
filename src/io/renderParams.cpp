@@ -194,6 +194,7 @@ void RenderParams::createShape(const json &j) {
     throw std::runtime_error("Unknown shape name: " + name);
 }
 
+/*
 void RenderParams::createPrimitive(const json &j) {
     std::string material = j.at("material").get<std::string>();
     std::string shape = j.at("shape").get<std::string>();
@@ -214,6 +215,70 @@ void RenderParams::createPrimitive(const json &j) {
     }
     return;
 }
+*/
+
+void RenderParams::createPrimitive(const json &j) {
+    std::string material = j.at("material").get<std::string>();
+    std::string shape = j.at("shape").get<std::string>();
+    if (j.contains("transform")) {
+        const json &trans = j.at("transform");
+        Transform t;
+        if (trans.contains("scale")) {
+            auto scale = threeValueCheck(trans, "scale", "scale");
+            //t = Transform::scale(scale[0], scale[1], scale[2]) * t;
+            //t = t;
+        }
+        if (trans.contains("rotate")) {
+            float theta = trans.value("theta", 0.f);
+            auto axis = threeValueCheck(trans, "axis", "axis");
+            Vector3f axisVec = threeValue2Vector3f(axis);
+            t = Transform::rotate(theta, axisVec) * t;
+        }
+        if (trans.contains("translate")) {
+            auto translate = threeValueCheck(trans, "translate", "translate");
+            Vector3f translateVec = threeValue2Vector3f(translate);
+            t = Transform::translate(translateVec) * t;
+        }
+
+        if (j.contains("areaLight")) {
+            std::string areaLight = j.at("areaLight").get<std::string>();
+            //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material), areaLights.at(areaLight)));
+            int i = 0;
+            for (const auto &shapePtr : shapes.at(shape)) {
+                primitives.push_back(std::make_shared<TransformedPrimitive>(
+                    std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material), areaLightsMap.at(areaLight)[i]), t));
+                    ++i;
+            }
+        }
+        else {
+            //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material)));
+            for (const auto &shapePtr : shapes.at(shape)) {
+                primitives.push_back(std::make_shared<TransformedPrimitive>(
+                    std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material)), t));
+            }
+        }
+    }
+
+    else if (j.contains("areaLight")) {
+        std::string areaLight = j.at("areaLight").get<std::string>();
+        //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material), areaLights.at(areaLight)));
+        int i = 0;
+        for (const auto &shapePtr : shapes.at(shape)) {
+            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material), areaLightsMap.at(areaLight)[i]));
+            ++i;
+        }
+    }
+    else {
+        //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material)));
+        for (const auto &shapePtr : shapes.at(shape)) {
+            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material)));
+        }
+    }
+    return;
+
+}
+
+
 
 void RenderParams::createLight(const json &j) {
     std::string name = j.at("name").get<std::string>();

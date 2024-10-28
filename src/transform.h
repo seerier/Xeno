@@ -3,6 +3,7 @@
 #include"xeno.h"
 #include"vecmath.h"
 #include"ray.h"
+#include"interaction.h"
 
 namespace xeno {
 
@@ -131,6 +132,7 @@ class Transform {
     inline Normal3<T> operator()(const Normal3<T> &) const;
     inline Ray operator()(const Ray &r) const;
     inline RayDifferential operator()(const RayDifferential &r) const;
+    Interaction operator()(const Interaction &r) const;
     Bounds3f operator()(const Bounds3f &b) const;
     Transform operator*(const Transform &t2) const;
     bool swapHandedness() const;

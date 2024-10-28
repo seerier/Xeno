@@ -11,12 +11,12 @@ Spectrum NormalIntegrator::Li(Ray &ray, const Scene &scene) const {
     if (!scene.intersect(ray, ray_t, intr))
         return Spectrum(.0f, .0f, .0f);
 
-    //return (Vector3f(intr.n) + Vector3f(1, 1, 1)) / 2.f;
+    return (Vector3f(intr.n) + Vector3f(1, 1, 1)) / 2.f;
     //return Vector3f(intr.p) / 1000.f;
 
-    BSDF bsdf = intr.getBSDF();
-    Vector3f wo = bsdf.frame.toLocal(-ray.d);
-    return (wo + Vector3f(1)) / 2.f;
+    //BSDF bsdf = intr.getBSDF();
+    //Vector3f wo = bsdf.frame.toLocal(-ray.d);
+    //return (wo + Vector3f(1)) / 2.f;
 }
 
 void NormalIntegrator::Render(Sensor &sensor, const Scene &scene) const {

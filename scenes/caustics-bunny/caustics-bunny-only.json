@@ -1,0 +1,222 @@
+{
+    "name": "onlybunny",
+    "imageWidth": 1000,
+    "imageHeight": 1000,
+    "integrator": {
+        "type": "NormalIntegrator",
+        "nIterations": 100,
+        "photonsPerIteration": 3000020,
+        "radius": 1,
+        "spp": 100,
+        "maxDepth": 10
+    },
+    "accelerator": {
+        "type": "bvh"
+    },
+    "sensor": {
+        "type": "pinhole",
+        "transform": {
+            "pos": [
+                0,
+                0,
+                -0.5
+            ],
+            "lookat": [
+                0,
+                0,
+                0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 40
+    },
+    "materials": [
+        {
+            "name": "whiteMat",
+            "type": "Diffuse",
+            "albedo": [
+                0.73,
+                0.73,
+                0.73
+            ]
+        },
+        {
+            "name": "redMat",
+            "type": "Diffuse",
+            "albedo": [
+                0.65,
+                0.05,
+                0.05
+            ]
+        },
+        {
+            "name": "greenMat",
+            "type": "Diffuse",
+            "albedo": [
+                0.12,
+                0.45,
+                0.15
+            ]
+        },
+        {
+            "name": "blackMat",
+            "type": "Diffuse",
+            "albedo": [
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "wood",
+            "type": "Diffuse",
+            "albedo": "textures/wood.png"
+        },
+        {
+            "name": "duskSky",
+            "type": "Diffuse",
+            "albedo": "textures/DSC_8129.png"
+        },
+        {
+            "name": "mirror",
+            "type": "Mirror"
+        },
+        {
+            "name": "dielectric",
+            "type": "Dielectric",
+            "ior": 2
+        }
+    ],
+    "shapes": [
+        {
+            "name": "smallbox",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_smallbox.obj"
+        },
+        {
+            "name": "largebox",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_largebox.obj"
+        },
+        {
+            "name": "back",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_back.obj"
+        },
+        {
+            "name": "floor",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_floor.obj"
+        },
+        {
+            "name": "ceiling",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_ceiling.obj"
+        },
+        {
+            "name": "redwall",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_redwall.obj"
+        },
+        {
+            "name": "greenwall",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_greenwall.obj"
+        },
+        {
+            "name": "luminaire",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\cbox_luminaire.obj"
+        },
+        {
+            "name": "bunny",
+            "type": "ObjTriangleMesh",
+            "path": "geometry\\stanford-bunny.obj"
+        },
+        {
+            "name": "lightQuad",
+            "type": "Quad",
+            "p": [
+                213,
+                544,
+                227
+            ],
+            "e0": [
+                130,
+                0,
+                0
+            ],
+            "e1": [
+                0,
+                0,
+                105
+            ]
+        },
+        {
+            "name": "woodBack",
+            "type": "Quad",
+            "p": [
+                0,
+                0,
+                559.20001
+            ],
+            "e0": [
+                0,
+                548.8,
+                0
+            ],
+            "e1": [
+                556,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "skyCeil",
+            "type": "Quad",
+            "p": [
+                556,
+                548.79999,
+                559.20001
+            ],
+            "e0": [
+                -556,
+                0,
+                0
+            ],
+            "e1": [
+                0,
+                0,
+                -559.20001
+            ]
+        }
+    ],
+    "lights": [
+        {
+            "name": "light",
+            "type": "AreaLight",
+            "emission": [
+                15,
+                15,
+                15
+            ],
+            "shape": "luminaire"
+        }
+    ],
+    "primitives": [
+
+        {
+            "shape": "luminaire",
+            "material": "blackMat",
+            "areaLight": "light"
+        },
+        {
+            "shape": "bunny",
+            "material": "whiteMat"
+        }
+    ]
+}

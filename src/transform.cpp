@@ -288,6 +288,19 @@ Transform Transform::operator*(const Transform &t2) const {
     return Transform(Matrix4x4::multiply(m, t2.m), Matrix4x4::multiply(t2.mInv, mInv));
 }
 
+Interaction Transform::operator()(const Interaction &r) const {
+    Interaction intr;
+    const Transform &t = *this;
+    intr.p = t(r.p);
+    intr.n = normalize(t(r.n));
+    intr.wo = normalize(t(r.wo));
+    intr.uv = r.uv;
+    intr.shape = r.shape;
+    intr.primitive = r.primitive;
+    intr.material = r.material;
+    return intr;
+}
+
 bool Transform::swapHandedness() const {
     float det = m.m[0][0] * (m.m[1][1] * m.m[2][2] - m.m[1][2] * m.m[2][1]) -
                 m.m[0][1] * (m.m[1][0] * m.m[2][2] - m.m[1][2] * m.m[2][0]) +

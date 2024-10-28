@@ -1065,8 +1065,8 @@ public:
     Point3<T> corner(int i) const {
         DCHECK(i >= 0 && i <= 7);
         return Point3<T>((*this)[i & 1].x,
-                        (*this)[(i & 2) ? 1 : 0].y
-                        (*this)[(i & 4) ? 1 : 0].z);
+            (*this)[(i & 2) ? 1 : 0].y,
+            (*this)[(i & 4) ? 1 : 0].z);
     }
 
     Vector3<T> diagonal() const {
