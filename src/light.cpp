@@ -10,7 +10,7 @@ bool VisibilityTester::unoccluded(const Scene &scene) const {
 }
 
 Spectrum AreaLight::sample_Li(const Interaction &it, const Point2f &uv, Vector3f *wi, float *pdf, VisibilityTester *vis) const {
-    Interaction pLight = shape->sample(uv, pdf);
+    Interaction pLight = shape->sample(it, uv, pdf);
     Vector3f dir = pLight.p - it.p;
     if (dir.lengthSquared() == 0) {
         *pdf = 0;

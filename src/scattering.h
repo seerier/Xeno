@@ -12,7 +12,8 @@ inline float FrComplex(float cosTheta_i, std::complex<float> eta) {
     // Compute complex $\cos\,\theta_\roman{t}$ for Fresnel equations using Snell's law
     float sin2Theta_i = 1 - square(cosTheta_i);
     Complex sin2Theta_t = sin2Theta_i / square(eta);
-    Complex cosTheta_t = std::sqrt(1 - sin2Theta_t);
+    //Complex cosTheta_t = std::sqrt(1 - sin2Theta_t);
+    Complex cosTheta_t = std::sqrt(Complex(1) - sin2Theta_t);
 
     Complex r_parl = (eta * cosTheta_i - cosTheta_t) / (eta * cosTheta_i + cosTheta_t);
     Complex r_perp = (cosTheta_i - eta * cosTheta_t) / (cosTheta_i + eta * cosTheta_t);
@@ -41,6 +42,10 @@ inline float Tan2Theta(Vector3f w) {
     return Sin2Theta(w) / Cos2Theta(w);
 }
 
+inline float SinTheta(Vector3f w) {
+    return std::sqrt(Sin2Theta(w));
+}
+
 inline float CosPhi(Vector3f w) {
     float sinTheta = SinTheta(w);
     return (sinTheta == 0) ? 1 : clamp(w.x / sinTheta, -1, 1);
@@ -48,6 +53,13 @@ inline float CosPhi(Vector3f w) {
 inline float SinPhi(Vector3f w) {
     float sinTheta = SinTheta(w);
     return (sinTheta == 0) ? 0 : clamp(w.y / sinTheta, -1, 1);
+}
+
+
+inline Point2f SampleUniformDiskPolar(Point2f u) {
+    float r = std::sqrt(u[0]);
+    float theta = 2 * Pi * u[1];
+    return {r * std::cos(theta), r * std::sin(theta)};
 }
 
 
@@ -85,7 +97,7 @@ class TrowbridgeReitzDistribution {
 
     float Lambda(Vector3f w) const {
         float tan2Theta = Tan2Theta(w);
-        if (IsInf(tan2Theta))
+        if (std::isinf(tan2Theta))
             return 0;
         float alpha2 = square(CosPhi(w) * alpha_x) + square(SinPhi(w) * alpha_y);
         return (std::sqrt(1 + alpha2 * tan2Theta) - 1) / 2;
@@ -118,9 +130,8 @@ class TrowbridgeReitzDistribution {
         p.y = lerp((1 + wh.z) / 2, h, p.y);
 
         // Reproject to hemisphere and transform normal to ellipsoid configuration
-        float pz = std::sqrt(std::max<float>(0, 1 - lengthSquared(Vector2f(p))));
+        float pz = std::sqrt(std::max(0.f, 1.f - Vector2f(p).lengthSquared()));
         Vector3f nh = p.x * T1 + p.y * T2 + pz * wh;
-        CHECK_RARE(1e-5f, nh.z == 0);
         return normalize(
             Vector3f(alpha_x * nh.x, alpha_y * nh.y, std::max<float>(1e-6f, nh.z)));
     }

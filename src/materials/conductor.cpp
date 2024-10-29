@@ -59,4 +59,20 @@ Spectrum ConductorBxDF::f(const Vector3f &wo, const Vector3f &wi, TransportMode 
     return f;
 }
 
+float ConductorBxDF::pdf(const Vector3f &wo, const Vector3f &wi, TransportMode mode) const {
+    if (mfDistrib.EffectivelySmooth() || dot(wo, wi) < 0) {
+        return 0;
+    }
+    float cos_i = std::abs(wo.z), cos_o = std::abs(wi.z);
+    if (cos_i == 0 || cos_o == 0) {
+        return 0;
+    }
+    Vector3f wm = wi + wo;
+    if (wm.lengthSquared() == 0) {
+        return 0;
+    }
+    wm = faceForward(normalize(wm), Normal3f(0, 0, 1));
+    return mfDistrib.PDF(wo, wm) / (4 * absDot(wo, wm));
+}
+
 } // namespace xeno

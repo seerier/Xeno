@@ -38,6 +38,14 @@ bool Quad::intersect(const Ray &ray, float &ray_t, Interaction &intr) const {
     return true;
 }
 
+Interaction Quad::sample(const Interaction &i, const Point2f &uv, float *pdf) const {
+    *pdf = 1.f / surfaceArea;
+    Interaction intr;
+    intr.p = p + uv.x * e0 + uv.y * e1;
+    intr.n = normalize(Normal3f(cross(e0, e1)));
+    return intr;
+}
+
 Interaction Quad::sample(const Point2f &uv, float *pdf) const {
     *pdf = 1.f / surfaceArea;
     Interaction intr;

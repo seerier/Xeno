@@ -8,7 +8,7 @@ namespace xeno {
 
 class ConductorBxDF : public BxDF {
 public:
-    ConductorBxDF(const TrowbridgeReitzDistribution &distrib, float eta, float k) :
+    ConductorBxDF(const TrowbridgeReitzDistribution &distrib, Spectrum eta, Spectrum k) :
         mfDistrib(distrib), eta(eta), k(k) {
     }
 
@@ -29,8 +29,8 @@ private:
 class Conductor : public Material {
 public:
 
-    Conductor(float eta, float k, float reflectance, float uRoughness, float vRoughness) :
-        eta(eta), k(k), reflectance(reflectance), uRoughness(uRoughness), vRoughness(vRoughness) {
+    Conductor(Spectrum eta, Spectrum k, float uRoughness, float vRoughness) :
+        eta(eta), k(k), uRoughness(uRoughness), vRoughness(vRoughness) {
     }
 
     BSDF getBSDF(const Interaction &intr) const {
@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    float eta, k, reflectance;
+    Spectrum eta, k;
     float uRoughness, vRoughness;
 };
 

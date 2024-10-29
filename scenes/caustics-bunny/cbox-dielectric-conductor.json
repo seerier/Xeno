@@ -3,11 +3,11 @@
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "sppm",
+        "type": "MISPathTracer",
         "nIterations": 10,
         "photonsPerIteration": 3005040,
         "radius": 1,
-        "spp": 100,
+        "spp": 128,
         "maxDepth": 10
     },
     "accelerator": {

@@ -144,7 +144,13 @@ void RenderParams::createMaterial(const json &j) {
         return;
     }
     else if (type == "Conductor") {
-        
+        Spectrum eta = threeValue2Vector3f(threeValueCheck(j, "eta", "eta"));
+        Spectrum k = threeValue2Vector3f(threeValueCheck(j, "k", "k"));
+        float uRoughness = j.value("uRoughness", 0.f);
+        float vRoughness = j.value("vRoughness", 0.f);
+
+        materials.emplace(name, std::make_shared<Conductor>(eta, k, uRoughness, vRoughness));
+        return;
     }
 
     std::cerr << "Failed to create material for name: " << name << std::endl;
@@ -197,29 +203,6 @@ void RenderParams::createShape(const json &j) {
     std::cerr << "Failed to create shape for name: " << name << std::endl;
     throw std::runtime_error("Unknown shape name: " + name);
 }
-
-/*
-void RenderParams::createPrimitive(const json &j) {
-    std::string material = j.at("material").get<std::string>();
-    std::string shape = j.at("shape").get<std::string>();
-    if (j.contains("areaLight")) {
-        std::string areaLight = j.at("areaLight").get<std::string>();
-        //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material), areaLights.at(areaLight)));
-        int i = 0;
-        for (const auto &shapePtr : shapes.at(shape)) {
-            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material), areaLightsMap.at(areaLight)[i]));
-            ++i;
-        }
-    }
-    else {
-        //primitives.push_back(std::make_shared<GeometricPrimitive>(shapes.at(shape), materials.at(material)));
-        for (const auto &shapePtr : shapes.at(shape)) {
-            primitives.push_back(std::make_shared<GeometricPrimitive>(shapePtr, materials.at(material)));
-        }
-    }
-    return;
-}
-*/
 
 void RenderParams::createPrimitive(const json &j) {
     std::string material = j.at("material").get<std::string>();
@@ -332,11 +315,34 @@ std::shared_ptr<Sensor> RenderParams::createSensor(const json &scenejson) const 
     std::string sceneName = scenejson.at("name").get<std::string>();
     std::string type = j.at("type").get<std::string>();
     const json transform = j.at("transform");
-    std::vector<float> pos = threeValueCheck(transform, type, "pos");
-    std::vector<float> lookat = threeValueCheck(transform, type, "lookat");
-    std::vector<float> up = threeValueCheck(transform, type, "up");
-
-    Transform trans = Transform::cameraToWorld(threeValue2Point3f(pos), threeValue2Point3f(lookat), threeValue2Vector3f(up));
+    Transform trans;
+    if (transform.contains("pos")) {
+        std::vector<float> pos = threeValueCheck(transform, type, "pos");
+        std::vector<float> lookat = threeValueCheck(transform, type, "lookat");
+        std::vector<float> up = threeValueCheck(transform, type, "up");
+        trans = Transform::cameraToWorld(threeValue2Point3f(pos), threeValue2Point3f(lookat), threeValue2Vector3f(up));
+    }
+    else if (transform.contains("matrix")) {
+        auto m16Value = transform.at("matrix");
+        std::vector<float> m;
+        if (m16Value.is_array()) {
+            if (m16Value.size() == 16) {
+                m = m16Value.get<std::vector<float>>();
+            }
+            else {
+                LOG(ERROR) << "matrix in " + type + " doesn't have three values";
+                throw std::runtime_error("matrix in " + type + " doesn't have three values");
+            }
+        }
+        else {
+            LOG(ERROR) << "matrix in " + type + " is not array";
+            throw std::runtime_error("matrix in " + type + " is not array");
+        }
+        //trans = Transform(Matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]));
+        //trans = Transform(Matrix4x4(m[0], m[4], m[8], m[12], m[1], m[5], m[9], m[13], m[2], m[6], m[10], m[14], m[3], m[7], m[11], m[15]));
+        //trans = Transform(inverse(Matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15])));
+        trans = Transform(inverse(transpose(Matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]))));
+    }
 
     int xReso = scenejson.at("imageWidth").get<int>();
     if (cmdOption.width != 0) xReso = cmdOption.width;

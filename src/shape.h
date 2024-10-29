@@ -20,6 +20,8 @@ public:
 
     virtual bool intersect(const Ray &r, float &ray_t, Interaction &intr) const = 0;
 
+    virtual Interaction sample(const Interaction &i, const Point2f &uv, float *pdf) const = 0;
+
     virtual Interaction sample(const Point2f &uv, float *pdf) const = 0;
 
     virtual ~Shape() {}

@@ -34,6 +34,15 @@ bool Sphere::intersect(const Ray &r, float &ray_t, Interaction &intr) const {
         return true;
 }
 
+Interaction Sphere::sample(const Interaction &i, const Point2f &uv, float *pdf) const {
+    *pdf = 1.f / surfaceArea;
+    Interaction intr;
+    Vector3f vec = uniformSampleSphere(uv);
+    intr.p = p + radius * vec;
+    intr.n = Normal3f(vec);
+    return intr;
+}
+
 Interaction Sphere::sample(const Point2f &uv, float *pdf) const {
     *pdf = 1.f / surfaceArea;
     Interaction intr;

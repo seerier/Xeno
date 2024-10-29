@@ -13,6 +13,8 @@ public:
 
     bool intersect(const Ray &r, float &ray_t, Interaction &intr) const override;
 
+    Interaction sample(const Interaction &i, const Point2f &uv, float *pdf) const override;
+
     Interaction sample(const Point2f &uv, float *pdf) const override;
 
 private:

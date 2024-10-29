@@ -1,0 +1,176 @@
+{
+    "name": "AllDiffuse-veach-mis",
+    "imageWidth": 1280,
+    "imageHeight": 720,
+    "integrator": {
+        "type": "MISPathTracer",
+        "nIterations": 10,
+        "photonsPerIteration": 3005040,
+        "radius": 1,
+        "spp": 64,
+        "maxDepth": 10
+    },
+    "accelerator": {
+        "type": "bvh"
+    },
+    "sensor": {
+        "type": "pinhole",
+        "transform": {
+            "matrix": [4.37113e-8 ,-0 ,-1 ,-0 ,-0 ,1 ,-0 ,-0 ,-1 ,-0 ,-4.37113e-8 ,-0 ,-0 ,-3.5 ,28.2792 ,1]
+        },
+        "fov": 20.114292
+    },
+    "materials": [
+        {
+            "name": "SuperRough",
+            "type": "Conductor",
+            "eta": [0.200438 ,0.924033 ,1.102212],
+            "k": [3.912949 ,2.452848 ,2.142188],
+            "uRoughness": 0.25,
+            "vRoughness": 0.25
+        },
+        {
+            "name": "Rough",
+            "type": "Conductor",
+            "eta": [0.200438 ,0.924033 ,1.102212],
+            "k": [3.912949 ,2.452848 ,2.142188],
+            "uRoughness": 0.1,
+            "vRoughness": 0.1
+        },
+        {
+            "name": "Glossy",
+            "type": "Conductor",
+            "eta": [0.200438 ,0.924033 ,1.102212],
+            "k": [3.912949 ,2.452848 ,2.142188],
+            "uRoughness": 0.05,
+            "vRoughness": 0.05
+        },
+        {
+            "name": "Smooth",
+            "type": "Conductor",
+            "eta": [0.200438 ,0.924033 ,1.102212],
+            "k": [3.912949 ,2.452848 ,2.142188],
+            "uRoughness": 0.01,
+            "vRoughness": 0.01
+        },
+        {
+            "name": "blackMat",
+            "type": "Diffuse",
+            "albedo": [0,0,0]
+        },
+        {
+            "name": "diffuse",
+            "type": "Diffuse",
+            "albedo": [0.5,0.5,0.5]
+        }
+    ],
+    "shapes": [
+        {
+            "name": "SmoothMesh",
+            "type": "ObjTriangleMesh",
+            "path": "geometry/SmoothMesh.obj"
+        },
+        {
+            "name": "GlossyMesh",
+            "type": "ObjTriangleMesh",
+            "path": "geometry/GlossyMesh.obj"
+        },
+        {
+            "name": "RoughMesh",
+            "type": "ObjTriangleMesh",
+            "path": "geometry/RoughMesh.obj"
+        },
+        {
+            "name": "SuperRoughMesh",
+            "type": "ObjTriangleMesh",
+            "path": "geometry/SuperRoughMesh.obj"
+        },
+        {
+            "name": "Wall",
+            "type": "ObjTriangleMesh",
+            "path": "geometry/Wall.obj"
+        },
+        {
+            "name": "luminaire1",
+            "type": "Sphere",
+            "origin": [0 ,6.5 ,-2.8],
+            "radius": 1
+        },
+        {
+            "name": "luminaire2",
+            "type": "Sphere",
+            "origin": [0 ,6.5 ,0],
+            "radius": 0.5
+        },
+        {
+            "name": "luminaire3",
+            "type": "Sphere",
+            "origin": [0 ,6.5 ,2.7],
+            "radius": 0.05
+        }
+    ],
+    "lights": [
+        {
+            "name": "light1",
+            "type": "AreaLight",
+            "emission": [
+                7.599088 ,7.599088 ,7.599088
+            ],
+            "shape": "luminaire1"
+        },
+        {
+            "name": "light2",
+            "type": "AreaLight",
+            "emission": [
+                30.396353 ,30.396353 ,30.396353
+            ],
+            "shape": "luminaire2"
+        },
+        {
+            "name": "light3",
+            "type": "AreaLight",
+            "emission": [
+                3039.6353 ,3039.6353 ,3039.6353
+            ],
+            "shape": "luminaire3"
+        }
+    ],
+    "primitives": [
+        {
+            "shape": "SmoothMesh",
+            "material": "diffuse"
+        },
+        {
+            "shape": "GlossyMesh",
+            "material": "diffuse"
+        },
+        {
+            "shape": "RoughMesh",
+            "material": "diffuse"
+        },
+        {
+            "shape": "SuperRoughMesh",
+            "material": "diffuse"
+        },
+        {
+            "shape": "Wall",
+            "material": "diffuse"
+        },
+        {
+            "shape": "luminaire1",
+            "material": "blackMat",
+            "areaLight": "light1"
+        },
+        {
+            "shape": "luminaire2",
+            "material": "blackMat",
+            "areaLight": "light2"
+        },
+        {
+            "shape": "luminaire3",
+            "material": "blackMat",
+            "areaLight": "light3"
+        }
+
+    ]
+}
