@@ -22,7 +22,7 @@ public:
     BxDFType flags() const override;
 
 private:
-    float eta, k;
+    Spectrum eta, k;
     TrowbridgeReitzDistribution mfDistrib;
 };
 

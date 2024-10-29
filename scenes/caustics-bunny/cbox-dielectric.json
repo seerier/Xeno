@@ -1,10 +1,10 @@
 {
-    "name": "smallBoxDielectric5-smallBox-CBox",
+    "name": "smallBoxDielectric1-smallBox-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
         "type": "sppm",
-        "nIterations": 100,
+        "nIterations": 10,
         "photonsPerIteration": 3005040,
         "radius": 1,
         "spp": 100,
@@ -88,7 +88,7 @@
         {
             "name": "dielectric",
             "type": "Dielectric",
-            "ior": 5
+            "ior": 1
         }
     ],
     "shapes": [
@@ -236,6 +236,5 @@
             "shape": "smallbox",
             "material": "dielectric"
         }
-
     ]
 }

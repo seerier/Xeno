@@ -15,6 +15,7 @@
 #include"materials/diffuse.h"
 #include"materials/mirror.h"
 #include"materials/dielectric.h"
+#include"materials/conductor.h"
 #include"shapes/quad.h"
 #include"shapes/sphere.h"
 #include"shapes/triangleMesh.h"
@@ -141,6 +142,9 @@ void RenderParams::createMaterial(const json &j) {
         float ior = j.value("ior", 1.f);
         materials.emplace(name, std::make_shared<Dielectric>(ior));
         return;
+    }
+    else if (type == "Conductor") {
+        
     }
 
     std::cerr << "Failed to create material for name: " << name << std::endl;

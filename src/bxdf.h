@@ -45,6 +45,10 @@ inline bool isSpecular(BxDFType type) {
     return type & BxDFType::SPECULAR;
 }
 
+inline Vector3f reflect(Vector3f wo, Vector3f n) {
+    return -wo + 2 * dot(wo, n) * n;
+}
+
 inline bool refract(Vector3f wi, float eta, float *etap, Vector3f *wt) {
     float cosTheta_i = wi.z;
     Normal3f n(0, 0, 1);
