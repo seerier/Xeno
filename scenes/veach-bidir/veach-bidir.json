@@ -1,13 +1,13 @@
 {
-    "name": "k-eta-veach-mis",
-    "imageWidth": 1280,
-    "imageHeight": 720,
+    "name": "veach-bidir",
+    "imageWidth": 1024,
+    "imageHeight": 1024,
     "integrator": {
-        "type": "SimplePathTracer",
+        "type": "PathTracer",
         "nIterations": 10,
         "photonsPerIteration": 3005040,
         "radius": 1,
-        "spp": 33,
+        "spp": 32,
         "maxDepth": 10
     },
     "accelerator": {
@@ -17,100 +17,27 @@
         "type": "pinhole",
         "transform": {
             "matrix": [
-                4.37113e-8,
-                -0,
-                -1,
-                -0,
-                -0,
-                1,
+                0.00502469,
+                -0.00467005,
+                -0.999977,
                 -0,
                 -0,
-                -1,
+                0.999989,
+                -0.00467011,
                 -0,
-                -4.37113e-8,
+                -0.999987,
+                -0.0000233837,
+                -0.00500703,
                 -0,
-                -0,
-                -3.5,
-                28.2792,
+                -0.0699916,
+                -3.9759,
+                16.2341,
                 1
             ]
         },
-        "fov": 20.114292
+        "fov": 35
     },
     "materials": [
-        {
-            "name": "SuperRough",
-            "type": "Conductor",
-            "eta": [
-                0.200438,
-                0.924033,
-                1.102212
-            ],
-            "k": [
-                3.912949,
-                2.452848,
-                2.142188
-            ],
-            "uRoughness": 0.25,
-            "vRoughness": 0.25
-        },
-        {
-            "name": "Rough",
-            "type": "Conductor",
-            "eta": [
-                0.200438,
-                0.924033,
-                1.102212
-            ],
-            "k": [
-                3.912949,
-                2.452848,
-                2.142188
-            ],
-            "uRoughness": 0.1,
-            "vRoughness": 0.1
-        },
-        {
-            "name": "Glossy",
-            "type": "Conductor",
-            "eta": [
-                0.200438,
-                0.924033,
-                1.102212
-            ],
-            "k": [
-                3.912949,
-                2.452848,
-                2.142188
-            ],
-            "uRoughness": 0.05,
-            "vRoughness": 0.05
-        },
-        {
-            "name": "Smooth",
-            "type": "Conductor",
-            "eta": [
-                0.200438,
-                0.924033,
-                1.102212
-            ],
-            "k": [
-                3.912949,
-                2.452848,
-                2.142188
-            ],
-            "uRoughness": 0.01,
-            "vRoughness": 0.01
-        },
-        {
-            "name": "blackMat",
-            "type": "Diffuse",
-            "albedo": [
-                0,
-                0,
-                0
-            ]
-        },
         {
             "name": "diffuse",
             "type": "Diffuse",
@@ -118,6 +45,36 @@
                 0.5,
                 0.5,
                 0.5
+            ]
+        },
+        {
+            "name": "glass",
+            "type": "Dielectric",
+            "eta": 1.5
+        },
+        {
+            "name": "lamp",
+            "type": "Conductor",
+            "eta": [
+                2.865601,
+                2.119182,
+                1.940077
+            ],
+            "k": [
+                3.032326,
+                2.056108,
+                1.616293
+            ],
+            "uRoughness": 0.25,
+            "vRoughness": 0.25
+        },
+        {
+            "name": "wood",
+            "type": "Diffuse",
+            "albedo": [
+                0.32963,
+                0.257976,
+                0.150292
             ]
         }
     ],

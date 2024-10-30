@@ -149,6 +149,7 @@ void RenderParams::createMaterial(const json &j) {
         float uRoughness = j.value("uRoughness", 0.f);
         float vRoughness = j.value("vRoughness", 0.f);
 
+        //materials.emplace(name, std::make_shared<Conductor>(eta, k, uRoughness, vRoughness));
         materials.emplace(name, std::make_shared<Conductor>(eta, k, uRoughness, vRoughness));
         return;
     }
