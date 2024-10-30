@@ -3,11 +3,11 @@
     "imageWidth": 1280,
     "imageHeight": 720,
     "integrator": {
-        "type": "SimplePathTracer",
+        "type": "NEEPathTracer",
         "nIterations": 10,
         "photonsPerIteration": 3005040,
         "radius": 1,
-        "spp": 33,
+        "spp": 1,
         "maxDepth": 10
     },
     "accelerator": {

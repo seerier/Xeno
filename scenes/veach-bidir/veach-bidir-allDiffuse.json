@@ -1,13 +1,13 @@
 {
-    "name": "alwaysOutward-veach-bidir",
+    "name": "alwaysOutward-AllDiffuse-veach-bidir",
     "imageWidth": 1024,
     "imageHeight": 1024,
     "integrator": {
-        "type": "sppm",
+        "type": "MISPathTracer",
         "nIterations": 1,
         "photonsPerIteration": 3005040,
         "radius": 1,
-        "spp": 32,
+        "spp": 1,
         "maxDepth": 10
     },
     "accelerator": {
@@ -180,11 +180,11 @@
     "primitives": [
         {
             "shape": "Mesh000",
-            "material": "wood"
+            "material": "diffuse"
         },
         {
             "shape": "Mesh001",
-            "material": "lamp"
+            "material": "diffuse"
         },
         {
             "shape": "Mesh002",
@@ -200,7 +200,7 @@
         },
         {
             "shape": "Mesh005",
-            "material": "lamp"
+            "material": "diffuse"
         },
         {
             "shape": "Mesh006",
@@ -208,7 +208,7 @@
         },
         {
             "shape": "Mesh007",
-            "material": "lamp"
+            "material": "diffuse"
         },
         {
             "shape": "Mesh008",

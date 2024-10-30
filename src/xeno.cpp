@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\2triangleLight.json");
     auto buildStart = std::chrono::high_resolution_clock::now();
-    std::string inFilename("D:\\Coding\\Github-Repo\\Xeno\\scenes\\veach-mis\\veach-mis.json");
+    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\veach-mis\\veach-mis.json");
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\teapot\\teapot.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
     cmdOption.nthreads = 1;
