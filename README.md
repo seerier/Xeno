@@ -1,21 +1,21 @@
-#Xeno Renderer
+# Xeno Renderer
 
+## About
+-----------------
 Hi! This is my own physically based renderer. It's name comes from my favorite video game, Xenoblade:)
 
-##Building the code
+## Building the code
 -----------------
-
-###Cloning:
+### Cloning:
 ```bash
 git clone https://github.com/seerier/Xeno.git
 ```
 
-###Building:
+### Building:
 Xeno uses [cmake](http://www.cmake.org/) for its build system
 
-##Usage
+## Usage
 -----------------
-
 To render a scene, use the following command:
 ```bash
 xeno -f filepath
@@ -27,3 +27,5 @@ You can alse use:
 xeno -help
 ```
 for more information.
+
+## Selected Images
