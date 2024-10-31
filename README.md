@@ -1,6 +1,4 @@
 # Xeno Renderer
-
-## About
 Hi! This is my own physically based renderer. It's name comes from my favorite video game, Xenoblade:)
 
 ## Building the code
