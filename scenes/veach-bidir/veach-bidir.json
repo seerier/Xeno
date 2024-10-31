@@ -1,13 +1,13 @@
 {
-    "name": "alwaysOutwardTruly-veach-bidir",
+    "name": "veach-bidir",
     "imageWidth": 1024,
     "imageHeight": 1024,
     "integrator": {
-        "type": "NormalIntegrator",
+        "type": "MISPathTracer",
         "nIterations": 1,
         "photonsPerIteration": 3005040,
         "radius": 1,
-        "spp": 32,
+        "spp": 2048,
         "maxDepth": 10
     },
     "accelerator": {
@@ -25,10 +25,10 @@
                 0.999989,
                 -0.00467011,
                 -0,
-                -0.999987,
-                -0.0000233837,
-                -0.00500703,
-                -0,
+                0.999987,
+                0.0000233837,
+                0.00500703,
+                0,
                 -0.0699916,
                 -3.9759,
                 16.2341,
@@ -50,7 +50,7 @@
         {
             "name": "glass",
             "type": "Dielectric",
-            "eta": 1.5
+            "ior": 1.5
         },
         {
             "name": "lamp",
