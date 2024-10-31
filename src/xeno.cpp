@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\veach-mis\\veach-mis.json");
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\teapot\\teapot.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
-    cmdOption.nthreads = 1;
+    //cmdOption.nthreads = 1;
     json data = loadJson(inFilename);
     setSearchDirectory(directoryContaining(inFilename));
 

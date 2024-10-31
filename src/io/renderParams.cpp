@@ -184,7 +184,10 @@ void RenderParams::createShape(const json &j) {
         std::vector<float> v1 = threeValueCheck(j, name, "v1");
         std::vector<float> v2 = threeValueCheck(j, name, "v2");
         //shapes.emplace(name, std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2])));
-        shapes[name].emplace_back(std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2])));
+        //shapes[name].emplace_back(std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2])));
+
+        shapes[name].emplace_back(std::make_shared<Triangle>(Point3f(v0[0], v0[1], v0[2]), Point3f(v1[0], v1[1], v1[2]), Point3f(v2[0], v2[1], v2[2]),
+            Normal3f(), Normal3f(), Normal3f()));
         return;
     }
     else if (type == "ObjTriangleMesh") {

@@ -1,13 +1,13 @@
 {
-    "name": "texture-CBox",
+    "name": "CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "sppm",
+        "type": "MISPathTracer",
         "nIterations": 10,
         "photonsPerIteration": 1000000,
         "radius": 5,
-        "spp": 128,
+        "spp": 129,
         "maxDepth": 10
     },
     "accelerator": {

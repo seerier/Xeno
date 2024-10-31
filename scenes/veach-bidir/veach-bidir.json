@@ -1,9 +1,9 @@
 {
-    "name": "alwaysOutward-veach-bidir",
+    "name": "alwaysOutwardTruly-veach-bidir",
     "imageWidth": 1024,
     "imageHeight": 1024,
     "integrator": {
-        "type": "sppm",
+        "type": "NormalIntegrator",
         "nIterations": 1,
         "photonsPerIteration": 3005040,
         "radius": 1,
@@ -164,7 +164,9 @@
             "name": "light1",
             "type": "AreaLight",
             "emission": [
-                523.2578 ,523.2578 ,523.2578
+                523.2578,
+                523.2578,
+                523.2578
             ],
             "shape": "LightMesh1"
         },
@@ -172,7 +174,9 @@
             "name": "light2",
             "type": "AreaLight",
             "emission": [
-                12048.179 ,8605.842 ,6196.206
+                12048.179,
+                8605.842,
+                6196.206
             ],
             "shape": "LightMesh2"
         }

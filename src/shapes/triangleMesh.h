@@ -75,6 +75,10 @@ struct ObjTriangleMesh {
                     vIndex = (vIndex > 0 ? vIndex : vIndex + p.size()) - 1; 
                     vtIndex = (vIndex > 0 ? vtIndex : vtIndex + p.size()) - 1; // should handle the special case that vtIndex==0, leave for future development
                     vnIndex = (vIndex > 0 ? vnIndex : vnIndex + p.size()) - 1;
+
+                    if (vtStr.empty()) vtIndex = -1;
+                    if (vnStr.empty()) vnIndex = -1;
+
                     localVertRef.emplace_back(vIndex, vtIndex, vnIndex);
                 }
 
@@ -110,7 +114,13 @@ struct ObjTriangleMesh {
     std::vector<Triangle> toTriangleList() {
         std::vector<Triangle> triangleList;
         for (int i = 0; i < nFaces; ++i) {
-            triangleList.emplace_back(p[indices[3 * i].v], p[indices[3 * i + 1].v], p[indices[3 * i + 2].v]);
+            //triangleList.emplace_back(p[indices[3 * i].v], p[indices[3 * i + 1].v], p[indices[3 * i + 2].v]);
+
+            Normal3f n0 = (indices[3 * i].vn == -1) ? Normal3f() : n[indices[3 * i].vn];
+            Normal3f n1 = (indices[3 * i].vn == -1) ? Normal3f() : n[indices[3 * i + 1].vn];
+            Normal3f n2 = (indices[3 * i].vn == -1) ? Normal3f() : n[indices[3 * i + 2].vn];
+            bool interpolate = (n0 != Normal3f() || n1 != Normal3f() || n2 != Normal3f());
+            triangleList.emplace_back(p[indices[3 * i].v], p[indices[3 * i + 1].v], p[indices[3 * i + 2].v], n0, n1, n2, interpolate);
         }
         return triangleList;
     }
@@ -118,7 +128,12 @@ struct ObjTriangleMesh {
     std::vector<std::shared_ptr<Triangle>> toSharedTriangleList() {
         std::vector<std::shared_ptr<Triangle>> sharedTriangleList;
         for (int i = 0; i < nFaces; ++i) {
-            sharedTriangleList.emplace_back(std::make_shared<Triangle>(p[indices[3 * i].v], p[indices[3 * i + 1].v], p[indices[3 * i + 2].v]));
+            Normal3f n0 = (indices[3 * i].vn == -1) ? Normal3f() : n[indices[3 * i].vn];
+            Normal3f n1 = (indices[3 * i].vn == -1) ? Normal3f() : n[indices[3 * i + 1].vn];
+            Normal3f n2 = (indices[3 * i].vn == -1) ? Normal3f() : n[indices[3 * i + 2].vn];
+            bool interpolate = (n0 != Normal3f() || n1 != Normal3f() || n2 != Normal3f());
+            //sharedTriangleList.emplace_back(std::make_shared<Triangle>(p[indices[3 * i].v], p[indices[3 * i + 1].v], p[indices[3 * i + 2].v]));
+            sharedTriangleList.emplace_back(std::make_shared<Triangle>(p[indices[3 * i].v], p[indices[3 * i + 1].v], p[indices[3 * i + 2].v], n0, n1, n2, interpolate));
         }
         return sharedTriangleList;
     }

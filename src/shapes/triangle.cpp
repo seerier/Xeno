@@ -26,9 +26,20 @@ bool Triangle::intersect(const Ray &ray, float &ray_t, Interaction &intr) const 
     ray.tMax = ray_t;
 
     intr.wo = -ray.d;
-    Vector3f n = normalize(cross(e1, e2));
-    n = dot(n, ray.d) < 0 ? n : -n;
-    intr.n = Normal3f(n);
+    if (interpolate) {
+        Normal3f n = (1 - u - v) * n0 + u * n1 + v * n2;
+        intr.n = normalize(n);
+    }
+    else {
+        Vector3f n = normalize(cross(e1, e2));
+        //n = dot(n, ray.d) < 0 ? n : -n;
+        intr.n = Normal3f(n);
+    }
+
+    //Vector3f n = normalize(cross(e1, e2));
+    //n = dot(n, ray.d) < 0 ? n : -n;
+    //intr.n = Normal3f(n);
+
     //intr.p = ray(ray_t);
     intr.p = v0 + u * e1 + v * e2;
     intr.uv.x = u, intr.uv.y = v;
