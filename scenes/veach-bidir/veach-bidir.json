@@ -4,10 +4,10 @@
     "imageHeight": 1024,
     "integrator": {
         "type": "MISPathTracer",
-        "nIterations": 1,
-        "photonsPerIteration": 3005040,
-        "radius": 1,
-        "spp": 2048,
+        "nIterations": 10,
+        "photonsPerIteration": 1000504,
+        "radius": 0.01,
+        "spp": 32768,
         "maxDepth": 10
     },
     "accelerator": {
