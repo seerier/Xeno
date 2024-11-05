@@ -25,3 +25,4 @@ for more information.
 
 ## Selected Images
 ![Render 1](gallery/sphere-caustics-MISPathTracer1000_1000-2048spp-depth10.png)
+![render 2](gallery/veach-bidir-MISPathTracer1024_1024-2048spp-depth10.png)
