@@ -13,7 +13,7 @@ Xeno uses [cmake](http://www.cmake.org/) for its build system
 ## Usage
 To render a scene, use the following command:
 ```bash
-xeno -f filepath
+xeno -f scene.json
 ```
 where filepath is the absolute path to the json scene file.
 
@@ -24,3 +24,4 @@ xeno -help
 for more information.
 
 ## Selected Images
+![Render 1](gallery/sphere-caustics-MISPathTracer1000_1000-2048spp-depth10.png)
