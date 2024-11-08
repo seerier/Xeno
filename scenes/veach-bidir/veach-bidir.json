@@ -3,8 +3,8 @@
     "imageWidth": 1024,
     "imageHeight": 1024,
     "integrator": {
-        "type": "MISPathTracer",
-        "nIterations": 10,
+        "type": "sppm",
+        "nIterations": 100,
         "photonsPerIteration": 1000504,
         "radius": 0.01,
         "spp": 32768,
