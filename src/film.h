@@ -19,6 +19,11 @@ public:
         pixels[index].rgb = val;
     }
 
+    void addRadiance(int x, int y, const Spectrum &val) {
+        int index = y * xResolution + x;
+        pixels[index].rgb += val;
+    }
+
     // Export an 8bit-RGB .png file
     void writePng() const;
 

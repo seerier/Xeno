@@ -12,6 +12,7 @@
 #include"integrators/normal.h"
 #include"integrators/pm.h"
 #include"integrators/sppm.h"
+#include"integrators/bdpt.h"
 #include"materials/diffuse.h"
 #include"materials/mirror.h"
 #include"materials/dielectric.h"
@@ -100,6 +101,13 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         float radius = j.value("radius", 1.f);
         int maxDepth = j.value("maxDepth", 10);
         return std::make_shared<SPPM>(nIterations, photonsPerIteration, maxDepth, radius);
+    }
+    else if (type == "bdpt") {
+        int spp = j.value("spp", 0);
+        if (cmdOption.spp != 0) spp = cmdOption.spp;
+        int maxDepth = j.value("maxDepth", 10);
+        if (spp != 0) return std::make_shared<BDPT>(spp, maxDepth);
+        else return std::make_shared<BDPT>(16, maxDepth);
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;
