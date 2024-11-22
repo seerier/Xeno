@@ -107,7 +107,7 @@ std::shared_ptr<Integrator> RenderParams::createIntegrator(const json &j) const 
         if (cmdOption.spp != 0) spp = cmdOption.spp;
         int maxDepth = j.value("maxDepth", 10);
         if (spp != 0) return std::make_shared<BDPT>(spp, maxDepth);
-        else return std::make_shared<BDPT>(16, maxDepth);
+        return std::make_shared<BDPT>(16, maxDepth);
     }
 
     std::cerr << "Failed to create integrator for type: " << type << std::endl;

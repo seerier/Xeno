@@ -16,6 +16,14 @@ struct Vertex {
         return intr.n;
     }
 
+    Spectrum f(const Vertex &next) const {
+        Vector3f wi = next.p() - p();
+        if (wi.lengthSquared() == 0) return Spectrum(0);
+        wi = normalize(wi);
+        BSDF bsdf = intr.getBSDF();
+        return bsdf.f(intr.wo, wi);
+    }
+
     float convertDensity(float pdf, const Vertex &next) const {
         // Return solid angle density if _next_ is an infinite area light
         Vector3f w = next.p() - p();
@@ -42,7 +50,7 @@ public:
     BDPT(int i = 16, int maxDepth = 10) :spp(i), maxDepth(maxDepth) {}
     virtual void Render(Sensor &sensor, const Scene &scene) const;
     //Spectrum Li(Ray &ray, const Scene &scene) const;
-    Spectrum connectBDPT(const Scene &scene) const;
+    Spectrum connectBDPT(const Scene &scene, Vertex *cameraVertices, Vertex *lightVertices, int s, int t) const;
 
 private:
     int spp;

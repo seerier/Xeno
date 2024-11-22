@@ -1,5 +1,5 @@
 {
-    "name": "alwaysOutward-veach-mis",
+    "name": "veach-mis",
     "imageWidth": 1280,
     "imageHeight": 720,
     "integrator": {
@@ -7,7 +7,7 @@
         "nIterations": 10,
         "photonsPerIteration": 3005040,
         "radius": 1,
-        "spp": 1,
+        "spp": 16,
         "maxDepth": 10
     },
     "accelerator": {

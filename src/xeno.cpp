@@ -65,6 +65,10 @@ void cmdOutput(const json &j, const CmdOptions &cmdOption) {
 }
 
 int main(int argc, char *argv[]) {
+    _CrtSetReportMode(_CRT_ASSERT, 0); // ??????
+    _set_invalid_parameter_handler([](const wchar_t*, const wchar_t*, const wchar_t*, unsigned int, uintptr_t) {
+        // ????????
+        });
 
     //google::InitGoogleLogging(argv[0]);
     //FLAGS_log_dir = "../../logs";
@@ -108,7 +112,7 @@ int main(int argc, char *argv[]) {
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\firstTry.json"); //default input filename
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\cbox\\2triangleLight.json");
     auto buildStart = std::chrono::high_resolution_clock::now();
-    std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\veach-mis\\veach-mis.json");
+    std::string inFilename("D:\\Coding\\Github-Repo\\Xeno\\scenes\\veach-bidir\\veach-bidir.json");
     //std::string inFilename("E:\\Coding\\github_repo\\xeno\\scenes\\teapot\\teapot.json");
     if (cmdOption.inFilename != "") inFilename = cmdOption.inFilename;
     //cmdOption.nthreads = 1;

@@ -1,13 +1,13 @@
 {
-    "name": "CBox",
+    "name": "1-4-CBox",
     "imageWidth": 1000,
     "imageHeight": 1000,
     "integrator": {
-        "type": "MISPathTracer",
+        "type": "bdpt",
         "nIterations": 10,
         "photonsPerIteration": 1000000,
         "radius": 5,
-        "spp": 129,
+        "spp": 1024,
         "maxDepth": 10
     },
     "accelerator": {

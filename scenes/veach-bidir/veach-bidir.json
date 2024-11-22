@@ -1,13 +1,13 @@
 {
-    "name": "veach-bidir",
+    "name": "veach-bidir---",
     "imageWidth": 1024,
     "imageHeight": 1024,
     "integrator": {
         "type": "bdpt",
         "nIterations": 10,
-        "photonsPerIteration": 1000504,
+        "photonsPerIteration": 1000004,
         "radius": 0.01,
-        "spp": 10,
+        "spp": 128,
         "maxDepth": 10
     },
     "accelerator": {

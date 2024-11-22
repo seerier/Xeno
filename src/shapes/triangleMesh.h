@@ -73,8 +73,8 @@ struct ObjTriangleMesh {
                     int vtIndex = vtStr.empty() ? 0 : std::stoi(vtStr);
                     int vnIndex = vnStr.empty() ? 0 : std::stoi(vnStr);
                     vIndex = (vIndex > 0 ? vIndex : vIndex + p.size()) - 1; 
-                    vtIndex = (vIndex > 0 ? vtIndex : vtIndex + p.size()) - 1; // should handle the special case that vtIndex==0, leave for future development
-                    vnIndex = (vIndex > 0 ? vnIndex : vnIndex + p.size()) - 1;
+                    vtIndex = (vIndex > 0 ? vtIndex : vtIndex + uv.size()) - 1; // should handle the special case that vtIndex==0, leave for future development
+                    vnIndex = (vIndex > 0 ? vnIndex : vnIndex + n.size()) - 1; // p.size() -> n.size() is a debug direction?
 
                     if (vtStr.empty()) vtIndex = -1;
                     if (vnStr.empty()) vnIndex = -1;
