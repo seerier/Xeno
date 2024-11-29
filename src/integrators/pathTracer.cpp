@@ -43,6 +43,7 @@ Spectrum PathTracer::Li(Ray &ray, const Scene &scene) const {
         // estimate direct light to this intersect point
         float lightSelectPdf;
         int lightIndex = scene.uniformSampleOneLight(random_float(), &lightSelectPdf);
+        if(bounces==3)
         Li += beta * estimateDirect(scene, intr, bsdf, *scene.lights[lightIndex]) / lightSelectPdf;
 
         // generate next ray direction
