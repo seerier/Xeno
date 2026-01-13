@@ -54,10 +54,10 @@ xeno -f scenes/cbox/cbox.json
 xeno -f scenes/cbox/cbox.json -o output.png -w 1920 -h 1080
 
 # High quality rendering with more samples per pixel
-xeno -f scenes/cbox/cbox.json -spp 256 -nthreads 8
+xeno -f scenes/cbox/cbox.json -spp 256 -nthreads 14
 
 # All options combined
-xeno -f scenes/cbox/cbox.json -o result.png -w 1280 -h 720 -spp 128 -nthreads 4
+xeno -f scenes/cbox/cbox.json -o result.png -w 1280 -h 720 -spp 128 -nthreads 8
 ```
 
 ## Gallery
