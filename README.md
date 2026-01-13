@@ -1,27 +1,36 @@
 # Xeno Renderer
-Hi! This is my own physically based renderer. It's name comes from my favorite video game, Xenoblade:)
 
-## Building the code
-### Cloning:
+A physically-based renderer implementing Monte-Carlo light transport algorithms.
+
+## Features
+
+- Path tracing with importance sampling and multiple importance sampling (MIS)
+- Bidirectional path tracing
+- Stochastic Progressive Photon Mapping
+- Multithreaded rendering for efficient performance
+
+## Building
+
+Xeno uses [cmake](http://www.cmake.org/) for its build system.
 ```bash
 git clone https://github.com/seerier/Xeno.git
+cd Xeno
+mkdir build && cd build
+cmake ..
+make -j8
 ```
 
-### Building:
-Xeno uses [cmake](http://www.cmake.org/) for its build system
-
 ## Usage
-To render a scene, use the following command:
+
+To render a scene:
 ```bash
 xeno -f scene.json
 ```
-where filepath is the absolute path to the json scene file.
 
-You can alse use:
+For more information:
 ```bash
 xeno -help
 ```
-for more information.
 
 ## Selected Images
 ![Render 1](gallery/sphere-dielectric.png)
