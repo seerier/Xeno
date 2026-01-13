@@ -69,7 +69,7 @@ xeno -f scenes/cbox/cbox.json -o result.png -w 1280 -h 720 -spp 128 -nthreads 4
 ![Cornell Box](gallery/sphere-dielectric.png)
 
 ### Indoor Scene with Global Illumination
-![Indoor Scene](gallery/veach-bidir)
+![Indoor Scene](gallery/veach-bidir.png)
 
 ## References
 
