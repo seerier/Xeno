@@ -1,17 +1,19 @@
 # Xeno Renderer
 
-A physically-based renderer implementing Monte-Carlo light transport algorithms.
+A physically-based Monte-Carlo renderer implementing advanced light transport algorithms, named after the Xenoblade series.
 
 ## Features
 
-- Path tracing with importance sampling and multiple importance sampling (MIS)
-- Bidirectional path tracing
-- Stochastic Progressive Photon Mapping
-- Multithreaded rendering for efficient performance
+- **Path Tracing** with importance sampling and multiple importance sampling (MIS)
+- **Bidirectional Path Tracing** for challenging lighting scenarios
+- **Photon Mapping** and **Stochastic Progressive Photon Mapping** for specular light transport simulation
+- **Multithreaded rendering** for efficient performance on multi-core systems
+- **JSON-based scene configuration** for flexible scene definition
 
 ## Building
 
 Xeno uses [cmake](http://www.cmake.org/) for its build system.
+
 ```bash
 git clone https://github.com/seerier/Xeno.git
 cd Xeno
@@ -22,19 +24,52 @@ make -j8
 
 ## Usage
 
-To render a scene:
+To render a scene, use the following command:
+
 ```bash
 xeno -f scene.json
 ```
 
-For more information:
+where `scene.json` is the path to your scene configuration file.
+
+### Command Line Options
+
 ```bash
-xeno -help
+xeno -f <input>              # Input scene file (required)
+xeno -o <output>             # Output image filename
+xeno -w, -width <num>        # Image width in pixels
+xeno -h, -height <num>       # Image height in pixels
+xeno -spp <num>              # Samples per pixel
+xeno -nthreads <num>         # Number of parallel threads
+xeno -help                   # Display help information
 ```
 
-## Selected Images
-![Render 1](gallery/sphere-dielectric.png)
+### Examples
 
+```bash
+# Basic rendering
+xeno -f scenes/cbox/cbox.json
+
+# Custom output and resolution
+xeno -f scenes/cbox/cbox.json -o output.png -w 1920 -h 1080
+
+# High quality rendering with more samples per pixel
+xeno -f scenes/cbox/cbox.json -spp 256 -nthreads 8
+
+# All options combined
+xeno -f scenes/cbox/cbox.json -o result.png -w 1280 -h 720 -spp 128 -nthreads 4
+```
+
+## Gallery
+
+### Classic Cornell Box
+![Cornell Box](gallery/Cornell-Box.png)
+
+### Cornell Box with Specular Light Path
+![Cornell Box](gallery/sphere-dielectric.png)
+
+### Indoor Scene with Global Illumination
+![Indoor Scene](gallery/veach-bidir)
 
 ## References
 
